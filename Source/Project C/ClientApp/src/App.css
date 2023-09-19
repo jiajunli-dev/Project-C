@@ -1,8 +1,32 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.main
+{
+  height: 100%;
+  width: 100vw;
+}
+
+.main  h1
+{
+  font-size: calc(1.525rem + 2.0625vw);
+  line-height: 1.1;
+  font-weight: 700;
+}
+
+.background_image
+{
+  position: absolute;
+  top: 62px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("https://viscongroup.eu/app/uploads/2021/03/headerhomepaginenew-1920x650.jpg");
+  background-repeat: no-repeat;
+  z-index: -1;
 }
 
 .logo {
@@ -11,6 +35,7 @@
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
