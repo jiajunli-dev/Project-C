@@ -20,10 +20,11 @@
 .background_image
 {
   position: absolute;
-  top: 62px;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  top: 112px;
+  left: 100px;
+  right: 100px ;
+  bottom: 50px ;
+  border-radius: 10px;
   background-image: url("https://viscongroup.eu/app/uploads/2021/03/headerhomepaginenew-1920x650.jpg");
   background-repeat: no-repeat;
   z-index: -1;
