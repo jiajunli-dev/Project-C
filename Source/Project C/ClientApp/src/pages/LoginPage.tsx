@@ -24,7 +24,7 @@ function LoginPage() {
 }
 
 function Welcome() {
-  return <div>Hello you are signed in</div>;
+  return <div className="bg-red-500">Hello you are signed in</div>;
 }
 
 export default LoginPage;
