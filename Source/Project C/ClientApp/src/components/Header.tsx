@@ -2,9 +2,17 @@ import logo from "../assets/viscon_logo-removebg-preview.png";
 import searchIcon from "../assets/search_icon.png";
 import bellIcon from "../assets/bell_icon.png";
 import inboxIcon from "../assets/inbox_icon.png";
-import chevDownIcom from "../assets/chevron_down_icon.png";
+import chevDownIcon from "../assets/chevron_down_icon.png";
+import greenLightIcon from "../assets/green_light_icon.png";
 import { useNavigate } from "react-router-dom";
 import "../header.css";
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  UserButton,
+} from "@clerk/clerk-react";
+import ShowName from "./ShowName";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -38,26 +46,33 @@ const Header = () => {
       </div>
 
       <div className="flex items-center">
-        <div className="flex items-center cursor-pointer">
-          <p className="text-black font-semibold name">Omar</p>
-          <img  className="mx-1 mr-3 w-[28%] " src={chevDownIcom} alt="" />
+        {/* If NOT signed in */}
+        <SignedOut>
+          <SignInButton>
+            <button className="flex items-center cursor-pointer bg-white">
+              <p className="text-black font-semibold name">Sign In</p>
+              <img className="mx-1 mr-3 w-[28%] " src={chevDownIcon} alt="" />
+            </button>
+          </SignInButton>
+        </SignedOut>
+
+        {/* If signed in */}
+        <div className="flex gap-7 items-center">
+          <SignedIn>
+            <div className="flex gap-2 items-center">
+              <ShowName></ShowName>
+              <img
+                className="h-[10px]"
+                src={greenLightIcon}
+                alt="Green Light Icon"
+              />
+            </div>
+            <div className="mr-6">
+              <UserButton afterSignOutUrl="/"></UserButton>
+            </div>
+          </SignedIn>
         </div>
 
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="#009fe3"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="w-14 h-14 cursor-pointer mr-[25px] hover:scale-105 ease-linear duration-150"
-          onClick={() => navigate("/authentication")}
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"
-          />
-        </svg>
         <div className="flex items-center gap-[1.5rem] pr-[5rem]">
           <div className="piped p-0">d</div>
           <img
