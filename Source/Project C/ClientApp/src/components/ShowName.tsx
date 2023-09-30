@@ -1,5 +1,6 @@
 import {  useUser } from "@clerk/clerk-react";
 
+
 function capitalizeFirstLetter(str: any) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
@@ -13,7 +14,7 @@ export default function Home() {
 
   if (isSignedIn) {
     return (
-      <div className="text-black">{capitalizeFirstLetter(user.username)}</div>
+      <div className="text-black dark:text-white">{capitalizeFirstLetter(user.username)}</div>
     );
   }
 

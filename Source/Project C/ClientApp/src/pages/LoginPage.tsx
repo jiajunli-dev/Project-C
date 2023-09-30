@@ -1,30 +1,8 @@
-const clerkPubKey =
-  "pk_test_c3RlcmxpbmctbW9yYXktOTAuY2xlcmsuYWNjb3VudHMuZGV2JA";
-
-import {
-  ClerkProvider,
-  SignedIn,
-  SignedOut,
-  UserButton,
-  useUser,
-  RedirectToSignIn,
-} from "@clerk/clerk-react";
+import { SignIn } from "@clerk/clerk-react";
+import "../loginpage.css"
 
 function LoginPage() {
-  return (
-    <ClerkProvider publishableKey={clerkPubKey}>
-      <SignedIn>
-        <Welcome />
-      </SignedIn>
-      <SignedOut>
-        <RedirectToSignIn />
-      </SignedOut>
-    </ClerkProvider>
-  );
-}
-
-function Welcome() {
-  return <div className="bg-red-500">Hello you are signed in</div>;
+  return <div className="signin"><SignIn></SignIn></div>;
 }
 
 export default LoginPage;
