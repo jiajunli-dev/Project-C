@@ -1,10 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Data.Models;
+
+using Microsoft.EntityFrameworkCore;
 
 namespace Data;
 
 public class AppDbContext : DbContext
 {
     // todo Add DbSets
+    public DbSet<Ticket> Tickets { get; set; }
 
     /// <summary>
     /// Launches DbContext with the provided DbContextOptions
