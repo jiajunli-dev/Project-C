@@ -45,11 +45,11 @@ const Header = () => {
           {/* If NOT signed in */}
           <SignedOut>
             <button
-              className="flex items-center cursor-pointer bg-white"
+              className="flex items-center cursor-pointer bg-gray-200 dark:bg-gray-700 mr-[1.75rem]"
               onClick={() => navigate("/authentication")}
             >
-              <p className="text-black font-semibold name">Sign In</p>
-              <img className="mx-1 mr-3 w-[28%] " src={chevDownIcon} alt="" />
+              <p className="text-black font-semibold name dark:text-white ">Sign In</p>
+              {/* <img className="mx-1 mr-3 w-[28%] " src={chevDownIcon} alt="" /> */}
             </button>
           </SignedOut>
 
@@ -72,15 +72,14 @@ const Header = () => {
           </div>
 
           <div className="flex items-center gap-[1.5rem] pr-[5rem]">
-            <div className="piped p-0">.</div>
             <img
               src={searchIcon}
-              className="object-contain cursor-pointer search__icon hover:scale-105 ease-linear duration-150"
+              className="object-contain cursor-pointer search__icon hover:scale-105 ease-linear duration-150 dark:bg-white rounded-xl"
               alt="Search Icon"
             />
             <img
               src={inboxIcon}
-              className="object-contain cursor-pointer hover:scale-105 ease-linear duration-150"
+              className="object-contain cursor-pointer hover:scale-105 ease-linear duration-150 dark:bg-white rounded-xl"
               alt="Inbox Icon"
             />
             <Switcher></Switcher>
