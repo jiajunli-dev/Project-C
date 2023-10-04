@@ -17,4 +17,3 @@ public class Ticket
 
   public Priority Priority { get; set; }
 }
-

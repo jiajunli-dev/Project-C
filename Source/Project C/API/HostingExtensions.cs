@@ -20,6 +20,7 @@ namespace API
     public static WebApplicationBuilder ConfigureServices(this WebApplicationBuilder app)
     {
       app.Services.AddScoped<TicketRepository>();
+      app.Services.AddScoped<PhotoRepository>();
 
       app.Services.AddControllers();
       app.Services.AddEndpointsApiExplorer();
