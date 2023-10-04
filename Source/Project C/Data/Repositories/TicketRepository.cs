@@ -39,17 +39,20 @@ public class TicketRepository
 
   public async Task Delete(int id)
   {
-    if (await _context.Tickets.FindAsync(id) is not Ticket ticket) 
+    if (await _context.Tickets.FindAsync(id) is not Ticket ticket)
       throw new ModelNotFoundException(nameof(Ticket));
 
     _context.Tickets.Remove(ticket);
     await _context.SaveChangesAsync();
   }
 
-  public async Task Escalate(int ticketId, Priority priority)
+  // TODO return created Malfunction
+  public async Task Escalate(int ticketId)
   {
-    // TODO implement
+    // TODO implement escalation from Ticket to Malfunction
     throw new NotImplementedException();
   }
-}
 
+  public bool Exists(int ticketId)
+    => ticketId > 0 && _context.Tickets.Any(t => t.TicketId == ticketId);
+}
