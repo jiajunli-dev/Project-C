@@ -36,7 +36,7 @@ public class PhotoController : ControllerBase
     }
   }
 
-  [HttpPost("?ticketId={ticketId}")] // POST /Photo?ticketId=1
+  [HttpPost("ticketId={ticketId}")] // POST /Photo/ticketId=1
   public async Task<IActionResult> Create(int ticketId, [FromBody] Photo photo)
   {
     if (ticketId <= 0)
