@@ -66,7 +66,7 @@ public class TicketController : ControllerBase
   public async Task<IActionResult> Create([FromBody] Ticket ticket)
   {
     if (ticket is null)
-      throw new ArgumentNullException(nameof(ticket));
+      return BadRequest($"Ticket not provided as JSON body");
 
     var model = await _ticketRepository.Create(ticket);
     return Created($"Ticket/{model.TicketId}", model);
