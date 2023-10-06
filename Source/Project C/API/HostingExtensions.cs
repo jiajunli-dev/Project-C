@@ -1,4 +1,5 @@
-﻿using Data.Repositories;
+﻿using Data.Models;
+using Data.Repositories;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -21,6 +22,10 @@ namespace API
     {
       app.Services.AddScoped<TicketRepository>();
       app.Services.AddScoped<PhotoRepository>();
+      app.Services.AddScoped<MalfunctionRepository>();
+      app.Services.AddScoped<UserRepository>();
+      app.Services.AddScoped<CustomerRepository>();
+      app.Services.AddScoped<EmployeeRepository>();
 
       app.Services.AddControllers();
       app.Services.AddEndpointsApiExplorer();

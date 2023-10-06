@@ -11,7 +11,9 @@ public class AppDbContext : DbContext
     public DbSet<Photo> Photos { get; set; }
     public DbSet<TicketPhoto> TicketPhotos { get; set; }
     public DbSet<Malfunction> Malfunctions { get; set; }
-   
+    public DbSet<User> Users { get; set; }
+    public DbSet<Customer> Customers { get; set; }
+    public DbSet<Employee> Employees { get; set; }
 
     /// <summary>
     /// Launches DbContext with the provided DbContextOptions
