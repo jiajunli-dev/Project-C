@@ -6,7 +6,7 @@ namespace Data;
 
 public class AppDbContext : DbContext
 {
-  // todo Add DbSets
+    // todo Add DbSets
     public DbSet<Ticket> Tickets { get; set; }
     public DbSet<Photo> Photos { get; set; }
     public DbSet<TicketPhoto> TicketPhotos { get; set; }
@@ -31,11 +31,11 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-    base.OnModelCreating(modelBuilder);
+        base.OnModelCreating(modelBuilder);
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-    base.OnConfiguring(optionsBuilder);
+        base.OnConfiguring(optionsBuilder);
     }
 }

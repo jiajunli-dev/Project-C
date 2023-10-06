@@ -8,5 +8,6 @@ var builder = WebApplication.CreateBuilder(args)
 var app = builder.Build();
 app.ConfigurePipeline().Run();
 
-// Force public for API.Tests to access
+#pragma warning disable S1118 // Force public for API.Tests to access
 public partial class Program { }
+#pragma warning restore S1118 // Utility classes should not have public constructors

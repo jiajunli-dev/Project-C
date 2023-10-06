@@ -1,4 +1,5 @@
 ﻿using Data.Exceptions;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace Data.Models;
@@ -17,7 +18,7 @@ public class UserRepository
             throw new ArgumentOutOfRangeException(nameof(id));
         if (await _context.Users.FindAsync(id) is not User user)
             throw new ModelNotFoundException(nameof(User));
-        
+
         return user;
     }
 

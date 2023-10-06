@@ -5,12 +5,12 @@ namespace Data.Models;
 
 public class TicketPhoto
 {
-  [Key]
-  public int TicketId { get; set; }
-  [ForeignKey(nameof(Ticket))]
-  public int PhotoId { get; set; }
+    [Key]
+    public int TicketId { get; set; }
+    [ForeignKey(nameof(Ticket))]
+    public int PhotoId { get; set; }
 
-  // Navigation properties
-  public Photo Photo { get; set; }
-  public Ticket Ticket { get; set; }
+    // Navigation properties
+    public Photo Photo { get; set; }
+    public Ticket Ticket { get; set; }
 }

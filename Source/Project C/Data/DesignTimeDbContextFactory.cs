@@ -5,9 +5,9 @@ namespace Data;
 
 public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
 {
-  public AppDbContext CreateDbContext(string[] args)
-  {
-    const string name = "ProjectCDb";
-    return new AppDbContext(new DbContextOptionsBuilder<AppDbContext>().UseInMemoryDatabase(name).Options);
-  }
+    public AppDbContext CreateDbContext(string[] args)
+    {
+        const string name = "ProjectCDb";
+        return new AppDbContext(new DbContextOptionsBuilder<AppDbContext>().UseInMemoryDatabase(name).Options);
+    }
 }

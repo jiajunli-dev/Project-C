@@ -1,9 +1,9 @@
 ﻿using Data.Exceptions;
 using Data.Models;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
-
 
 [ApiController]
 [Route("[controller]")]

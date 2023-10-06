@@ -1,4 +1,5 @@
 ﻿using Data.Exceptions;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace Data.Models;

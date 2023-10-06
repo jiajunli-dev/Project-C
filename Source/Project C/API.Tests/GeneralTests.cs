@@ -12,17 +12,17 @@ namespace API.Tests;
 [TestClass]
 public class GeneralTests : TestBase
 {
-  [TestMethod]
-  public void CreateClassDiagram()
-  {
-    // Arrange
-    using var context = new DesignTimeDbContextFactory().CreateDbContext(Array.Empty<string>());
-    var path = Path.GetTempFileName() + ".dgml";
-    File.WriteAllText(path, context.AsDgml(), Encoding.UTF8);
-    var startInfo = new ProcessStartInfo(path)
+    [TestMethod]
+    public void CreateClassDiagram()
     {
-      UseShellExecute = true,
-    };
-    Process.Start(startInfo);
-  }
+        // Arrange
+        using var context = new DesignTimeDbContextFactory().CreateDbContext(Array.Empty<string>());
+        var path = Path.GetTempFileName() + ".dgml";
+        File.WriteAllText(path, context.AsDgml(), Encoding.UTF8);
+        var startInfo = new ProcessStartInfo(path)
+        {
+            UseShellExecute = true,
+        };
+        Process.Start(startInfo);
+    }
 }
