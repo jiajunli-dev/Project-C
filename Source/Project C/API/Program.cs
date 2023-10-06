@@ -7,3 +7,6 @@ var builder = WebApplication.CreateBuilder(args)
 
 var app = builder.Build();
 app.ConfigurePipeline().Run();
+
+// Force public for API.Tests to access
+public partial class Program { }
