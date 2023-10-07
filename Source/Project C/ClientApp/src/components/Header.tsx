@@ -1,8 +1,6 @@
 import logo from "../assets/viscon_logo-removebg-preview.png";
 import searchIcon from "../assets/search_icon.png";
-import bellIcon from "../assets/bell_icon.png";
 import inboxIcon from "../assets/inbox_icon.png";
-import chevDownIcon from "../assets/chevron_down_icon.png";
 import greenLightIcon from "../assets/green_light_icon.png";
 import { useNavigate } from "react-router-dom";
 import "../header.css";
@@ -15,7 +13,7 @@ const Header = () => {
 
   return (
     <>
-      <div className="min-h-[60px] absolute top-0 right-0 left-0 flex items-center justify-between  p-5 border-b-[1px] border-gray-200 bg-white dark:bg-black">
+      <div className="flex items-center justify-between p-5 border-b-[1px] border-gray-200 bg-white dark:bg-darkmodeBlack ">
         <div>
           <img
             src={logo}
@@ -48,7 +46,9 @@ const Header = () => {
               className="flex items-center cursor-pointer bg-gray-200 dark:bg-gray-700 mr-[1.75rem]"
               onClick={() => navigate("/authentication")}
             >
-              <p className="text-black font-semibold name dark:text-white ">Sign In</p>
+              <p className="text-black font-semibold name dark:text-white ">
+                Sign In
+              </p>
               {/* <img className="mx-1 mr-3 w-[28%] " src={chevDownIcon} alt="" /> */}
             </button>
           </SignedOut>
