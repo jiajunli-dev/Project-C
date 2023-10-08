@@ -36,17 +36,17 @@ public class PhotoController : ControllerBase
         }
     }
 
-    [HttpPost("ticketId={ticketId}")] // POST /Photo/ticketId=1
-    public async Task<IActionResult> Create(int ticketId, [FromBody] Photo photo)
+    [HttpPost] // POST /Photo
+    public async Task<IActionResult> Create([FromBody] Photo photo)
     {
-        if (ticketId <= 0)
-            return BadRequest("Invalid Id provided");
-        if (!_ticketRepository.Exists(ticketId))
-            return BadRequest($"Ticket not found with the Id: {ticketId}");
         if (photo is null)
             return BadRequest("Invalid body content provided");
+        if (photo.TicketId <= 0)
+            return BadRequest("Invalid Ticket Id provided");
+        if (!_ticketRepository.Exists(photo.TicketId))
+            return BadRequest($"Ticket not found with the Id: {photo.TicketId}");
 
-        var model = await _photoRepository.Create(ticketId, photo);
+        var model = await _photoRepository.Create(photo);
         return Created($"Photo/{model.PhotoId}", model);
     }
 
@@ -55,6 +55,10 @@ public class PhotoController : ControllerBase
     {
         if (photo is null)
             return BadRequest("Invalid body content provided");
+        if (photo.TicketId <= 0)
+            return BadRequest("Invalid Ticket Id provided");
+        if (!_ticketRepository.Exists(photo.TicketId))
+            return BadRequest($"Ticket not found with the Id: {photo.TicketId}");
 
         try
         {

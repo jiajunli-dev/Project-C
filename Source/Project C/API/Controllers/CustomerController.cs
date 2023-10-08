@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
-
 [ApiController]
 [Route("[controller]")]
 public class CustomerController : ControllerBase
@@ -21,7 +20,9 @@ public class CustomerController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         var customers = await _customerRepository.GetAll();
-        if (customers.Count == 0) return NoContent();
+        if (customers.Count == 0) 
+            return NoContent();
+        
         return Ok(customers);
     }
 
@@ -47,7 +48,7 @@ public class CustomerController : ControllerBase
     public async Task<IActionResult> Create([FromBody] Customer customer)
     {
         if (customer is null)
-            throw new ArgumentNullException(nameof(Customer));
+            return BadRequest("Invalid body content provided");
 
         var model = await _customerRepository.Create(customer);
         return Created($"Customer/{model.UserId}", model);

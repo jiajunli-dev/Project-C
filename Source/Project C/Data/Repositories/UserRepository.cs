@@ -8,9 +8,11 @@ public class UserRepository
 {
     private readonly AppDbContext _context;
 
-    public UserRepository(AppDbContext context) => _context = context;
+    public UserRepository(AppDbContext context)
+        => _context = context;
 
-    public async Task<List<User>> GetAll() => await _context.Users.ToListAsync();
+    public Task<List<User>> GetAll()
+        => _context.Users.AsNoTracking().ToListAsync();
 
     public async Task<User> GetById(int id)
     {
@@ -26,6 +28,7 @@ public class UserRepository
     {
         var model = _context.Users.Add(user);
         await _context.SaveChangesAsync();
+
         return model.Entity;
     }
 
@@ -34,15 +37,16 @@ public class UserRepository
         if (await _context.Users.FindAsync(user.UserId) is null)
             throw new ModelNotFoundException(nameof(User));
 
-        _context.Users.Update(user);
+        var result = _context.Users.Update(user);
         await _context.SaveChangesAsync();
-        return user;
+
+        return result.Entity;
     }
 
     public async Task Delete(int id)
     {
         if (id <= 0)
-            throw new ArgumentOutOfRangeException(nameof(User));
+            throw new ArgumentOutOfRangeException(nameof(id));
         if (await _context.Users.FindAsync(id) is not User user)
             throw new ModelNotFoundException(nameof(User));
 

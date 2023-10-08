@@ -8,9 +8,11 @@ public class EmployeeRepository
 {
     private readonly AppDbContext _context;
 
-    public EmployeeRepository(AppDbContext context) => _context = context;
+    public EmployeeRepository(AppDbContext context)
+        => _context = context;
 
-    public async Task<List<Employee>> GetAll() => await _context.Employees.ToListAsync();
+    public Task<List<Employee>> GetAll()
+        => _context.Employees.AsNoTracking().ToListAsync();
 
     public async Task<Employee> GetById(int id)
     {
@@ -26,6 +28,7 @@ public class EmployeeRepository
     {
         var model = _context.Employees.Add(employee);
         await _context.SaveChangesAsync();
+
         return model.Entity;
     }
 
@@ -34,15 +37,16 @@ public class EmployeeRepository
         if (await _context.Employees.FindAsync(employee.UserId) is null)
             throw new ModelNotFoundException(nameof(Employee));
 
-        _context.Employees.Update(employee);
+        var result = _context.Employees.Update(employee);
         await _context.SaveChangesAsync();
-        return employee;
+
+        return result.Entity;
     }
 
     public async Task Delete(int id)
     {
         if (id <= 0)
-            throw new ArgumentOutOfRangeException(nameof(Employee));
+            throw new ArgumentOutOfRangeException(nameof(id));
         if (await _context.Employees.FindAsync(id) is not Employee employee)
             throw new ModelNotFoundException(nameof(Employee));
 

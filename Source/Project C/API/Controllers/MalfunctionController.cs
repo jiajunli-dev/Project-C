@@ -22,9 +22,7 @@ namespace API.Controllers
         {
             var malfunctions = _malfunctionRepository.GetAll();
             if (malfunctions.Count == 0)
-            {
                 return NoContent();
-            }
 
             return Ok(malfunctions);
         }
@@ -51,9 +49,7 @@ namespace API.Controllers
         public async Task<IActionResult> Create([FromBody] Malfunction malfunction)
         {
             if (malfunction is null)
-            {
-                throw new ArgumentNullException(nameof(malfunction));
-            }
+                return BadRequest("Invalid body content provided");
 
             var model = await _malfunctionRepository.Create(malfunction);
             return Created($"Malfunction/{model.MalfunctionId}", model);
@@ -63,9 +59,7 @@ namespace API.Controllers
         public async Task<IActionResult> Update([FromBody] Malfunction malfunction)
         {
             if (malfunction is null)
-            {
                 return BadRequest("Invalid body content provided");
-            }
 
             try
             {
@@ -81,9 +75,7 @@ namespace API.Controllers
         public async Task<IActionResult> Delete(int malfunctionId)
         {
             if (malfunctionId <= 0)
-            {
                 return BadRequest("Invalid ID provided");
-            }
 
             try
             {

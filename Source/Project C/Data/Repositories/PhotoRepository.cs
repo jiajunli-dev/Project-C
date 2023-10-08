@@ -11,8 +11,8 @@ public class PhotoRepository
     public PhotoRepository(AppDbContext context)
       => _context = context;
 
-    public async Task<List<Photo>> GetAllByTicketId(int ticketId)
-      => await _context.TicketPhotos.Where(tp => tp.TicketId == ticketId).Select(tp => tp.Photo).ToListAsync();
+    public Task<List<Photo>> GetAllByTicketId(int ticketId)
+      => _context.Photos.Where(p => p.TicketId == ticketId).AsNoTracking().ToListAsync();
 
     public async Task<Photo> GetById(int photoId)
     {
@@ -24,11 +24,9 @@ public class PhotoRepository
         return photo;
     }
 
-    public async Task<Photo> Create(int ticketId, Photo photo)
+    public async Task<Photo> Create(Photo photo)
     {
         var model = _context.Photos.Add(photo);
-        await _context.SaveChangesAsync();
-        _context.TicketPhotos.Add(new TicketPhoto { Photo = photo, TicketId = ticketId, PhotoId = model.Entity.PhotoId });
         await _context.SaveChangesAsync();
 
         return model.Entity;
@@ -47,12 +45,10 @@ public class PhotoRepository
 
     public async Task Delete(int photoId)
     {
-        var photo = await _context.Photos.FindAsync(photoId) ?? throw new ModelNotFoundException(nameof(Photo));
-        if (await _context.TicketPhotos.FirstOrDefaultAsync(tp => tp.PhotoId == photoId) is not TicketPhoto ticketPhoto)
-            throw new ModelNotFoundException(nameof(TicketPhoto));
+        if (await _context.Photos.FindAsync(photoId) is not Photo photo)
+            throw new ModelNotFoundException(nameof(Photo));
 
         _context.Photos.Remove(photo);
-        _context.TicketPhotos.Remove(ticketPhoto);
         await _context.SaveChangesAsync();
     }
 }

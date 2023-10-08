@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Data.Models
 {
@@ -6,13 +7,16 @@ namespace Data.Models
     {
         [Key]
         public int MalfunctionId { get; set; }
-        public Priority priority { get; set; }
 
+        public Priority Priority { get; set; }
         [MaxLength(2048)]
         public string Description { get; set; }
-        public int TicketId { get; set; }
-
         [MaxLength(2048)]
         public string Solution { get; set; }
+
+        // Navigation properties
+        [ForeignKey(nameof(Ticket))]
+        public int TicketId { get; set; }
+        public Ticket Ticket { get; set; }
     }
 }

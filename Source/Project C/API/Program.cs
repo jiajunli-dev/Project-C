@@ -2,6 +2,7 @@ using API;
 
 var builder = WebApplication.CreateBuilder(args)
     .ConfigureConfiguration()
+    .ConfigureLogger()
     .ConfigureServices()
     .ConfigureDatabase();
 

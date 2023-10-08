@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
-
 [ApiController]
 [Route("[controller]")]
 public class EmployeeController : ControllerBase
@@ -47,7 +46,7 @@ public class EmployeeController : ControllerBase
     public async Task<IActionResult> Create([FromBody] Employee employee)
     {
         if (employee is null)
-            throw new ArgumentNullException(nameof(Employee));
+            return BadRequest("Invalid body content provided");
 
         var model = await _employeeRepository.Create(employee);
         return Created($"Employee/{model.UserId}", model);

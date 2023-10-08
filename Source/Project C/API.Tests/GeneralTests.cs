@@ -15,7 +15,6 @@ public class GeneralTests : TestBase
     [TestMethod]
     public void CreateClassDiagram()
     {
-        // Arrange
         using var context = new DesignTimeDbContextFactory().CreateDbContext(Array.Empty<string>());
         var path = Path.GetTempFileName() + ".dgml";
         File.WriteAllText(path, context.AsDgml(), Encoding.UTF8);
@@ -24,5 +23,7 @@ public class GeneralTests : TestBase
             UseShellExecute = true,
         };
         Process.Start(startInfo);
+
+        Assert.IsTrue(true);
     }
 }

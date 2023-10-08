@@ -1,14 +1,18 @@
 ﻿using Data.Exceptions;
 using Data.Models;
 
+using Microsoft.EntityFrameworkCore;
+
 namespace Data.Repositories;
 public class TicketRepository
 {
     private readonly AppDbContext _context;
 
-    public TicketRepository(AppDbContext context) => _context = context;
+    public TicketRepository(AppDbContext context)
+        => _context = context;
 
-    public List<Ticket> GetAll() => _context.Tickets.ToList();
+    public Task<List<Ticket>> GetAll()
+        => _context.Tickets.AsNoTracking().ToListAsync();
 
     public async Task<Ticket?> GetById(int id)
     {
@@ -24,6 +28,7 @@ public class TicketRepository
     {
         var model = _context.Tickets.Add(ticket);
         await _context.SaveChangesAsync();
+
         return model.Entity;
     }
 
@@ -32,9 +37,10 @@ public class TicketRepository
         if (await _context.Tickets.FindAsync(ticket.TicketId) is null)
             throw new ModelNotFoundException(nameof(Ticket));
 
-        _context.Tickets.Update(ticket);
+        var model = _context.Tickets.Update(ticket);
         await _context.SaveChangesAsync();
-        return ticket;
+
+        return model.Entity;
     }
 
     public async Task Delete(int id)

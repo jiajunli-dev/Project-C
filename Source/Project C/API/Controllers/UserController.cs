@@ -46,7 +46,7 @@ public class UserController : ControllerBase
     public async Task<IActionResult> Create([FromBody] User user)
     {
         if (user is null)
-            throw new ArgumentNullException(nameof(User));
+            return BadRequest("Invalid body content provided");
 
         var model = await _userRepository.Create(user);
         return Created($"User/{model.UserId}", model);

@@ -9,7 +9,6 @@ public class AppDbContext : DbContext
     // todo Add DbSets
     public DbSet<Ticket> Tickets { get; set; }
     public DbSet<Photo> Photos { get; set; }
-    public DbSet<TicketPhoto> TicketPhotos { get; set; }
     public DbSet<Malfunction> Malfunctions { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<Customer> Customers { get; set; }

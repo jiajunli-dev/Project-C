@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Data.Models;
 
 public class Customer
 {
+    // TODO: Check what Id Clerk provides, and adjust accordingly
     [Key]
     public int UserId { get; set; }
 

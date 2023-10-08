@@ -3,6 +3,9 @@ using Data.Models;
 using Data.Repositories;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+
+using Serilog;
 
 namespace API.Controllers;
 
@@ -10,23 +13,23 @@ namespace API.Controllers;
 [Route("[controller]")]
 public class TicketController : ControllerBase
 {
+    private readonly ILogger<TicketController> _logger;
     private readonly TicketRepository _ticketRepository;
     private readonly PhotoRepository _photoRepository;
 
-    public TicketController(TicketRepository repository, PhotoRepository photoRepository)
+    public TicketController(ILogger<TicketController> logger, TicketRepository repository, PhotoRepository photoRepository)
     {
+        _logger = logger;
         _ticketRepository = repository;
         _photoRepository = photoRepository;
     }
 
     [HttpGet] // GET Ticket
-    public IActionResult GetAll()
+    public async Task<IActionResult> GetAll()
     {
-        var tickets = _ticketRepository.GetAll();
-        if (tickets.Count == 0)
-            return NoContent();
+        var tickets = await _ticketRepository.GetAll();
 
-        return Ok(tickets);
+        return tickets.Any() ? Ok(tickets) : NoContent();
     }
 
     [HttpGet("{ticketId}")] // GET Ticket/1
@@ -34,8 +37,7 @@ public class TicketController : ControllerBase
     {
         try
         {
-            var ticket = await _ticketRepository.GetById(ticketId);
-            return Ok(ticket);
+            return Ok(await _ticketRepository.GetById(ticketId));
         }
         catch (ModelNotFoundException)
         {
@@ -56,20 +58,35 @@ public class TicketController : ControllerBase
             return BadRequest($"Ticket not found with the Id: {ticketId}");
 
         var photos = await _photoRepository.GetAllByTicketId(ticketId);
-        if (photos.Count == 0)
-            return NoContent();
 
-        return Ok(photos);
+        return photos.Any() ? Ok(photos) : NoContent();
     }
 
     [HttpPost] // POST Ticket
     public async Task<IActionResult> Create([FromBody] Ticket ticket)
     {
-        if (ticket is null)
-            return BadRequest($"Ticket not provided as JSON body");
+        _logger.LogInformation($"Creating Ticket");
 
-        var model = await _ticketRepository.Create(ticket);
-        return Created($"Ticket/{model.TicketId}", model);
+        if (ticket is null)
+        {
+            _logger.LogWarning("Ticket not provided as JSON body");
+            return BadRequest($"Ticket not provided as JSON body");
+        }
+
+        try
+        {
+            var model = await _ticketRepository.Create(ticket);
+            return Created($"Ticket/{model.TicketId}", model);
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            _logger.LogError("An update concurrency occured while trying to create ticket", ex);
+            return Conflict(await _ticketRepository.GetById(ticket.TicketId));
+        }
+        catch (DbUpdateException)
+        {
+            return BadRequest($"Ticket not created");
+        }
     }
 
     [HttpPut] // PUT Ticket
@@ -109,6 +126,10 @@ public class TicketController : ControllerBase
         catch (ModelNotFoundException)
         {
             return BadRequest($"A Model with ID \"{ticketId}\" was not found");
+        }
+        catch (ArgumentOutOfRangeException)
+        {
+            return BadRequest("Invalid ID provided");
         }
     }
 }
