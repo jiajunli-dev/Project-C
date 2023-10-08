@@ -1,7 +1,7 @@
-using System;
-using System.Net.Sockets;
 using Data.Exceptions;
 using Data.Models;
+
+using Microsoft.EntityFrameworkCore;
 
 namespace Data.Repositories
 {
@@ -10,7 +10,8 @@ namespace Data.Repositories
         private readonly AppDbContext _context;
         public DepartmentRepository(AppDbContext context) => _context = context;
 
-        public List<Department> GetAll() => _context.Departments.ToList();
+        public Task<List<Department>> GetAll()
+            => _context.Departments.AsNoTracking().ToListAsync();
 
         public async Task<Department?> GetById(int id)
         {
@@ -30,6 +31,7 @@ namespace Data.Repositories
         {
             var model = _context.Departments.Add(department);
             await _context.SaveChangesAsync();
+
             return model.Entity;
         }
 
@@ -38,9 +40,10 @@ namespace Data.Repositories
             if (await _context.Departments.FindAsync(department.DepartmentId) is null)
                 throw new ModelNotFoundException(nameof(Department));
 
-            _context.Departments.Update(department);
+            var model = _context.Departments.Update(department);
             await _context.SaveChangesAsync();
-            return department;
+
+            return model.Entity;
         }
 
         public async Task Delete(int id)

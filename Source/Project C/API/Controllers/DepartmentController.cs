@@ -18,13 +18,11 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            var departments = _departmentRepository.GetAll();
+            var departments = await _departmentRepository.GetAll();
             if (departments.Count == 0)
-            {
                 return NoContent();
-            }
 
             return Ok(departments);
         }
@@ -51,9 +49,7 @@ namespace API.Controllers
         public async Task<IActionResult> Create([FromBody] Department department)
         {
             if (department is null)
-            {
-                throw new ArgumentNullException(nameof(department));
-            }
+                return BadRequest("Invalid body content provided");
 
             var model = await _departmentRepository.Create(department);
             return Created($"Department/{model.DepartmentId}", model);
@@ -63,9 +59,7 @@ namespace API.Controllers
         public async Task<IActionResult> Update([FromBody] Department department)
         {
             if (department is null)
-            {
                 return BadRequest("Invalid body content provided");
-            }
 
             try
             {
@@ -81,9 +75,7 @@ namespace API.Controllers
         public async Task<IActionResult> Delete(int departmentId)
         {
             if (departmentId <= 0)
-            {
                 return BadRequest("Invalid ID provided");
-            }
 
             try
             {
