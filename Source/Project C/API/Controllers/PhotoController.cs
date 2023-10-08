@@ -30,8 +30,7 @@ public class PhotoController : ControllerBase
         try
         {
             var photo = await _photoRepository.GetById(photoId);
-
-            return photo is null ? NoContent() : Ok(photo);
+            return Ok(photo);
         }
         catch (ModelNotFoundException)
         {
@@ -116,7 +115,7 @@ public class PhotoController : ControllerBase
         }
     }
 
-    [HttpDelete] // DELETE /Photo/1
+    [HttpDelete("{photoId}")] // DELETE /Photo/1
     public async Task<IActionResult> Delete(int photoId)
     {
         if (photoId <= 0)

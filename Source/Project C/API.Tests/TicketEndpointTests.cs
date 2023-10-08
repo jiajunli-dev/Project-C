@@ -285,8 +285,6 @@ public class TicketEndpointTests : TestBase
     [TestMethod]
     public async Task Delete_DeleteReturnsBadRequest()
     {
-        // TODO: Test 2 cases for invalid ID and for non-existing ID
-
         // Arrange
         var client = _factory.CreateClient();
 
