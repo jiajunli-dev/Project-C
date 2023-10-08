@@ -34,13 +34,13 @@ public class PhotoRepository
 
     public async Task<Photo> Update(Photo photo)
     {
-        if (await _context.Tickets.FindAsync(photo.PhotoId) is null)
+        if (await _context.Photos.FindAsync(photo.PhotoId) is not Photo existingPhoto)
             throw new ModelNotFoundException(nameof(Photo));
 
-        var model = _context.Photos.Update(photo);
+        _context.Entry(existingPhoto).CurrentValues.SetValues(photo);
         await _context.SaveChangesAsync();
 
-        return model.Entity;
+        return existingPhoto;
     }
 
     public async Task Delete(int photoId)

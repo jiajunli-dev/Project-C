@@ -5,8 +5,6 @@ using Data.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-using Serilog;
-
 namespace API.Controllers;
 
 [ApiController]
@@ -27,25 +25,44 @@ public class TicketController : ControllerBase
     [HttpGet] // GET Ticket
     public async Task<IActionResult> GetAll()
     {
-        var tickets = await _ticketRepository.GetAll();
+        _logger.LogInformation("Fetching all tickets");
 
-        return tickets.Any() ? Ok(tickets) : NoContent();
+        try
+        {
+            var tickets = await _ticketRepository.GetAll();
+
+            return tickets.Any() ? Ok(tickets) : NoContent();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while fetching tickets");
+            return StatusCode(500, "An error occurred while processing your request");
+        }
     }
 
     [HttpGet("{ticketId}")] // GET Ticket/1
     public async Task<IActionResult> GetById(int ticketId)
     {
+        _logger.LogInformation("Fetching ticket with ID: {ticketId}", ticketId);
+
         try
         {
-            return Ok(await _ticketRepository.GetById(ticketId));
+            var ticket = await _ticketRepository.GetById(ticketId);
+
+            return ticket is null ? NoContent() : Ok(ticket);
         }
         catch (ModelNotFoundException)
         {
-            return BadRequest($"A Model with ID \"{ticketId}\" was not found");
+            return NoContent();
         }
         catch (ArgumentOutOfRangeException)
         {
             return BadRequest("Invalid ID provided");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred while fetching a ticket.");
+            return StatusCode(500, "An unexpected error occurred while processing your request.");
         }
     }
 
@@ -57,35 +74,44 @@ public class TicketController : ControllerBase
         if (!_ticketRepository.Exists(ticketId))
             return BadRequest($"Ticket not found with the Id: {ticketId}");
 
-        var photos = await _photoRepository.GetAllByTicketId(ticketId);
+        _logger.LogInformation("Fetching all photos for ticket with ID: {ticketId}", ticketId);
 
-        return photos.Any() ? Ok(photos) : NoContent();
+        try
+        {
+            var photos = await _photoRepository.GetAllByTicketId(ticketId);
+
+            return photos.Any() ? Ok(photos) : NoContent();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while fetching photos by ticket ID.");
+            return StatusCode(500, "An error occurred while processing your request.");
+        }
     }
 
     [HttpPost] // POST Ticket
     public async Task<IActionResult> Create([FromBody] Ticket ticket)
     {
-        _logger.LogInformation($"Creating Ticket");
-
         if (ticket is null)
-        {
-            _logger.LogWarning("Ticket not provided as JSON body");
             return BadRequest($"Ticket not provided as JSON body");
-        }
+
+        _logger.LogInformation("Creating ticket.");
 
         try
         {
             var model = await _ticketRepository.Create(ticket);
+
             return Created($"Ticket/{model.TicketId}", model);
         }
-        catch (DbUpdateConcurrencyException ex)
+        catch (DbUpdateException ex)
         {
-            _logger.LogError("An update concurrency occured while trying to create ticket", ex);
-            return Conflict(await _ticketRepository.GetById(ticket.TicketId));
+            _logger.LogError(ex, "An error occurred while creating the ticket in the database.");
+            return BadRequest($"Ticket not created.");
         }
-        catch (DbUpdateException)
+        catch (Exception ex)
         {
-            return BadRequest($"Ticket not created");
+            _logger.LogError(ex, "An unexpected error occurred while creating the ticket");
+            return StatusCode(500, "An unexpected error occurred while processing your request.");
         }
     }
 
@@ -95,6 +121,8 @@ public class TicketController : ControllerBase
         if (ticket is null)
             return BadRequest("Invalid body content provided");
 
+        _logger.LogInformation("Updating ticket with ID: {ticketId}", ticket.TicketId);
+
         try
         {
             return Ok(await _ticketRepository.Update(ticket));
@@ -103,12 +131,26 @@ public class TicketController : ControllerBase
         {
             return BadRequest($"A Model with ID \"{ticket.TicketId}\" was not found");
         }
+        catch (DbUpdateConcurrencyException)
+        {
+            return Conflict($"Ticket with ID {ticket.TicketId} was updated by another user. Retrieve the latest version and try again.");
+        }
+        catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "An error occurred while updating the ticket in the database.");
+            return StatusCode(500, "An error occurred while updating the ticket in the database.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred while updating the ticket.");
+            return StatusCode(500, "An unexpected error occurred while processing your request.");
+        }
     }
 
+    // TODO implement Escalate Ticket to malfunction
     [HttpPost("{ticketId}/escalate/")] // PUT Ticket/1/escalate
     public async Task<IActionResult> Escalate(int ticketId)
     {
-        // TODO implement Escalate Ticket to malfunction
         throw new NotImplementedException();
     }
 
@@ -118,10 +160,13 @@ public class TicketController : ControllerBase
         if (ticketId <= 0)
             return BadRequest("Invalid ID provided");
 
+        _logger.LogInformation("Deleting ticket with ID: {ticketId}", ticketId);
+
         try
         {
             await _ticketRepository.Delete(ticketId);
-            return Ok();
+
+            return NoContent();
         }
         catch (ModelNotFoundException)
         {
@@ -130,6 +175,16 @@ public class TicketController : ControllerBase
         catch (ArgumentOutOfRangeException)
         {
             return BadRequest("Invalid ID provided");
+        }
+        catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "An error occurred while deleting the ticket from the database.");
+            return StatusCode(500, "An error occurred while deleting the ticket from the database.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred while deleting the ticket.");
+            return StatusCode(500, "An unexpected error occurred while processing your request.");
         }
     }
 }

@@ -34,13 +34,13 @@ public class TicketRepository
 
     public async Task<Ticket> Update(Ticket ticket)
     {
-        if (await _context.Tickets.FindAsync(ticket.TicketId) is null)
+        if (await _context.Tickets.FindAsync(ticket.TicketId) is not Ticket existingTicket)
             throw new ModelNotFoundException(nameof(Ticket));
 
-        var model = _context.Tickets.Update(ticket);
+        _context.Entry(existingTicket).CurrentValues.SetValues(ticket);
         await _context.SaveChangesAsync();
 
-        return model.Entity;
+        return existingTicket;
     }
 
     public async Task Delete(int id)
@@ -52,10 +52,9 @@ public class TicketRepository
         await _context.SaveChangesAsync();
     }
 
-    // TODO return created Malfunction
+    // TODO implement escalation from Ticket to Malfunction and return Malfunction
     public async Task Escalate(int ticketId)
     {
-        // TODO implement escalation from Ticket to Malfunction
         throw new NotImplementedException();
     }
 
