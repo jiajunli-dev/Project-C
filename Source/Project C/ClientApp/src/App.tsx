@@ -9,7 +9,6 @@ function App() {
   return (
     <>
       <Router>
-        <Header />
         <Routes>
           <Route path="/" element={<Parent />}>
             <Route path="/" element={<HomePage />} />
