@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import "../header.css";
 import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
 import ShowName from "./ShowName";
-import Switcher from "../Switcher";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -82,7 +81,6 @@ const Header = () => {
               className="object-contain cursor-pointer hover:scale-105 ease-linear duration-150 dark:bg-white rounded-xl"
               alt="Inbox Icon"
             />
-            <Switcher></Switcher>
           </div>
         </div>
       </div>
