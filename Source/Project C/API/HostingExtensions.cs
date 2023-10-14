@@ -45,6 +45,7 @@ namespace API
             app.Services.AddScoped<UserRepository>();
             app.Services.AddScoped<CustomerRepository>();
             app.Services.AddScoped<EmployeeRepository>();
+            app.Services.AddScoped<DepartmentRepository>();
 
             app.Services.AddControllers();
             app.Services.AddEndpointsApiExplorer();
