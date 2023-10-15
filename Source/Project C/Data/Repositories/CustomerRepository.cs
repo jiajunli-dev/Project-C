@@ -45,8 +45,6 @@ public class CustomerRepository
 
     public async Task Delete(int id)
     {
-        if (id <= 0)
-            throw new ArgumentOutOfRangeException(nameof(id));
         if (await _context.Customers.FindAsync(id) is not Customer customer)
             throw new ModelNotFoundException(nameof(Customer));
 
