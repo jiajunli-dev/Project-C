@@ -1,13 +1,21 @@
-﻿using Data.Models;
+﻿using System.Text;
+
+using Data.Models;
 using Data.Repositories;
 
 using Destructurama;
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 using Serilog;
 
 using AppDbContext = Data.AppDbContext;
+
 namespace API
 {
     public static class HostingExtensions
@@ -47,9 +55,32 @@ namespace API
             app.Services.AddScoped<EmployeeRepository>();
             app.Services.AddScoped<DepartmentRepository>();
 
-            app.Services.AddControllers();
+            app.Services.AddControllers(configure =>
+            {
+                configure.RespectBrowserAcceptHeader = true;
+                configure.Filters.Add(new AuthorizeFilter(new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build()));
+            });
             app.Services.AddEndpointsApiExplorer();
-            app.Services.AddSwaggerGen();
+            app.Services.AddSwaggerGen(c =>
+            {
+                c.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
+                {
+                    Description = JwtBearerDefaults.AuthenticationScheme,
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference{Type = ReferenceType.SecurityScheme,Id = JwtBearerDefaults.AuthenticationScheme}
+                        },
+                        Array.Empty<string>()
+                    }
+                });
+            });
 
             return app;
         }
@@ -86,6 +117,30 @@ namespace API
             app.UseHttpsRedirection();
             app.UseAuthorization();
             app.MapControllers();
+
+            return app;
+        }
+
+        public static WebApplicationBuilder ConfigureAuthentication(this WebApplicationBuilder app)
+        {
+            string authority = app.Configuration["Clerk:AuthorityUri"] ?? throw new NullReferenceException("Authority is not provided in appsettings.json");
+            string audience = app.Configuration["Clerk:AudienceUri"] ?? throw new NullReferenceException("Audience is not provided in appsettings.json");
+            string signingKey = app.Configuration["Clerk:SigningKey"] ?? throw new NullReferenceException("Signing key is not provided in appsettings.json");
+
+            app.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+                {
+                    options.Authority = authority;
+                    options.Audience = audience;
+                    options.TokenValidationParameters = new()
+                    {
+                        ValidIssuer = authority,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey)),
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ClockSkew = TimeSpan.FromSeconds(5)
+                    };
+                });
 
             return app;
         }

@@ -1,6 +1,8 @@
+using System;
 using System.Net;
 
 using API.Tests.Utility;
+using API.Utility;
 
 namespace API.Tests;
 
@@ -8,10 +10,69 @@ namespace API.Tests;
 public class TicketEndpointTests : TestBase
 {
     [TestMethod]
+    [DataRow("Get", "Ticket")]
+    [DataRow("Post", "Ticket")]
+    [DataRow("Put", "Ticket")]
+    [DataRow("Get", "Ticket/1")]
+    [DataRow("Delete", "Ticket/1")]
+    [DataRow("Get", "Ticket/1/photos")]
+    [DataRow("Post", "Ticket/1/escalate")]
+    public async Task Endpoints_ReturnUnauthorized(string httpMethod, string url)
+    {
+        // Arrange
+        var client = CreateClient();
+
+        var method = httpMethod switch
+        {
+            "Get" => HttpMethod.Get,
+            "Post" => HttpMethod.Post,
+            "Put" => HttpMethod.Put,
+            "Delete" => HttpMethod.Delete,
+            _ => throw new ArgumentException("Invalid HTTP method", nameof(httpMethod)),
+        };
+
+        // Act
+        var response = await client.SendAsync(new HttpRequestMessage(method, url));
+
+        // Assert
+        Assert.AreEqual(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [TestMethod]
+    [DataRow("Get", "Ticket", Roles.ADMIN, HttpStatusCode.OK)]
+    [DataRow("Get", "Ticket", Roles.CUSTOMER, HttpStatusCode.OK)]
+    [DataRow("Get", "Ticket", Roles.EMPLOYEE, HttpStatusCode.OK)]
+    public async Task Endpoints_EnsureAuthorizationConfiguration(string method, string endpoint, string role, HttpStatusCode expected)
+    {
+        // Arrange
+        var client = role switch
+        {
+            Roles.ADMIN => CreateAdminClient(),
+            Roles.EMPLOYEE => CreateEmployeeClient(),
+            Roles.CUSTOMER => CreateCustomerClient(),
+            _ => throw new ArgumentException("Invalid role", nameof(role)),
+        };
+        var httpMethod = method switch
+        {
+            "Get" => HttpMethod.Get,
+            "Post" => HttpMethod.Post,
+            "Put" => HttpMethod.Put,
+            "Delete" => HttpMethod.Delete,
+            _ => throw new ArgumentException("Invalid HTTP method", nameof(method)),
+        };
+
+        // Act
+        var result = await client.SendAsync(new HttpRequestMessage(httpMethod, endpoint));
+
+        // Assert
+        Assert.AreEqual(expected, result.StatusCode);
+    }
+
+    [TestMethod]
     public async Task Get_GetAllReturnNoContent()
     {
         // Arrange
-        var client = _factory.CreateClient();
+        var client = CreateAdminClient();
         var response = await client.GetAsync("Ticket");
         Assert.IsNotNull(response);
         if (response.StatusCode == HttpStatusCode.OK)
@@ -33,7 +94,7 @@ public class TicketEndpointTests : TestBase
     public async Task Get_GetAllReturnOK()
     {
         // Arrange
-        var client = _factory.CreateClient();
+        var client = CreateAdminClient();
         for (int i = 1; i <= 2; i++)
         {
             await client.PostAsJsonAsync("Ticket", new Ticket
@@ -60,7 +121,8 @@ public class TicketEndpointTests : TestBase
     public async Task Get_GetByIdReturnOk()
     {
         // Arrange
-        var client = _factory.CreateClient();
+        var client = CreateAdminClient();
+
         var model = new Ticket
         {
             AdditionalNotes = "Test",
@@ -83,23 +145,10 @@ public class TicketEndpointTests : TestBase
     }
 
     [TestMethod]
-    public async Task Get_GetByIdReturnNoContent()
-    {
-        // Arrange
-        var client = _factory.CreateClient();
-
-        // Act
-        var response = await client.GetAsync($"Ticket/3243");
-
-        // Assert
-        Assert.AreEqual(HttpStatusCode.NoContent, response.StatusCode);
-    }
-
-    [TestMethod]
     public async Task Get_GetByIdReturnBadRequest()
     {
         // Arrange
-        var client = _factory.CreateClient();
+        var client = CreateAdminClient();
 
         // Act
         var response = await client.GetAsync($"Ticket/-1");
@@ -112,7 +161,7 @@ public class TicketEndpointTests : TestBase
     public async Task Get_GetAllByTicketIdReturnNoContent()
     {
         // Arrange
-        var client = _factory.CreateClient();
+        var client = CreateAdminClient();
         var model = new Ticket
         {
             AdditionalNotes = "Test",
@@ -135,7 +184,7 @@ public class TicketEndpointTests : TestBase
     public async Task Get_GetAllByTicketIdReturnOk()
     {
         // Arrange
-        var client = _factory.CreateClient();
+        var client = CreateAdminClient();
         var model = new Ticket
         {
             AdditionalNotes = "Test",
@@ -174,7 +223,7 @@ public class TicketEndpointTests : TestBase
     public async Task Post_CreateReturnsCreated()
     {
         // Arrange
-        var client = _factory.CreateClient();
+        var client = CreateAdminClient();
         var model = new Ticket
         {
             AdditionalNotes = "Test",
@@ -198,7 +247,7 @@ public class TicketEndpointTests : TestBase
     public async Task Post_CreateReturnsBadRequest()
     {
         // Arrange
-        var client = _factory.CreateClient();
+        var client = CreateAdminClient();
 
         // Act
         var response = await client.PostAsJsonAsync("Ticket", new object { });
@@ -212,7 +261,7 @@ public class TicketEndpointTests : TestBase
     public async Task Put_UpdateReturnsOk()
     {
         // Arrange
-        var client = _factory.CreateClient();
+        var client = CreateAdminClient();
         var model = new Ticket
         {
             AdditionalNotes = "Test",
@@ -242,7 +291,7 @@ public class TicketEndpointTests : TestBase
     public async Task Put_UpdateReturnsBadRequest()
     {
         // Arrange
-        var client = _factory.CreateClient();
+        var client = CreateAdminClient();
 
         // Act
         var response = await client.PutAsJsonAsync("Ticket", new object { });
@@ -259,7 +308,7 @@ public class TicketEndpointTests : TestBase
     public async Task Delete_DeleteReturnsNoContent()
     {
         // Arrange
-        var client = _factory.CreateClient();
+        var client = CreateAdminClient();
         var model = new Ticket
         {
             AdditionalNotes = "Test",
@@ -286,7 +335,7 @@ public class TicketEndpointTests : TestBase
     public async Task Delete_DeleteReturnsBadRequest()
     {
         // Arrange
-        var client = _factory.CreateClient();
+        var client = CreateAdminClient();
 
         // Act
         var response = await client.DeleteAsync($"Ticket/-1");

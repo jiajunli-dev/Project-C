@@ -4,6 +4,7 @@ var builder = WebApplication.CreateBuilder(args)
     .ConfigureConfiguration()
     .ConfigureLogger()
     .ConfigureServices()
+    .ConfigureAuthentication()
     .ConfigureDatabase();
 
 var app = builder.Build();

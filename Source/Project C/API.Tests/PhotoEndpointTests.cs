@@ -8,10 +8,36 @@ namespace API.Tests;
 public class PhotoEndpointTests : TestBase
 {
     [TestMethod]
+    [DataRow("Get", "Photo/1")]
+    [DataRow("Post", "Photo")]
+    [DataRow("Put", "Photo")]
+    [DataRow("Delete", "Photo/1")]
+    public async Task Endpoints_ReturnUnauthorized(string httpMethod, string url)
+    {
+        // Arrange
+        var client = CreateClient();
+
+        var method = httpMethod switch
+        {
+            "Get" => HttpMethod.Get,
+            "Post" => HttpMethod.Post,
+            "Put" => HttpMethod.Put,
+            "Delete" => HttpMethod.Delete,
+            _ => throw new ArgumentException("Invalid HTTP method", nameof(httpMethod)),
+        };
+
+        // Act
+        var response = await client.SendAsync(new HttpRequestMessage(method, url));
+
+        // Assert
+        Assert.AreEqual(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [TestMethod]
     public async Task Get_GetByIdReturnOk()
     {
         // Arrange
-        var client = _factory.CreateClient();
+        var client = CreateAdminClient();
         var ticket = new Ticket
         {
             AdditionalNotes = "Test",
@@ -50,7 +76,7 @@ public class PhotoEndpointTests : TestBase
     public async Task Get_GetByIdReturnBadRequest()
     {
         // Arrange
-        var client = _factory.CreateClient();
+        var client = CreateAdminClient();
 
         // Act
         var response = await client.GetAsync($"Photo/-1");
@@ -65,7 +91,7 @@ public class PhotoEndpointTests : TestBase
     public async Task Post_CreateReturnsCreated()
     {
         // Arrange
-        var client = _factory.CreateClient();
+        var client = CreateAdminClient();
         var model = new Ticket
         {
             AdditionalNotes = "Test",
@@ -99,7 +125,7 @@ public class PhotoEndpointTests : TestBase
     public async Task Post_CreateReturnsBadRequest()
     {
         // Arrange
-        var client = _factory.CreateClient();
+        var client = CreateAdminClient();
 
         // Act
         var response = await client.PostAsJsonAsync("Photo", new object { });
@@ -118,7 +144,7 @@ public class PhotoEndpointTests : TestBase
     public async Task Put_UpdateReturnsOk()
     {
         // Arrange
-        var client = _factory.CreateClient();
+        var client = CreateAdminClient();
         var model = new Ticket
         {
             AdditionalNotes = "Test",
@@ -157,7 +183,7 @@ public class PhotoEndpointTests : TestBase
     public async Task Put_UpdateReturnsBadRequest()
     {
         // Arrange
-        var client = _factory.CreateClient();
+        var client = CreateAdminClient();
 
         // Act
         var response = await client.PutAsJsonAsync("Photo", new object { });
@@ -177,7 +203,7 @@ public class PhotoEndpointTests : TestBase
     public async Task Delete_DeleteReturnsNoContent()
     {
         // Arrange
-        var client = _factory.CreateClient();
+        var client = CreateAdminClient();
 
         var response = await client.PostAsJsonAsync("Ticket", new Ticket
         {
@@ -211,7 +237,7 @@ public class PhotoEndpointTests : TestBase
     public async Task Delete_DeleteReturnsBadRequest()
     {
         // Arrange
-        var client = _factory.CreateClient();
+        var client = CreateAdminClient();
 
         // Act
         var response = await client.DeleteAsync($"Photo/-1");

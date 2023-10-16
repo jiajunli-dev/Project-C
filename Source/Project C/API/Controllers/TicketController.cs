@@ -1,7 +1,10 @@
-﻿using Data.Exceptions;
+﻿using API.Utility;
+
+using Data.Exceptions;
 using Data.Models;
 using Data.Repositories;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,6 +26,7 @@ public class TicketController : ControllerBase
     }
 
     [HttpGet] // GET Ticket
+    [Authorize(Roles = Roles.ADMIN)]
     public async Task<IActionResult> GetAll()
     {
         _logger.LogInformation("Fetching all tickets");
@@ -53,7 +57,7 @@ public class TicketController : ControllerBase
         }
         catch (ModelNotFoundException)
         {
-            return NoContent();
+            return BadRequest($"A ticket with ID \"{ticketId}\" was not found");
         }
         catch (ArgumentOutOfRangeException)
         {
