@@ -1,18 +1,14 @@
 ﻿using Data.Exceptions;
-
-using Microsoft.EntityFrameworkCore;
+using Data.Repositories;
 
 namespace Data.Models;
 
-public class CustomerRepository
+public class CustomerRepository : GenericRepository<Customer>
 {
     private readonly AppDbContext _context;
 
     public CustomerRepository(AppDbContext context)
         => _context = context;
-
-    public Task<List<Customer>> GetAll()
-        => _context.Customers.AsNoTracking().ToListAsync();
 
     public async Task<Customer> GetById(int id)
     {

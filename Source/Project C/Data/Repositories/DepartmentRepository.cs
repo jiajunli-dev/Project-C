@@ -1,17 +1,13 @@
 using Data.Exceptions;
 using Data.Models;
 
-using Microsoft.EntityFrameworkCore;
-
 namespace Data.Repositories
 {
-    public class DepartmentRepository
+    public class DepartmentRepository : GenericRepository<Department>, IDepartmentRepository
     {
         private readonly AppDbContext _context;
         public DepartmentRepository(AppDbContext context) => _context = context;
 
-        public Task<List<Department>> GetAll()
-            => _context.Departments.AsNoTracking().ToListAsync();
 
         public async Task<Department?> GetById(int id)
         {
