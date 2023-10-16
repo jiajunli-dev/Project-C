@@ -67,6 +67,8 @@ public class EmployeeController : ControllerBase
         if (employee is null)
             return BadRequest("Invalid body content provided");
 
+        _logger.LogInformation("Creating employee.");
+
         try
         {
             var model = await _employeeRepository.Create(employee);
@@ -90,6 +92,8 @@ public class EmployeeController : ControllerBase
     {
         if (employee is null)
             return BadRequest("Invalid body content provided");
+
+        _logger.LogInformation("Updating employee with ID: {employeeId}", employee.UserId);
 
         try
         {

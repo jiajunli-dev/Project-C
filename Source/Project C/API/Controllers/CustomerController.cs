@@ -67,6 +67,8 @@ public class CustomerController : ControllerBase
         if (customer is null)
             return BadRequest("Invalid body content provided");
 
+        _logger.LogInformation("Creating customer.");
+
         try
         {
             var model = await _customerRepository.Create(customer);
@@ -90,6 +92,8 @@ public class CustomerController : ControllerBase
     {
         if (customer is null)
             return BadRequest("Invalid body content provided");
+
+        _logger.LogInformation("Updating customer with ID: {customerId}", customer.UserId);
 
         try
         {

@@ -2,6 +2,8 @@
 using Data.Models;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Net.Sockets;
 
 namespace API.Controllers;
 
@@ -9,19 +11,31 @@ namespace API.Controllers;
 [Route("[controller]")]
 public class UserController : ControllerBase
 {
+    private readonly ILogger<UserController> _logger;
     private readonly UserRepository _userRepository;
 
-    public UserController(UserRepository repository)
+    public UserController(ILogger<UserController> logger,UserRepository repository)
     {
+        _logger = logger;
         _userRepository = repository;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var users = await _userRepository.GetAll();
-        if (users.Count == 0) return NoContent();
-        return Ok(users);
+        _logger.LogInformation("Fetching all users");
+        
+        try
+        {
+            var users = await _userRepository.GetAll();
+
+            return users.Any() ? Ok(users) : NoContent();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while fetching users");
+            return StatusCode(500, "An error occurred while processing your request");
+        }
     }
 
     [HttpGet("{userId}")]
@@ -40,6 +54,11 @@ public class UserController : ControllerBase
         {
             return BadRequest("Invalid ID provided");
         }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred while fetching a user.");
+            return StatusCode(500, "An unexpected error occurred while processing your request.");
+        }
     }
 
     [HttpPost]
@@ -48,8 +67,24 @@ public class UserController : ControllerBase
         if (user is null)
             return BadRequest("Invalid body content provided");
 
-        var model = await _userRepository.Create(user);
-        return Created($"User/{model.UserId}", model);
+        _logger.LogInformation("Creating user.");
+
+        try
+        {
+            var model = await _userRepository.Create(user);
+            
+            return Created($"User/{model.UserId}", model);
+        }
+        catch  (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "An error occurred while creating a user");
+            return StatusCode(500, "An error occurred while processing your request");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred while creating a user.");
+            return StatusCode(500, "An unexpected error occurred while processing your request.");
+        }
     }
 
     [HttpPut]
@@ -57,6 +92,8 @@ public class UserController : ControllerBase
     {
         if (user is null)
             return BadRequest("Invalid body content provided");
+
+        _logger.LogInformation("Updating user with ID: {UserId}", user.UserId);
 
         try
         {
@@ -66,6 +103,20 @@ public class UserController : ControllerBase
         {
             return BadRequest($"A Model with ID \"{user.UserId}\" was not found");
         }
+        catch (DbUpdateConcurrencyException)
+        {
+            return Conflict($"User with ID {user.UserId} was updated by another user. Retrieve the latest version and try again.");
+        }
+        catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "An error occurred while updating the user in the database.");
+            return StatusCode(500, "An error occurred while updating the user in the database.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred while updating a user.");
+            return StatusCode(500, "An unexpected error occurred while processing your request.");
+        }
     }
 
     [HttpDelete("{userId}")]
@@ -74,10 +125,13 @@ public class UserController : ControllerBase
         if (userId <= 0)
             return BadRequest("Invalid ID provided");
 
+        _logger.LogInformation("Deleting user with ID: {userId}", userId);
+
         try
         {
             await _userRepository.Delete(userId);
-            return Ok();
+
+            return NoContent();
         }
         catch (ModelNotFoundException)
         {
@@ -86,6 +140,16 @@ public class UserController : ControllerBase
         catch (ArgumentOutOfRangeException)
         {
             return BadRequest("Invalid ID provided");
+        }
+        catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "An error occurred while deleting the user in the database.");
+            return StatusCode(500, "An error occurred while deleting the user in the database.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred while deleting a user.");
+            return StatusCode(500, "An unexpected error occurred while processing your request.");
         }
     }
 }
