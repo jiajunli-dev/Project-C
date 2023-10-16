@@ -45,8 +45,6 @@ public class EmployeeRepository
 
     public async Task Delete(int id)
     {
-        if (id <= 0)
-            throw new ArgumentOutOfRangeException(nameof(id));
         if (await _context.Employees.FindAsync(id) is not Employee employee)
             throw new ModelNotFoundException(nameof(Employee));
 
