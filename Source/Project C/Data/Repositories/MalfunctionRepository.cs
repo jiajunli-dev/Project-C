@@ -2,6 +2,7 @@
 using System.Net.Sockets;
 using Data.Exceptions;
 using Data.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Data.Repositories
 {
@@ -11,8 +12,8 @@ namespace Data.Repositories
         public MalfunctionRepository(AppDbContext context)
             => _context = context;
 
-        public List<Malfunction> GetAll()
-            => _context.Malfunctions.ToList();
+        public Task<List<Malfunction>> GetAll()
+            => _context.Malfunctions.AsNoTracking().ToListAsync();
 
         public async Task<Malfunction?> GetById(int id)
         {
