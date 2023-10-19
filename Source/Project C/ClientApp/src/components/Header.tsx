@@ -3,7 +3,6 @@ import searchIcon from "../assets/search_icon.png";
 import inboxIcon from "../assets/inbox_icon.png";
 import greenLightIcon from "../assets/green_light_icon.png";
 import { useNavigate } from "react-router-dom";
-import "../header.css";
 import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
 import ShowName from "./ShowName";
 

@@ -37,7 +37,7 @@ function ThemeToggle() {
           onClick={toggleTheme}
         />
         <div className="w-[2.55rem] h-6 bg-gray-200   rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after: pl-2.4 left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-        <span className="ml-3 text-sm font-medium text-gray-900 dark:text-white">
+        <span className="ml-3 text-sm font-medium  text-white">
           Dark Mode
         </span>
       </label>
