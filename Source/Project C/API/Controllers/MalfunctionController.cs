@@ -1,6 +1,6 @@
 ﻿using Data.Exceptions;
+using Data.Interfaces;
 using Data.Models;
-using Data.Repositories;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,17 +10,17 @@ namespace API.Controllers
     [Route("[controller]")]
     public class MalfunctionController : ControllerBase
     {
-        private readonly MalfunctionRepository _malfunctionRepository;
+        private readonly IMalfunctionRepository _malfunctionRepository;
 
-        public MalfunctionController(MalfunctionRepository malfunctionRepository)
+        public MalfunctionController(IMalfunctionRepository malfunctionRepository)
         {
             _malfunctionRepository = malfunctionRepository;
         }
 
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            var malfunctions = _malfunctionRepository.GetAll();
+            var malfunctions = await _malfunctionRepository.GetAll();
             if (malfunctions.Count == 0)
                 return NoContent();
 
@@ -52,7 +52,7 @@ namespace API.Controllers
                 return BadRequest("Invalid body content provided");
 
             var model = await _malfunctionRepository.Create(malfunction);
-            return Created($"Malfunction/{model.MalfunctionId}", model);
+            return Created($"Malfunction/{model.Id}", model);
         }
 
         [HttpPut]
@@ -67,7 +67,7 @@ namespace API.Controllers
             }
             catch (ModelNotFoundException)
             {
-                return BadRequest($"A malfunction with ID {malfunction.MalfunctionId} was not found.");
+                return BadRequest($"A malfunction with ID {malfunction.Id} was not found.");
             }
         }
 

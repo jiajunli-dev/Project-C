@@ -1,13 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
+using Data.Abstracts;
+using Data.Enums;
+
 namespace Data.Models;
 
-public class Ticket
+public class Ticket : DbModel<int>
 {
-    [Key]
-    public int TicketId { get; set; }
-    public int UserId { get; set; }
-
     [MaxLength(2048)]
     public string Description { get; set; }
     [MaxLength(2048)]
@@ -16,4 +15,6 @@ public class Ticket
     public string AdditionalNotes { get; set; }
 
     public Priority Priority { get; set; }
+
+    public Status Status { get; set; }
 }

@@ -1,4 +1,5 @@
 ﻿using Data.Exceptions;
+using Data.Interfaces;
 using Data.Models;
 
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +12,9 @@ namespace API.Controllers;
 public class CustomerController : ControllerBase
 {
     private readonly ILogger<CustomerController> _logger;
-    private readonly CustomerRepository _customerRepository;
+    private readonly ICustomerRepository _customerRepository;
 
-    public CustomerController(ILogger<CustomerController> logger, CustomerRepository repository)
+    public CustomerController(ILogger<CustomerController> logger, ICustomerRepository repository)
     {
         _logger = logger;
         _customerRepository = repository;
@@ -38,12 +39,12 @@ public class CustomerController : ControllerBase
     }
 
     [HttpGet("{customerId}")]
-    public async Task<IActionResult> GetById(int customerId)
+    public async Task<IActionResult> GetById(string customerId)
     {
         try
         {
             var customer = await _customerRepository.GetById(customerId);
-            
+
             return customer is null ? NoContent() : Ok(customer);
         }
         catch (ModelNotFoundException)
@@ -73,7 +74,7 @@ public class CustomerController : ControllerBase
         {
             var model = await _customerRepository.Create(customer);
 
-            return Created($"Customer/{model.UserId}", model);
+            return Created($"Customer/{model.Id}", model);
         }
         catch (DbUpdateException ex)
         {
@@ -93,7 +94,7 @@ public class CustomerController : ControllerBase
         if (customer is null)
             return BadRequest("Invalid body content provided");
 
-        _logger.LogInformation("Updating customer with ID: {customerId}", customer.UserId);
+        _logger.LogInformation("Updating customer with ID: {customerId}", customer.Id);
 
         try
         {
@@ -101,11 +102,11 @@ public class CustomerController : ControllerBase
         }
         catch (ModelNotFoundException)
         {
-            return BadRequest($"A Model with ID \"{customer.UserId}\" was not found");
+            return BadRequest($"A Model with ID \"{customer.Id}\" was not found");
         }
         catch (DbUpdateConcurrencyException)
         {
-            return Conflict($"Customer with ID \"{customer.UserId}\" was updated by another user. Please refresh and try again.");
+            return Conflict($"Customer with ID \"{customer.Id}\" was updated by another user. Please refresh and try again.");
         }
         catch (DbUpdateException ex)
         {
@@ -120,9 +121,9 @@ public class CustomerController : ControllerBase
     }
 
     [HttpDelete("{customerId}")]
-    public async Task<IActionResult> Delete(int customerId)
+    public async Task<IActionResult> Delete(string customerId)
     {
-        if (customerId <= 0)
+        if (string.IsNullOrEmpty(customerId))
             return BadRequest("Invalid ID provided");
 
         _logger.LogInformation("Deleting customer with ID: {customerId}", customerId);

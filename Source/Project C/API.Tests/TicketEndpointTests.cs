@@ -1,14 +1,28 @@
 using System;
 using System.Net;
+using System.Text;
+using System.Text.Json;
 
 using API.Tests.Utility;
 using API.Utility;
+
+using Data.Dtos;
+using Data.Enums;
 
 namespace API.Tests;
 
 [TestClass]
 public class TicketEndpointTests : TestBase
 {
+    private readonly CreateTicketDto _createTicketDto = new()
+    {
+        CreatedBy = "123",
+        AdditionalNotes = "Test",
+        TriedSolutions = "Test",
+        Description = "Test",
+        Priority = Priority.Critical
+    };
+
     [TestMethod]
     [DataRow("Get", "Ticket")]
     [DataRow("Post", "Ticket")]
@@ -39,9 +53,10 @@ public class TicketEndpointTests : TestBase
     }
 
     [TestMethod]
-    [DataRow("Get", "Ticket", Roles.ADMIN, HttpStatusCode.OK)]
-    [DataRow("Get", "Ticket", Roles.CUSTOMER, HttpStatusCode.OK)]
-    [DataRow("Get", "Ticket", Roles.EMPLOYEE, HttpStatusCode.OK)]
+    [DataRow("Get", "Ticket", Roles.ADMIN, HttpStatusCode.NoContent)]
+    [DataRow("Get", "Ticket", Roles.CUSTOMER, HttpStatusCode.Forbidden)]
+    [DataRow("Get", "Ticket", Roles.EMPLOYEE, HttpStatusCode.Forbidden)]
+    // nog veel meer toevoegen voor elke endpoint
     public async Task Endpoints_EnsureAuthorizationConfiguration(string method, string endpoint, string role, HttpStatusCode expected)
     {
         // Arrange
@@ -61,8 +76,31 @@ public class TicketEndpointTests : TestBase
             _ => throw new ArgumentException("Invalid HTTP method", nameof(method)),
         };
 
+        HttpRequestMessage request;
+        if (httpMethod == HttpMethod.Post)
+        {
+            request = new HttpRequestMessage(httpMethod, endpoint)
+            {
+                Content = new StringContent(JsonSerializer.Serialize(_createTicketDto), Encoding.UTF8, "application/json"),
+            };
+        }
+        else if (httpMethod == HttpMethod.Put)
+        {
+            var adminClient = CreateAdminClient();
+            var response = await adminClient.PostAsJsonAsync("Ticket", _createTicketDto);
+            var responseModel = await response.Content.ReadFromJsonAsync<Ticket>();
+            request = new HttpRequestMessage(httpMethod, endpoint)
+            {
+                Content = new StringContent(JsonSerializer.Serialize(responseModel), Encoding.UTF8, "application/json"),
+            };
+        }
+        else
+        {
+            request = new HttpRequestMessage(httpMethod, endpoint);
+        }
+
         // Act
-        var result = await client.SendAsync(new HttpRequestMessage(httpMethod, endpoint));
+        var result = await client.SendAsync(request);
 
         // Assert
         Assert.AreEqual(expected, result.StatusCode);
@@ -80,7 +118,7 @@ public class TicketEndpointTests : TestBase
             var tickets = await response.Content.ReadFromJsonAsync<List<Ticket>>();
             if (tickets is not null)
                 foreach (var ticket in tickets)
-                    await client.DeleteAsync($"Ticket/{ticket.TicketId}");
+                    await client.DeleteAsync($"Ticket/{ticket.Id}");
         }
 
         // Act
@@ -96,15 +134,7 @@ public class TicketEndpointTests : TestBase
         // Arrange
         var client = CreateAdminClient();
         for (int i = 1; i <= 2; i++)
-        {
-            await client.PostAsJsonAsync("Ticket", new Ticket
-            {
-                AdditionalNotes = $"Test{i}",
-                TriedSolutions = $"Test{i}",
-                Description = $"Test{i}",
-                Priority = Priority.Critical,
-            });
-        }
+            await client.PostAsJsonAsync("Ticket", _createTicketDto);
 
         // Act
         var response = await client.GetAsync("Ticket");
@@ -122,26 +152,18 @@ public class TicketEndpointTests : TestBase
     {
         // Arrange
         var client = CreateAdminClient();
-
-        var model = new Ticket
-        {
-            AdditionalNotes = "Test",
-            TriedSolutions = "Test",
-            Description = "Test",
-            Priority = Priority.Critical,
-        };
-        var response = await client.PostAsJsonAsync("Ticket", model);
+        var response = await client.PostAsJsonAsync("Ticket", _createTicketDto);
         var responseModel = await response.Content.ReadFromJsonAsync<Ticket>();
         Assert.IsNotNull(responseModel);
 
         // Act
-        var response2 = await client.GetAsync($"Ticket/{responseModel.TicketId}");
+        var response2 = await client.GetAsync($"Ticket/{responseModel.Id}");
         var responseModel2 = await response2.Content.ReadFromJsonAsync<Ticket>();
 
         // Assert
         Assert.AreEqual(HttpStatusCode.OK, response2.StatusCode);
         Assert.IsNotNull(responseModel2);
-        Assert.AreEqual(responseModel.TicketId, responseModel2.TicketId);
+        Assert.AreEqual(responseModel.Id, responseModel2.Id);
     }
 
     [TestMethod]
@@ -162,19 +184,12 @@ public class TicketEndpointTests : TestBase
     {
         // Arrange
         var client = CreateAdminClient();
-        var model = new Ticket
-        {
-            AdditionalNotes = "Test",
-            TriedSolutions = "Test",
-            Description = "Test",
-            Priority = Priority.Critical,
-        };
-        var response = await client.PostAsJsonAsync("Ticket", model);
+        var response = await client.PostAsJsonAsync("Ticket", _createTicketDto);
         var responseModel = await response.Content.ReadFromJsonAsync<Ticket>();
         Assert.IsNotNull(responseModel);
 
         // Act
-        var response2 = await client.GetAsync($"Ticket/{responseModel.TicketId}/photos");
+        var response2 = await client.GetAsync($"Ticket/{responseModel.Id}/photos");
 
         // Assert
         Assert.AreEqual(HttpStatusCode.NoContent, response2.StatusCode);
@@ -185,37 +200,31 @@ public class TicketEndpointTests : TestBase
     {
         // Arrange
         var client = CreateAdminClient();
-        var model = new Ticket
-        {
-            AdditionalNotes = "Test",
-            TriedSolutions = "Test",
-            Description = "Test",
-            Priority = Priority.Critical,
-        };
-        var response = await client.PostAsJsonAsync("Ticket", model);
+        var response = await client.PostAsJsonAsync("Ticket", _createTicketDto);
         var responseModel = await response.Content.ReadFromJsonAsync<Ticket>();
         Assert.IsNotNull(responseModel);
+
         for (int i = 1; i <= 2; i++)
         {
-            var photo = new PhotoDto
+            var photoResult = await client.PostAsJsonAsync("Photo", new CreatePhotoDto
             {
-                TicketId = responseModel.TicketId,
+                CreatedBy = "123",
+                TicketId = responseModel.Id,
                 Name = $"Test{i}.png",
                 Data = Convert.ToBase64String(new byte[] { 1, 2, 3 }),
-            };
-            var result = await client.PostAsJsonAsync("Photo", photo);
-            Assert.AreEqual(HttpStatusCode.Created, result.StatusCode);
+            });
+            Assert.AreEqual(HttpStatusCode.Created, photoResult.StatusCode);
         }
 
         // Act
-        var response2 = await client.GetAsync($"Ticket/{responseModel.TicketId}/photos");
-        var photos = await response2.Content.ReadFromJsonAsync<List<Photo>>();
+        var result = await client.GetAsync($"Ticket/{responseModel.Id}/photos");
+        var photos = await result.Content.ReadFromJsonAsync<List<Photo>>();
 
         // Assert
-        Assert.AreEqual(HttpStatusCode.OK, response2.StatusCode);
+        Assert.AreEqual(HttpStatusCode.OK, result.StatusCode);
         Assert.IsNotNull(photos);
         Assert.IsTrue(photos.Any());
-        Assert.IsTrue(photos.All(p => p.TicketId == responseModel.TicketId));
+        Assert.IsTrue(photos.All(p => p.TicketId == responseModel.Id));
         Assert.IsTrue(photos.Count == 2);
     }
 
@@ -224,23 +233,16 @@ public class TicketEndpointTests : TestBase
     {
         // Arrange
         var client = CreateAdminClient();
-        var model = new Ticket
-        {
-            AdditionalNotes = "Test",
-            TriedSolutions = "Test",
-            Description = "Test",
-            Priority = Priority.Critical,
-        };
 
         // Act
-        var response = await client.PostAsJsonAsync("Ticket", model);
+        var response = await client.PostAsJsonAsync("Ticket", _createTicketDto);
+        response.EnsureSuccessStatusCode();
         var responseModel = await response.Content.ReadFromJsonAsync<Ticket>();
 
         // Assert
-        response.EnsureSuccessStatusCode();
         Assert.AreEqual(HttpStatusCode.Created, response.StatusCode);
         Assert.IsNotNull(responseModel);
-        Assert.AreEqual(model.AdditionalNotes, responseModel.AdditionalNotes);
+        Assert.AreEqual(_createTicketDto.AdditionalNotes, responseModel.AdditionalNotes);
     }
 
     [TestMethod]
@@ -262,15 +264,8 @@ public class TicketEndpointTests : TestBase
     {
         // Arrange
         var client = CreateAdminClient();
-        var model = new Ticket
-        {
-            AdditionalNotes = "Test",
-            TriedSolutions = "Test",
-            Description = "Test",
-            Priority = Priority.Critical,
-        };
         var expected = "This is a changed value";
-        var response = await client.PostAsJsonAsync("Ticket", model);
+        var response = await client.PostAsJsonAsync("Ticket", _createTicketDto);
         response.EnsureSuccessStatusCode();
         var responseModel = await response.Content.ReadFromJsonAsync<Ticket>();
         Assert.IsNotNull(responseModel);
@@ -295,7 +290,7 @@ public class TicketEndpointTests : TestBase
 
         // Act
         var response = await client.PutAsJsonAsync("Ticket", new object { });
-        var response2 = await client.PutAsJsonAsync("Ticket", new Ticket { TicketId = -1 });
+        var response2 = await client.PutAsJsonAsync("Ticket", new Ticket { Id = -1 });
 
         // Assert
         Assert.ThrowsException<HttpRequestException>(response.EnsureSuccessStatusCode);
@@ -309,20 +304,13 @@ public class TicketEndpointTests : TestBase
     {
         // Arrange
         var client = CreateAdminClient();
-        var model = new Ticket
-        {
-            AdditionalNotes = "Test",
-            TriedSolutions = "Test",
-            Description = "Test",
-            Priority = Priority.Critical,
-        };
-        var response = await client.PostAsJsonAsync("Ticket", model);
+        var response = await client.PostAsJsonAsync("Ticket", _createTicketDto);
         response.EnsureSuccessStatusCode();
         var responseModel = await response.Content.ReadFromJsonAsync<Ticket>();
         Assert.IsNotNull(responseModel);
 
         // Act
-        var response2 = await client.DeleteAsync($"Ticket/{responseModel.TicketId}");
+        var response2 = await client.DeleteAsync($"Ticket/{responseModel.Id}");
 
         // Assert
         Assert.IsNotNull(response2);

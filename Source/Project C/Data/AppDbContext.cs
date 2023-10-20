@@ -1,4 +1,6 @@
-﻿using Data.Models;
+﻿using Data.Abstracts;
+using Data.Interfaces;
+using Data.Models;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -6,7 +8,6 @@ namespace Data;
 
 public class AppDbContext : DbContext
 {
-    // todo Add DbSets
     public DbSet<Ticket> Tickets { get; set; }
     public DbSet<Photo> Photos { get; set; }
     public DbSet<Malfunction> Malfunctions { get; set; }
@@ -19,15 +20,9 @@ public class AppDbContext : DbContext
     /// Launches DbContext with the provided DbContextOptions
     /// </summary>
     /// <param name="options"></param>
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-    {
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-    }
-
-    public AppDbContext()
-    {
-
-    }
+    public AppDbContext() { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -37,5 +32,24 @@ public class AppDbContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
+    }
+
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        var entities = ChangeTracker.Entries()
+            .Where(entry => entry is ICreatable && (entry.State == EntityState.Added || entry.State == EntityState.Modified));
+
+        var now = DateTime.UtcNow;
+        foreach (var entity in entities)
+        {
+            if (entity is ICreatable trackable)
+            {
+                if (entity.State == EntityState.Added)
+                    trackable.CreatedAt = now;
+                trackable.UpdatedAt = now;
+            }
+        }
+
+        return base.SaveChangesAsync(cancellationToken);
     }
 }

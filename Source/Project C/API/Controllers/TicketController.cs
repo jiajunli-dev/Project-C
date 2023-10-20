@@ -1,8 +1,9 @@
 ﻿using API.Utility;
 
+using Data.Dtos;
 using Data.Exceptions;
+using Data.Interfaces;
 using Data.Models;
-using Data.Repositories;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,10 +16,10 @@ namespace API.Controllers;
 public class TicketController : ControllerBase
 {
     private readonly ILogger<TicketController> _logger;
-    private readonly TicketRepository _ticketRepository;
-    private readonly PhotoRepository _photoRepository;
+    private readonly ITicketRepository _ticketRepository;
+    private readonly IPhotoRepository _photoRepository;
 
-    public TicketController(ILogger<TicketController> logger, TicketRepository repository, PhotoRepository photoRepository)
+    public TicketController(ILogger<TicketController> logger, ITicketRepository repository, IPhotoRepository photoRepository)
     {
         _logger = logger;
         _ticketRepository = repository;
@@ -94,18 +95,18 @@ public class TicketController : ControllerBase
     }
 
     [HttpPost] // POST Ticket
-    public async Task<IActionResult> Create([FromBody] Ticket ticket)
+    public async Task<IActionResult> Create([FromBody] CreateTicketDto dto)
     {
-        if (ticket is null)
+        if (dto is null)
             return BadRequest($"Ticket not provided as JSON body");
 
         _logger.LogInformation("Creating ticket.");
 
         try
         {
-            var model = await _ticketRepository.Create(ticket);
+            var model = await _ticketRepository.Create(dto.ToTicket());
 
-            return Created($"Ticket/{model.TicketId}", model);
+            return Created($"Ticket/{model.Id}", model);
         }
         catch (DbUpdateException ex)
         {
@@ -125,7 +126,7 @@ public class TicketController : ControllerBase
         if (ticket is null)
             return BadRequest("Invalid body content provided");
 
-        _logger.LogInformation("Updating ticket with ID: {ticketId}", ticket.TicketId);
+        _logger.LogInformation("Updating ticket with ID: {ticketId}", ticket.Id);
 
         try
         {
@@ -133,11 +134,11 @@ public class TicketController : ControllerBase
         }
         catch (ModelNotFoundException)
         {
-            return BadRequest($"A Model with ID \"{ticket.TicketId}\" was not found");
+            return BadRequest($"A Model with ID \"{ticket.Id}\" was not found");
         }
         catch (DbUpdateConcurrencyException)
         {
-            return Conflict($"Ticket with ID {ticket.TicketId} was updated by another user. Retrieve the latest version and try again.");
+            return Conflict($"Ticket with ID {ticket.Id} was updated by another user. Retrieve the latest version and try again.");
         }
         catch (DbUpdateException ex)
         {

@@ -1,13 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Data.Abstracts;
 
 namespace Data.Models;
 
-public class Customer
+public class Customer : User
 {
-    // TODO: Check what Id Clerk provides, and adjust accordingly
-    [Key]
-    public int UserId { get; set; }
-
     public string PhoneNumber { get; set; }
     public string CompanyName { get; set; }
     public string CompanyPhoneNumber { get; set; }

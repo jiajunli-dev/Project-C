@@ -1,12 +1,9 @@
-using System.ComponentModel.DataAnnotations;
+using Data.Abstracts;
 
 namespace Data.Models
 {
-    public class Department
+    public class Department : DbModel<int>
     {
-        [Key]
-        public int DepartmentId { get; set; }
-
         public string Name { get; set; }
         public string Description { get; set; }
     }

@@ -1,4 +1,4 @@
-﻿namespace Data.Models;
+﻿namespace Data.Enums;
 
 public enum Priority
 {

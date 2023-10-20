@@ -1,5 +1,5 @@
 ﻿using System.Text;
-
+using Data.Interfaces;
 using Data.Models;
 using Data.Repositories;
 
@@ -47,13 +47,13 @@ namespace API
 
         public static WebApplicationBuilder ConfigureServices(this WebApplicationBuilder app)
         {
-            app.Services.AddScoped<TicketRepository>();
-            app.Services.AddScoped<PhotoRepository>();
-            app.Services.AddScoped<MalfunctionRepository>();
-            app.Services.AddScoped<UserRepository>();
-            app.Services.AddScoped<CustomerRepository>();
-            app.Services.AddScoped<EmployeeRepository>();
-            app.Services.AddScoped<DepartmentRepository>();
+            app.Services.AddScoped<ITicketRepository, TicketRepository>();
+            app.Services.AddScoped<IPhotoRepository, PhotoRepository>();
+            app.Services.AddScoped<IMalfunctionRepository, MalfunctionRepository>();
+            app.Services.AddScoped<IUserRepository, UserRepository>();
+            app.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+            app.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            app.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
 
             app.Services.AddControllers(configure =>
             {

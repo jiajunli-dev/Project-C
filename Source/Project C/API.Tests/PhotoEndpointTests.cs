@@ -2,11 +2,23 @@
 
 using API.Tests.Utility;
 
+using Data.Dtos;
+using Data.Enums;
+
 namespace API.Tests;
 
 [TestClass]
 public class PhotoEndpointTests : TestBase
 {
+    private readonly CreateTicketDto _createTicketDto = new()
+    {
+        CreatedBy = "123",
+        AdditionalNotes = "Test",
+        TriedSolutions = "Test",
+        Description = "Test",
+        Priority = Priority.Critical
+    };
+
     [TestMethod]
     [DataRow("Get", "Photo/1")]
     [DataRow("Post", "Photo")]
@@ -38,38 +50,23 @@ public class PhotoEndpointTests : TestBase
     {
         // Arrange
         var client = CreateAdminClient();
-        var ticket = new Ticket
-        {
-            AdditionalNotes = "Test",
-            Description = "Test",
-            TriedSolutions = "Test",
-            Priority = Priority.High,
-            UserId = 1
-        };
-        var ticketResult = await client.PostAsJsonAsync("Ticket", ticket);
-        ticket = await ticketResult.Content.ReadFromJsonAsync<Ticket>();
+        var ticketResult = await client.PostAsJsonAsync("Ticket", _createTicketDto);
+        var ticket = await ticketResult.Content.ReadFromJsonAsync<Ticket>();
         Assert.IsNotNull(ticket);
 
-        var model = new Photo
-        {
-            TicketId = ticket.TicketId,
-            Name = "Test.png",
-            Data = "    "u8.ToArray()
-        };
-
-        var response = await client.PostAsJsonAsync("Photo", model);
+        var response = await client.PostAsJsonAsync("Photo", CreatePhotoDto(ticket.Id));
         var responseModel = await response.Content.ReadFromJsonAsync<Photo>();
         Assert.IsNotNull(responseModel);
 
         // Act
-        var response2 = await client.GetAsync($"Photo/{responseModel.PhotoId}");
+        var response2 = await client.GetAsync($"Photo/{responseModel.Id}");
         var responseModel2 = await response2.Content.ReadFromJsonAsync<Photo>();
 
         // Assert
         Assert.AreEqual(HttpStatusCode.OK, response2.StatusCode);
         Assert.IsNotNull(responseModel2);
-        Assert.AreEqual(responseModel.PhotoId, responseModel2.PhotoId);
-        Assert.AreEqual(ticket.TicketId, responseModel2.TicketId);
+        Assert.AreEqual(responseModel.Id, responseModel2.Id);
+        Assert.AreEqual(ticket.Id, responseModel2.TicketId);
     }
 
     [TestMethod]
@@ -92,22 +89,10 @@ public class PhotoEndpointTests : TestBase
     {
         // Arrange
         var client = CreateAdminClient();
-        var model = new Ticket
-        {
-            AdditionalNotes = "Test",
-            TriedSolutions = "Test",
-            Description = "Test",
-            Priority = Priority.Critical,
-        };
-        var response = await client.PostAsJsonAsync("Ticket", model);
+        var response = await client.PostAsJsonAsync("Ticket", _createTicketDto);
         var ticket = await response.Content.ReadFromJsonAsync<Ticket>();
         Assert.IsNotNull(ticket);
-        var photo = new Photo
-        {
-            TicketId = ticket.TicketId,
-            Name = "Test.png",
-            Data = "    "u8.ToArray()
-        };
+        var photo = CreatePhotoDto(ticket.Id);
 
         // Act
         var response2 = await client.PostAsJsonAsync("Photo", photo);
@@ -145,38 +130,25 @@ public class PhotoEndpointTests : TestBase
     {
         // Arrange
         var client = CreateAdminClient();
-        var model = new Ticket
-        {
-            AdditionalNotes = "Test",
-            TriedSolutions = "Test",
-            Description = "Test",
-            Priority = Priority.Critical,
-        };
         var expected = "This is a changed value";
-        var response = await client.PostAsJsonAsync("Ticket", model);
-        response.EnsureSuccessStatusCode();
-        var responseModel = await response.Content.ReadFromJsonAsync<Ticket>();
-        Assert.IsNotNull(responseModel);
-        var photo = PhotoDto.FromPhoto(new Photo
-        {
-            TicketId = responseModel.TicketId,
-            Name = "Test.png",
-            Data = "    "u8.ToArray()
-        });
-        var response2 = await client.PostAsJsonAsync("Photo", photo);
-        var responseModel2 = await response2.Content.ReadFromJsonAsync<Photo>();
-        Assert.IsNotNull(responseModel2);
+        var ticketResponse = await client.PostAsJsonAsync("Ticket", _createTicketDto);
+        ticketResponse.EnsureSuccessStatusCode();
+        var ticket = await ticketResponse.Content.ReadFromJsonAsync<Ticket>();
+        Assert.IsNotNull(ticket);
+        var photoResponse = await client.PostAsJsonAsync("Photo", CreatePhotoDto(ticket.Id));
+        var photo = await photoResponse.Content.ReadFromJsonAsync<Photo>();
+        Assert.IsNotNull(photo);
 
         // Act
-        responseModel2.Name = expected;
-        var response3 = await client.PutAsJsonAsync("Photo", responseModel2);
-        var responseModel3 = await response3.Content.ReadFromJsonAsync<Photo>();
+        photo.Name = expected;
+        var result = await client.PutAsJsonAsync("Photo", new PhotoDto(photo));
+        result.EnsureSuccessStatusCode();
+        var resultModel = await result.Content.ReadFromJsonAsync<Photo>();
 
         // Assert
-        response3.EnsureSuccessStatusCode();
-        Assert.AreEqual(HttpStatusCode.OK, response3.StatusCode);
-        Assert.IsNotNull(responseModel3);
-        Assert.AreEqual(expected, responseModel3.Name);
+        Assert.AreEqual(HttpStatusCode.OK, result.StatusCode);
+        Assert.IsNotNull(resultModel);
+        Assert.AreEqual(expected, resultModel.Name);
     }
 
     [TestMethod]
@@ -205,28 +177,17 @@ public class PhotoEndpointTests : TestBase
         // Arrange
         var client = CreateAdminClient();
 
-        var response = await client.PostAsJsonAsync("Ticket", new Ticket
-        {
-            AdditionalNotes = "Test",
-            TriedSolutions = "Test",
-            Description = "Test",
-            Priority = Priority.Critical,
-        });
+        var response = await client.PostAsJsonAsync("Ticket", _createTicketDto);
         response.EnsureSuccessStatusCode();
         var responseModel = await response.Content.ReadFromJsonAsync<Ticket>();
         Assert.IsNotNull(responseModel);
 
-        var response2 = await client.PostAsJsonAsync("Photo", PhotoDto.FromPhoto(new Photo
-        {
-            TicketId = responseModel.TicketId,
-            Name = "Test.png",
-            Data = "    "u8.ToArray()
-        }));
+        var response2 = await client.PostAsJsonAsync("Photo", CreatePhotoDto(responseModel.Id));
         var responseModel2 = await response2.Content.ReadFromJsonAsync<PhotoDto>();
         Assert.IsNotNull(responseModel2);
 
         // Act
-        var response3 = await client.DeleteAsync($"Photo/{responseModel2.PhotoId}");
+        var response3 = await client.DeleteAsync($"Photo/{responseModel2.Id}");
 
         // Assert
         Assert.IsNotNull(response3);
@@ -248,4 +209,12 @@ public class PhotoEndpointTests : TestBase
         Assert.IsNotNull(response2);
         Assert.AreEqual(HttpStatusCode.BadRequest, response2.StatusCode);
     }
+
+    private static CreatePhotoDto CreatePhotoDto(int ticketId) => new()
+    {
+        CreatedBy = "123",
+        TicketId = ticketId,
+        Name = "Test.png",
+        Data = Convert.ToBase64String(new byte[] { 1, 2, 3 }),
+    };
 }

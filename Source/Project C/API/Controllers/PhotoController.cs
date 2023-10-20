@@ -1,6 +1,11 @@
-﻿using Data.Exceptions;
+﻿using System.Security.Claims;
+
+using API.Utility;
+
+using Data.Dtos;
+using Data.Exceptions;
+using Data.Interfaces;
 using Data.Models;
-using Data.Repositories;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,10 +17,10 @@ namespace API.Controllers;
 public class PhotoController : ControllerBase
 {
     private readonly ILogger<PhotoController> _logger;
-    private readonly PhotoRepository _photoRepository;
-    private readonly TicketRepository _ticketRepository;
+    private readonly IPhotoRepository _photoRepository;
+    private readonly ITicketRepository _ticketRepository;
 
-    public PhotoController(ILogger<PhotoController> logger, PhotoRepository repository, TicketRepository ticketRepository)
+    public PhotoController(ILogger<PhotoController> logger, IPhotoRepository repository, ITicketRepository ticketRepository)
     {
         _logger = logger;
         _photoRepository = repository;
@@ -26,7 +31,7 @@ public class PhotoController : ControllerBase
     public async Task<IActionResult> GetById(int photoId)
     {
         _logger.LogInformation("Fetching photo with ID: {photoId}", photoId);
-
+        
         try
         {
             var photo = await _photoRepository.GetById(photoId);
@@ -48,7 +53,7 @@ public class PhotoController : ControllerBase
     }
 
     [HttpPost] // POST /Photo
-    public async Task<IActionResult> Create([FromBody] PhotoDto dto)
+    public async Task<IActionResult> Create([FromBody] CreatePhotoDto dto)
     {
         if (dto is null)
             return BadRequest("Invalid body content provided");
@@ -61,10 +66,9 @@ public class PhotoController : ControllerBase
 
         try
         {
-            var photo = Photo.FromDto(dto);
-            var model = await _photoRepository.Create(photo);
+            var model = await _photoRepository.Create(dto.ToPhoto());
 
-            return Created($"Photo/{model.PhotoId}", model);
+            return Created($"Photo/{model.Id}", model);
         }
         catch (DbUpdateException ex)
         {
@@ -87,21 +91,28 @@ public class PhotoController : ControllerBase
             return BadRequest("Invalid Ticket Id provided");
         if (!_ticketRepository.Exists(dto.TicketId))
             return BadRequest($"Ticket not found with the Id: {dto.TicketId}");
+        if (HttpContext.User.IsInRole(Roles.CUSTOMER))
+        {
+            var accountId = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            // check accountId against customer ID
+            // if not the same, return 403
+        }
 
-        _logger.LogInformation("Updating photo with ID: {photoId}", dto.PhotoId);
+        _logger.LogInformation("Updating photo with ID: {photoId}", dto.Id);
 
         try
         {
-            var photo = Photo.FromDto(dto);
-            return Ok(await _photoRepository.Update(photo));
+            var photo = new Photo(dto);
+            var result = await _photoRepository.Update(photo);
+            return Ok(new PhotoDto(result));
         }
         catch (ModelNotFoundException)
         {
-            return BadRequest($"Photo not found with the Id: {dto.PhotoId}");
+            return BadRequest($"Photo not found with the Id: {dto.Id}");
         }
         catch (DbUpdateConcurrencyException)
         {
-            return Conflict($"Photo with Id: {dto.PhotoId} was updated by another user. Retrieve the latest version and try again.");
+            return Conflict($"Photo with Id: {dto.Id} was updated by another user. Retrieve the latest version and try again.");
         }
         catch (DbUpdateException ex)
         {

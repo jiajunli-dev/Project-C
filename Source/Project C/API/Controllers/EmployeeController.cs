@@ -1,4 +1,5 @@
 ﻿using Data.Exceptions;
+using Data.Interfaces;
 using Data.Models;
 
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +12,9 @@ namespace API.Controllers;
 public class EmployeeController : ControllerBase
 {
     private readonly ILogger<EmployeeController> _logger;
-    private readonly EmployeeRepository _employeeRepository;
+    private readonly IEmployeeRepository _employeeRepository;
 
-    public EmployeeController(ILogger<EmployeeController> logger, EmployeeRepository repository)
+    public EmployeeController(ILogger<EmployeeController> logger, IEmployeeRepository repository)
     {
         _logger = logger;
         _employeeRepository = repository;
@@ -38,7 +39,7 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpGet("{employeeId}")]
-    public async Task<IActionResult> GetById(int employeeId)
+    public async Task<IActionResult> GetById(string employeeId)
     {
         try
         {
@@ -73,7 +74,7 @@ public class EmployeeController : ControllerBase
         {
             var model = await _employeeRepository.Create(employee);
 
-            return Created($"Employee/{model.UserId}", model);
+            return Created($"Employee/{model.Id}", model);
         }
         catch (DbUpdateException ex)
         {
@@ -93,7 +94,7 @@ public class EmployeeController : ControllerBase
         if (employee is null)
             return BadRequest("Invalid body content provided");
 
-        _logger.LogInformation("Updating employee with ID: {employeeId}", employee.UserId);
+        _logger.LogInformation("Updating employee with ID: {employeeId}", employee.Id);
 
         try
         {
@@ -101,11 +102,11 @@ public class EmployeeController : ControllerBase
         }
         catch (ModelNotFoundException)
         {
-            return BadRequest($"A Model with ID \"{employee.UserId}\" was not found");
+            return BadRequest($"A Model with ID \"{employee.Id}\" was not found");
         }
         catch (DbUpdateConcurrencyException ex)
         {
-            return Conflict($"Employee with ID \"{employee.UserId}\" was updated by another user. Please refresh and try again.");
+            return Conflict($"Employee with ID \"{employee.Id}\" was updated by another user. Please refresh and try again.");
         }
         catch (DbUpdateException ex)
         {
@@ -120,9 +121,9 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpDelete("{employeeId}")]
-    public async Task<IActionResult> Delete(int employeeId)
+    public async Task<IActionResult> Delete(string employeeId)
     {
-        if (employeeId <= 0)
+        if (string.IsNullOrEmpty(employeeId))
             return BadRequest("Invalid ID provided");
 
         _logger.LogInformation("Deleting customer with ID: {employeeId}", employeeId);

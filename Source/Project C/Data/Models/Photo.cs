@@ -1,12 +1,24 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+using Data.Abstracts;
+using Data.Dtos;
 
 namespace Data.Models;
 
-public class Photo
+public class Photo : DbModel<int>
 {
-    [Key]
-    public int PhotoId { get; set; }
+    public Photo() { }
+    public Photo(PhotoDto dto)
+    {
+        Id = dto.Id;
+        CreatedAt = dto.CreatedAt;
+        CreatedBy = dto.CreatedBy;
+        UpdatedAt = dto.UpdatedAt;
+        UpdatedBy = dto.UpdatedBy;
+        Name = dto.Name;
+        Data = Convert.FromBase64String(dto.Data);
+        TicketId = dto.TicketId;
+    }
 
     public string Name { get; set; }
     public byte[] Data { get; set; }
@@ -16,30 +28,5 @@ public class Photo
     public int TicketId { get; set; }
     public Ticket Ticket { get; set; }
 
-    public string DataToBase64()
-        => Data is null ? string.Empty : Convert.ToBase64String(Data);
-
-    public static Photo FromDto(PhotoDto dto) => new()
-    {
-        PhotoId = dto.PhotoId,
-        Name = dto.Name,
-        Data = Convert.FromBase64String(dto.Data),
-        TicketId = dto.TicketId,
-    };
-}
-
-public class PhotoDto
-{
-    public int PhotoId { get; set; }
-    public string Name { get; set; }
-    public string Data { get; set; } = string.Empty;
-    public int TicketId { get; set; }
-
-    public static PhotoDto FromPhoto(Photo photo) => new()
-    {
-        PhotoId = photo.PhotoId,
-        Name = photo.Name,
-        Data = photo.DataToBase64(),
-        TicketId = photo.TicketId,
-    };
+    public string DataToBase64() => Data is null ? string.Empty : Convert.ToBase64String(Data);
 }

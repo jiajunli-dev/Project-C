@@ -1,6 +1,6 @@
 using Data.Exceptions;
+using Data.Interfaces;
 using Data.Models;
-using Data.Repositories;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,9 +10,9 @@ namespace API.Controllers
     [Route("[controller]")]
     public class DepartmentController : ControllerBase
     {
-        private readonly DepartmentRepository _departmentRepository;
+        private readonly IDepartmentRepository _departmentRepository;
 
-        public DepartmentController(DepartmentRepository departmentRepository)
+        public DepartmentController(IDepartmentRepository departmentRepository)
         {
             _departmentRepository = departmentRepository;
         }
@@ -52,7 +52,7 @@ namespace API.Controllers
                 return BadRequest("Invalid body content provided");
 
             var model = await _departmentRepository.Create(department);
-            return Created($"Department/{model.DepartmentId}", model);
+            return Created($"Department/{model.Id}", model);
         }
 
         [HttpPut]
@@ -67,7 +67,7 @@ namespace API.Controllers
             }
             catch (ModelNotFoundException)
             {
-                return BadRequest($"A department with ID {department.DepartmentId} was not found.");
+                return BadRequest($"A department with ID {department.Id} was not found.");
             }
         }
 

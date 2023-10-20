@@ -18,7 +18,7 @@ public abstract class TestBase
         _factory = _provider.GetRequiredService<WebApiFactory<Program>>();
     }
 
-    protected HttpClient CreateClient(string token = null)
+    protected HttpClient CreateClient(string? token = null)
     {
         var client = _factory.CreateClient();
         if (!string.IsNullOrEmpty(token))
