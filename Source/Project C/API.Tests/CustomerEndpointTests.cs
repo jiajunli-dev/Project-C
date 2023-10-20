@@ -97,7 +97,7 @@ public class CustomerEndpointTests : TestBase
             var customers = await response.Content.ReadFromJsonAsync<List<Customer>>();
             if (customers != null)
                 foreach (var customer in customers)
-                    await client.DeleteAsync($"Customer/{customer.UserId}");
+                    await client.DeleteAsync($"Customer/{customer.Id}");
         }
 
         // Act
@@ -116,7 +116,6 @@ public class CustomerEndpointTests : TestBase
         {
             await client.PostAsJsonAsync("Customer", new Customer
             {
-                UserId = i,
                 PhoneNumber = "1234567890",
                 CompanyName = $"Test{i} Company",
                 CompanyPhoneNumber = "1234567890",
@@ -154,13 +153,13 @@ public class CustomerEndpointTests : TestBase
         Assert.IsNotNull(responseModel);
 
         // Act
-        var response2 = await client.GetAsync($"Customer/{responseModel.UserId}");
+        var response2 = await client.GetAsync($"Customer/{responseModel.Id}");
         var responseModel2 = await response2.Content.ReadFromJsonAsync<Customer>();
 
         // Assert
         Assert.AreEqual(HttpStatusCode.OK, response2.StatusCode);
         Assert.IsNotNull(responseModel2);
-        Assert.AreEqual(responseModel.UserId, responseModel2.UserId);
+        Assert.AreEqual(responseModel.Id, responseModel2.Id);
     }
 
     [TestMethod]
@@ -252,7 +251,7 @@ public class CustomerEndpointTests : TestBase
 
         // Act
         var response = await client.PutAsJsonAsync("Customer", new Customer { });
-        var response2 = await client.PutAsJsonAsync("Customer", new Customer { UserId = -1 });
+        var response2 = await client.PutAsJsonAsync("Customer", new Customer { Id = "-1" });
     
         // Assert
         Assert.ThrowsException<HttpRequestException>(response.EnsureSuccessStatusCode);
@@ -266,7 +265,8 @@ public class CustomerEndpointTests : TestBase
     {
         var client = CreateAdminClient();
         var model = new Customer
-        {
+        {   
+            Id = "123",
             PhoneNumber = "1234567890",
             CompanyName = "Test Company",
             CompanyPhoneNumber = "1234567890",
@@ -278,7 +278,7 @@ public class CustomerEndpointTests : TestBase
         Assert.IsNotNull(responseModel);
 
         // Act
-        var response2 = await client.DeleteAsync($"Customer/{responseModel.UserId}");
+        var response2 = await client.DeleteAsync($"Customer/{responseModel.Id}");
 
         // Assert
         Assert.IsNotNull(response2);
