@@ -12,4 +12,7 @@ public class PhotoRepository : GenericRepository<Photo, int>, IPhotoRepository
 
     public Task<List<Photo>> GetAllByTicketId(int ticketId)
       => _context.Photos.Where(p => p.TicketId == ticketId).AsNoTracking().ToListAsync();
+
+    public bool IsOwner(int photoId, string userId)
+      => _context.Photos.Any(p => p.Id == photoId && p.CreatedBy == userId);
 }

@@ -27,7 +27,7 @@ public class TicketController : ControllerBase
     }
 
     [HttpGet] // GET Ticket
-    [Authorize(Roles = Roles.ADMIN)]
+    [Authorize(Roles = $"{Roles.ADMIN}, {Roles.EMPLOYEE}")]
     public async Task<IActionResult> GetAll()
     {
         _logger.LogInformation("Fetching all tickets");
@@ -104,7 +104,7 @@ public class TicketController : ControllerBase
 
         try
         {
-            var model = await _ticketRepository.Create(dto.ToTicket());
+            var model = await _ticketRepository.Create(dto.ToModel());
 
             return Created($"Ticket/{model.Id}", model);
         }
@@ -121,6 +121,7 @@ public class TicketController : ControllerBase
     }
 
     [HttpPut] // PUT Ticket
+    [Authorize(Roles = $"{Roles.ADMIN}, {Roles.EMPLOYEE}")]
     public async Task<IActionResult> Update([FromBody] Ticket ticket)
     {
         if (ticket is null)
@@ -160,6 +161,7 @@ public class TicketController : ControllerBase
     }
 
     [HttpDelete("{ticketId}")] // DELETE Ticket/1
+    [Authorize(Roles = Roles.ADMIN)]
     public async Task<IActionResult> Delete(int ticketId)
     {
         if (ticketId <= 0)

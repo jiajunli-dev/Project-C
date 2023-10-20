@@ -5,8 +5,8 @@ using API.Utility;
 using Data.Dtos;
 using Data.Exceptions;
 using Data.Interfaces;
-using Data.Models;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -35,7 +35,7 @@ public class PhotoController : ControllerBase
         try
         {
             var photo = await _photoRepository.GetById(photoId);
-            return Ok(photo);
+            return photo is null ? NoContent() : Ok(photo);
         }
         catch (ModelNotFoundException)
         {
@@ -66,7 +66,7 @@ public class PhotoController : ControllerBase
 
         try
         {
-            var model = await _photoRepository.Create(dto.ToPhoto());
+            var model = await _photoRepository.Create(dto.ToModel());
 
             return Created($"Photo/{model.Id}", model);
         }
@@ -85,25 +85,24 @@ public class PhotoController : ControllerBase
     [HttpPut] // PUT /Photo
     public async Task<IActionResult> Update([FromBody] PhotoDto dto)
     {
+        if (HttpContext.User.IsInRole(Roles.CUSTOMER))
+        {
+            var accountId = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            if (accountId is null || _photoRepository.IsOwner(dto.Id, accountId))
+                return Unauthorized("You are not authorized to update this photo.");
+        }
         if (dto is null)
             return BadRequest("Invalid body content provided");
         if (dto.TicketId <= 0)
             return BadRequest("Invalid Ticket Id provided");
         if (!_ticketRepository.Exists(dto.TicketId))
             return BadRequest($"Ticket not found with the Id: {dto.TicketId}");
-        if (HttpContext.User.IsInRole(Roles.CUSTOMER))
-        {
-            var accountId = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            // check accountId against customer ID
-            // if not the same, return 403
-        }
 
         _logger.LogInformation("Updating photo with ID: {photoId}", dto.Id);
 
         try
         {
-            var photo = new Photo(dto);
-            var result = await _photoRepository.Update(photo);
+            var result = await _photoRepository.Update(dto.ToModel());
             return Ok(new PhotoDto(result));
         }
         catch (ModelNotFoundException)
@@ -127,6 +126,7 @@ public class PhotoController : ControllerBase
     }
 
     [HttpDelete("{photoId}")] // DELETE /Photo/1
+    [Authorize(Roles = Roles.ADMIN)]
     public async Task<IActionResult> Delete(int photoId)
     {
         if (photoId <= 0)

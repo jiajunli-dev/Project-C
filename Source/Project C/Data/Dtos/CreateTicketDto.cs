@@ -17,8 +17,7 @@ public class CreateTicketDto
 
     public Priority Priority { get; set; }
 
-
-    public Ticket ToTicket() => new()
+    public Ticket ToModel() => new()
     {
         CreatedBy = CreatedBy,
         UpdatedBy = CreatedBy,

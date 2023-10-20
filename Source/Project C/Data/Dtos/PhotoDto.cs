@@ -30,4 +30,16 @@ public class PhotoDto
     public string Name { get; set; }
     public string Data { get; set; } = string.Empty;
     public int TicketId { get; set; }
+
+    public Photo ToModel() => new()
+    {
+        Id = Id,
+        CreatedAt = CreatedAt,
+        CreatedBy = CreatedBy,
+        UpdatedAt = UpdatedAt,
+        UpdatedBy = UpdatedBy,
+        Name = Name,
+        Data = Convert.FromBase64String(Data),
+        TicketId = TicketId,
+    };
 }

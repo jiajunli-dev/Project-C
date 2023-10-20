@@ -1,8 +1,8 @@
 ﻿using API.Utility;
 
+using Data.Dtos;
 using Data.Exceptions;
 using Data.Interfaces;
-using Data.Models;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +24,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = Roles.ADMIN)]
+        [Authorize(Roles = $"{Roles.ADMIN}, {Roles.EMPLOYEE}")]
         public async Task<IActionResult> GetAll()
         {
             _logger.LogInformation("Fetching all malfunctions");
@@ -68,16 +68,16 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Malfunction malfunction)
+        public async Task<IActionResult> Create([FromBody] CreateMalfunctionDto dto)
         {
-            if (malfunction is null)
+            if (dto is null)
                 return BadRequest("Invalid body content provided");
 
             _logger.LogInformation("Creating malfunction.");
 
             try
             {
-                var model = await _malfunctionRepository.Create(malfunction);
+                var model = await _malfunctionRepository.Create(dto.ToModel());
                 return Created($"Malfunction/{model.Id}", model);
             }
             catch (DbUpdateException ex)
@@ -94,26 +94,27 @@ namespace API.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update([FromBody] Malfunction malfunction)
+        [Authorize(Roles = $"{Roles.ADMIN}, {Roles.EMPLOYEE}")]
+        public async Task<IActionResult> Update([FromBody] MalfunctionDto dto)
         {
-            if (malfunction is null)
+            if (dto is null)
             {
                 return BadRequest("Invalid body content provided");
             }
 
-            _logger.LogInformation($"Updating malfunction with ID: {malfunction.Id}");
+            _logger.LogInformation($"Updating malfunction with ID: {dto.Id}");
 
             try
             {
-                return Ok(await _malfunctionRepository.Update(malfunction));
+                return Ok(await _malfunctionRepository.Update(dto.ToModel()));
             }
             catch (ModelNotFoundException)
             {
-                return BadRequest($"A malfunction with ID {malfunction.Id} was not found.");
+                return BadRequest($"A malfunction with ID {dto.Id} was not found.");
             }
             catch (DbUpdateConcurrencyException)
             {
-                return Conflict($"Malfunction with ID {malfunction.Id} was updated by another user. Retrieve the latest version and try again.");
+                return Conflict($"Malfunction with ID {dto.Id} was updated by another user. Retrieve the latest version and try again.");
             }
             catch (DbUpdateException ex)
             {
@@ -127,7 +128,8 @@ namespace API.Controllers
             }
         }
 
-        [HttpPost("{malfunctionId}")]
+        [HttpDelete("{malfunctionId}")]
+        [Authorize(Roles = Roles.ADMIN)]
         public async Task<IActionResult> Delete(int malfunctionId)
         {
             if (malfunctionId <= 0)
@@ -138,7 +140,7 @@ namespace API.Controllers
             try
             {
                 await _malfunctionRepository.Delete(malfunctionId);
-                return Ok();
+                return NoContent();
             }
             catch (ModelNotFoundException)
             {
