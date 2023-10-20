@@ -16,6 +16,7 @@ namespace API.Controllers
 
         public DepartmentController(ILogger logger, IDepartmentRepository departmentRepository)
         {
+            _logger = logger;
             _departmentRepository = departmentRepository;
         }
 
@@ -94,7 +95,7 @@ namespace API.Controllers
             if (department is null)
                 return BadRequest("Invalid body content provided");
 
-            _logger.LogInformation($"Updating department with ID: {department.DepartmentId}");
+            _logger.LogInformation($"Updating department with ID: {department.Id}");
 
             try
             {
@@ -106,7 +107,7 @@ namespace API.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                return Conflict($"Department with ID {department.DepartmentId} was updated by another user. Retrieve the latest version and try again.");
+                return Conflict($"Department with ID {department.Id} was updated by another user. Retrieve the latest version and try again.");
             }
             catch (DbUpdateException ex)
             {

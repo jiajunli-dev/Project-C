@@ -1,5 +1,4 @@
-﻿using Data.Abstracts;
-using Data.Interfaces;
+﻿using Data.Interfaces;
 using Data.Models;
 
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +10,6 @@ public class AppDbContext : DbContext
     public DbSet<Ticket> Tickets { get; set; }
     public DbSet<Photo> Photos { get; set; }
     public DbSet<Malfunction> Malfunctions { get; set; }
-    public DbSet<User> Users { get; set; }
     public DbSet<Customer> Customers { get; set; }
     public DbSet<Employee> Employees { get; set; }
     public DbSet<Department> Departments { get; set; }

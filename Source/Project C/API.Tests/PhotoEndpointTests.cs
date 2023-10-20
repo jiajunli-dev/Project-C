@@ -1,11 +1,4 @@
-﻿using System.Net;
-
-using API.Tests.Utility;
-
-using Data.Dtos;
-using Data.Enums;
-
-namespace API.Tests;
+﻿namespace API.Tests;
 
 [TestClass]
 public class PhotoEndpointTests : TestBase

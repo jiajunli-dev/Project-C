@@ -31,7 +31,7 @@ public class PhotoController : ControllerBase
     public async Task<IActionResult> GetById(int photoId)
     {
         _logger.LogInformation("Fetching photo with ID: {photoId}", photoId);
-        
+
         try
         {
             var photo = await _photoRepository.GetById(photoId);

@@ -1,4 +1,5 @@
 ﻿using System.Text;
+
 using Data.Interfaces;
 using Data.Models;
 using Data.Repositories;
@@ -50,7 +51,6 @@ namespace API
             app.Services.AddScoped<ITicketRepository, TicketRepository>();
             app.Services.AddScoped<IPhotoRepository, PhotoRepository>();
             app.Services.AddScoped<IMalfunctionRepository, MalfunctionRepository>();
-            app.Services.AddScoped<IUserRepository, UserRepository>();
             app.Services.AddScoped<ICustomerRepository, CustomerRepository>();
             app.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             app.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();

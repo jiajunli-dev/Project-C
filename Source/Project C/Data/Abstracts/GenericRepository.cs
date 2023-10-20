@@ -1,5 +1,6 @@
 ﻿using Data.Exceptions;
 using Data.Interfaces;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace Data.Abstracts

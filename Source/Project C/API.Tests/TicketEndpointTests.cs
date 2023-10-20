@@ -1,13 +1,5 @@
-using System;
-using System.Net;
 using System.Text;
 using System.Text.Json;
-
-using API.Tests.Utility;
-using API.Utility;
-
-using Data.Dtos;
-using Data.Enums;
 
 namespace API.Tests;
 

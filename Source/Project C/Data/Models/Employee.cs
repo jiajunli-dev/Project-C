@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+
 using Data.Abstracts;
 
 namespace Data.Models;

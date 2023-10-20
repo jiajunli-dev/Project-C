@@ -24,7 +24,7 @@ public class EmployeeController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         _logger.LogInformation("Fetching all employees");
-        
+
         try
         {
             var employees = await _employeeRepository.GetAll();
@@ -44,7 +44,7 @@ public class EmployeeController : ControllerBase
         try
         {
             var employee = await _employeeRepository.GetById(employeeId);
-            
+
             return employee is null ? NoContent() : Ok(employee);
         }
         catch (ModelNotFoundException)
@@ -131,7 +131,7 @@ public class EmployeeController : ControllerBase
         try
         {
             await _employeeRepository.Delete(employeeId);
-            
+
             return NoContent();
         }
         catch (ModelNotFoundException)
