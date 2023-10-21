@@ -1,6 +1,7 @@
 import { SignedIn, SignedOut } from "@clerk/clerk-react";
 import LoginPage from "./LoginPage";
 import AdminDashboard from "./AdminDashboard";
+import SideBar from "../components/SideBar";
 
 const HomePage = () => {
   return (
@@ -9,7 +10,9 @@ const HomePage = () => {
         <LoginPage />
       </SignedOut>
       <SignedIn>
-        <AdminDashboard />
+        <div className="flex min-h-screen">
+          <SideBar></SideBar>
+        </div>
       </SignedIn>
     </>
   );

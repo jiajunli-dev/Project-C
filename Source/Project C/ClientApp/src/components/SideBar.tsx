@@ -9,7 +9,7 @@ const SideBar = () => {
     <div>
       <div className=" z-40 w-64 h-full px-3 py-4 overflow-y-auto bg-[#1b1b46]">
         <div>
-          <a href="#" className="flex items-center pl-2.5 mb-5">
+          <a href="/" className="flex items-center pl-2.5 mb-5">
             <img
               src="/viscon_logo.jpeg"
               className="h-6 mr-3 sm:h-7"
@@ -37,7 +37,7 @@ const SideBar = () => {
         <ul className="space-y-2 font-medium">
           <li>
             <a
-              href="#"
+              href="/"
               className="flex items-center p-2  rounded-lg text-white hover:bg-gray-100 "
             >
               <svg
@@ -76,7 +76,7 @@ const SideBar = () => {
           </li>
           <li>
             <a
-              href="#"
+              href="users"
               className="flex items-center p-2  rounded-lg text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
             >
               <svg
@@ -93,7 +93,7 @@ const SideBar = () => {
           </li>
           <li>
             <a
-              href="#"
+              href="tickets"
               className="flex items-center p-2  rounded-lg text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
             >
               <svg

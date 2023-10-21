@@ -1,4 +1,4 @@
-import { Label, Table, TextInput } from "flowbite-react";
+import { Label, Select, Table, TextInput } from "flowbite-react";
 import { useState } from "react";
 import chevronUp from "../assets/chevron-up.png";
 import chevronDown from "../assets/chevron-down.png";
@@ -70,6 +70,96 @@ export default function DefaultTable() {
       createDate: "26-10-2023",
       status: "Closed",
     },
+    {
+      id: 9,
+      requestedBy: "Olivia",
+      subject: "Security Update",
+      assignee: "Sophia",
+      priority: "Low",
+      createDate: "28-10-2023",
+      status: "Open",
+    },
+    {
+      id: 10,
+      requestedBy: "Liam",
+      subject: "Software Bug",
+      assignee: "Ethan",
+      priority: "Urgent",
+      createDate: "29-10-2023",
+      status: "Open",
+    },
+    {
+      id: 11,
+      requestedBy: "Mia",
+      subject: "Hardware Failure",
+      assignee: "Ava",
+      priority: "Low",
+      createDate: "30-10-2023",
+      status: "Open",
+    },
+    {
+      id: 12,
+      requestedBy: "Noah",
+      subject: "Database Update",
+      assignee: "Lucas",
+      priority: "Low",
+      createDate: "31-10-2023",
+      status: "Open",
+    },
+    {
+      id: 13,
+      requestedBy: "Sophia",
+      subject: "Network Issue",
+      assignee: "Elijah",
+      priority: "Urgent",
+      createDate: "1-11-2023",
+      status: "Closed",
+    },
+    {
+      id: 9,
+      requestedBy: "Olivia",
+      subject: "Security Update",
+      assignee: "Sophia",
+      priority: "Low",
+      createDate: "28-10-2023",
+      status: "Open",
+    },
+    {
+      id: 10,
+      requestedBy: "Liam",
+      subject: "Software Bug",
+      assignee: "Ethan",
+      priority: "Urgent",
+      createDate: "29-10-2023",
+      status: "Open",
+    },
+    {
+      id: 11,
+      requestedBy: "Mia",
+      subject: "Hardware Failure",
+      assignee: "Ava",
+      priority: "Low",
+      createDate: "30-10-2023",
+      status: "Open",
+    },
+    {
+      id: 12,
+      requestedBy: "Noah",
+      subject: "Database Update",
+      assignee: "Lucas",
+      priority: "Low",
+      createDate: "31-10-2023",
+      status: "Open",
+    },
+    {
+      id: 13,
+      requestedBy: "Sophia",
+      subject: "Network Issue",
+      assignee: "Elijah",
+      priority: "Urgent",
+      createDate: "1-11-2023",
+      status: "Closed",
+    },
   ];
 
   const [data, setData] = useState<TableData[]>(initialData);
@@ -85,6 +175,8 @@ export default function DefaultTable() {
       status: "asc",
     }
   );
+
+  const [entriesPerPage, setEntriesPerPage] = useState<number>(10);
 
   const toggleSortOrder = (field: keyof TableData) => {
     const newSortOrder = { ...sortOrder };
@@ -118,18 +210,37 @@ export default function DefaultTable() {
     );
   });
 
+  const displayedData = filteredData.slice(0, entriesPerPage);
+
   return (
     <>
-      <TextInput
-        id="small"
-        sizing="sm"
-        className="text-black mb-6"
-        type="text"
-        placeholder="Filter..."
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-      />
-        <Table>
+      <div className="flex items-center justify-between relative  mb-6">
+        <div className="flex items-center gap-3">
+          <p className="text-black">Show</p>
+          <Select
+            value={entriesPerPage.toString()}
+            onChange={(e) => setEntriesPerPage(Number(e.target.value))}
+            className=""
+          >
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </Select>
+          <p className="text-black">entries</p>
+        </div>
+        <TextInput
+          id="small"
+          sizing="md"
+          className="text-black"
+          type="text"
+          placeholder="Search..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
+
+      <Table>
         <Table.Head>
           <Table.HeadCell
             className="cursor-pointer select-none relative"
@@ -211,7 +322,7 @@ export default function DefaultTable() {
           <Table.HeadCell>Action</Table.HeadCell>
         </Table.Head>
         <Table.Body className="divide-y">
-          {filteredData.map((item, index) => (
+          {displayedData.map((item, index) => (
             <Table.Row
               key={index}
               className="bg-white dark:border-gray-700 dark:bg-gray-800"
@@ -239,7 +350,7 @@ export default function DefaultTable() {
               </Table.Cell>
               <Table.Cell>
                 <a
-                  className="font-medium text-cyan-600 hover:underline dark:text-cyan-500"
+                  className="font-Urgent text-cyan-600 hover:underline dark:text-cyan-500"
                   href="/tables"
                 >
                   <p>Edit</p>
