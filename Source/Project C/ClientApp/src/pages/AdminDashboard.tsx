@@ -21,7 +21,9 @@ const AdminDashboard = () => {
               <MalfunctionCard count={1}></MalfunctionCard>
             </main>
             <div>
+              <div className="bg-white p-6 rounded-[0.4rem]">
               <AdminTable></AdminTable>
+              </div>
             </div>
           </div>
         </div>
