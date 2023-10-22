@@ -1,7 +1,8 @@
-﻿using Data.Exceptions;
+﻿using API.Utility;
+using Data.Exceptions;
 using Data.Interfaces;
 using Data.Models;
-
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,6 +22,7 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = $"{Roles.ADMIN}, {Roles.EMPLOYEE}")]
     public async Task<IActionResult> GetAll()
     {
         _logger.LogInformation("Fetching all employees");
@@ -89,6 +91,7 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpPut]
+    [Authorize(Roles = $"{Roles.ADMIN}, {Roles.EMPLOYEE}")]
     public async Task<IActionResult> Update([FromBody] Employee employee)
     {
         if (employee is null)
@@ -121,6 +124,7 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpDelete("{employeeId}")]
+    [Authorize(Roles = $"{Roles.ADMIN}")]
     public async Task<IActionResult> Delete(string employeeId)
     {
         if (string.IsNullOrEmpty(employeeId))
