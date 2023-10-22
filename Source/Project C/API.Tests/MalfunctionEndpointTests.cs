@@ -121,15 +121,8 @@ public class MalfunctionEndpointTests : TestBase
 
         Assert.AreEqual(HttpStatusCode.OK, result.StatusCode);
         Assert.IsNotNull(resultModel);
-        Assert.AreEqual(expectedModel.Id, resultModel.Id);
-        Assert.AreEqual(expectedModel.CreatedBy, resultModel.CreatedBy);
-        Assert.AreEqual(expectedModel.CreatedAt, resultModel.CreatedAt);
-        Assert.AreEqual(expectedModel.UpdatedAt, resultModel.UpdatedAt);
-        Assert.AreEqual(expectedModel.UpdatedBy, resultModel.UpdatedBy);
-        Assert.AreEqual(expectedModel.Priority, resultModel.Priority);
-        Assert.AreEqual(expectedModel.Status, resultModel.Status);
-        Assert.AreEqual(expectedModel.Description, resultModel.Description);
-        Assert.AreEqual(expectedModel.Solution, resultModel.Solution);
+        foreach (var property in typeof(Malfunction).GetProperties())
+            Assert.AreEqual(property.GetValue(expectedModel), property.GetValue(resultModel));
     }
 
     [TestMethod]

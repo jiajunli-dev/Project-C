@@ -1,178 +1,110 @@
-﻿using System;
-using System.Net;
-
-using API.Tests.Utility;
-using API.Utility;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-
-namespace API.Tests;
+﻿namespace API.Tests;
 
 [TestClass]
 public class CustomerEndpointTests : TestBase
 {
-    [TestMethod]
-    [DataRow("Get", "Customer")]
-    [DataRow("Post", "Customer")]
-    [DataRow("Put", "Customer")]
-    [DataRow("Get", "Customer/1")]
-    [DataRow("Delete", "Customer/1")]
-    public async Task Endpoints_ReturnUnauthorized(string httpMethod, string url)
-    {
-        //Arrange
-        var client = CreateClient();
-
-        var method = httpMethod switch
-        {
-            "Get" => HttpMethod.Get,
-            "Post" => HttpMethod.Post,
-            "Put" => HttpMethod.Put,
-            "Delete" => HttpMethod.Delete,
-            _ => throw new ArgumentException("Invalid HTTP method", nameof(httpMethod))
-        };
-
-        // Act
-        var response = await client.SendAsync(new HttpRequestMessage(method, url));
-
-        // Assert
-        Assert.AreEqual(HttpStatusCode.Unauthorized, response.StatusCode);
-    }
+    private const string _endpoint = "Customer";
 
     [TestMethod]
-    [DataRow("Get", "Customer", Roles.ADMIN, HttpStatusCode.NoContent)]
-    [DataRow("Get", "Customer", Roles.CUSTOMER, HttpStatusCode.Forbidden)]
-    [DataRow("Get", "Customer", Roles.EMPLOYEE, HttpStatusCode.NoContent)]
-    
-    [DataRow("Get", "Customer/1", Roles.ADMIN, HttpStatusCode.BadRequest)]
-    [DataRow("Get", "Customer/1", Roles.CUSTOMER, HttpStatusCode.BadRequest)]
-    [DataRow("Get", "Customer/1", Roles.EMPLOYEE, HttpStatusCode.BadRequest)]
-    
-    // TODO: Fix test post
-    /*[DataRow("Post", "Customer", Roles.ADMIN, HttpStatusCode.BadRequest)]
-    [DataRow("Post", "Customer", Roles.CUSTOMER, HttpStatusCode.BadRequest)]
-    [DataRow("Post", "Customer", Roles.EMPLOYEE, HttpStatusCode.BadRequest)]*/
-    
-    // TODO: Fix test put
-    /*[DataRow("Put", "Customer", Roles.ADMIN, HttpStatusCode.BadRequest)]
-    [DataRow("Put", "Customer", Roles.CUSTOMER, HttpStatusCode.BadRequest)]
-    [DataRow("Put", "Customer", Roles.EMPLOYEE, HttpStatusCode.BadGateway)]*/
+    [DataRow("Get", _endpoint, Roles.ADMIN, true)]
+    [DataRow("Get", _endpoint, Roles.EMPLOYEE, true)]
+    [DataRow("Get", _endpoint, Roles.CUSTOMER)]
+    [DataRow("Get", _endpoint)]
 
-    [DataRow("Delete", "Customer/1", Roles.CUSTOMER, HttpStatusCode.Forbidden)]
-    [DataRow("Delete", "Customer/1", Roles.EMPLOYEE, HttpStatusCode.Forbidden)]
-    [DataRow("Delete", "Customer/1", Roles.ADMIN, HttpStatusCode.BadRequest)]
-    public async Task Endpoints_EnsureAuthorizationConfiguration(string method, string endpoint, string role, HttpStatusCode expected)
-    {
-        // Arrange
-        var client = role switch
-        {
-            Roles.ADMIN => CreateAdminClient(),
-            Roles.EMPLOYEE => CreateEmployeeClient(),
-            Roles.CUSTOMER => CreateCustomerClient(),
-            _ => throw new ArgumentException("Invalid role", nameof(role)),
-        };
-        var httpMethod = method switch
-        {
-            "Get" => HttpMethod.Get,
-            "Post" => HttpMethod.Post,
-            "Put" => HttpMethod.Put,
-            "Delete" => HttpMethod.Delete,
-            _ => throw new ArgumentException("Invalid HTTP method", nameof(method)),
-        };
+    [DataRow("Get", $"{_endpoint}/1", Roles.ADMIN, true)]
+    [DataRow("Get", $"{_endpoint}/1", Roles.EMPLOYEE, true)]
+    [DataRow("Get", $"{_endpoint}/1", Roles.CUSTOMER, true)]
+    [DataRow("Get", $"{_endpoint}/1")]
 
-        // Act
-        var result = await client.SendAsync(new HttpRequestMessage(httpMethod, endpoint));
+    [DataRow("Post", _endpoint, Roles.ADMIN, true)]
+    [DataRow("Post", _endpoint, Roles.EMPLOYEE, true)]
+    [DataRow("Post", _endpoint, Roles.CUSTOMER, true)]
+    [DataRow("Post", _endpoint)]
 
-        // Assert
-        Assert.AreEqual(expected, result.StatusCode);
-    }
+    [DataRow("Put", _endpoint, Roles.ADMIN, true)]
+    [DataRow("Put", _endpoint, Roles.EMPLOYEE, true)]
+    [DataRow("Put", _endpoint, Roles.CUSTOMER)]
+    [DataRow("Put", _endpoint)]
+
+    [DataRow("Delete", $"{_endpoint}/1", Roles.ADMIN, true)]
+    [DataRow("Delete", $"{_endpoint}/1", Roles.EMPLOYEE)]
+    [DataRow("Delete", $"{_endpoint}/1", Roles.CUSTOMER)]
+    [DataRow("Delete", $"{_endpoint}/1")]
+    public override async Task Endpoints_EnsureAuthorization(string method,
+                                                string endpoint,
+                                                string? role = null,
+                                                bool isAuthorized = false)
+        => await base.Endpoints_EnsureAuthorization(method,
+                                                    endpoint,
+                                                    role,
+                                                    isAuthorized);
 
     [TestMethod]
-    public async Task Get_GetAllReturnNoContent()
+    public async Task Get_GetAllReturnsNoContent()
     {
         // Arrange
         var client = CreateAdminClient();
-        var response = await client.GetAsync("Customer");
-        Assert.IsNotNull(response);
-        if (response.StatusCode == HttpStatusCode.OK)
-        {
-            var customers = await response.Content.ReadFromJsonAsync<List<Customer>>();
-            if (customers != null)
-                foreach (var customer in customers)
-                    await client.DeleteAsync($"Customer/{customer.Id}");
-        }
+        await DeleteAllExistingCustomers(client);
 
         // Act
-        var response2 = await client.GetAsync("Customer");
+        var result = await client.GetAsync(_endpoint);
 
         // Assert
-        Assert.AreEqual(HttpStatusCode.NoContent, response2.StatusCode);
+        Assert.AreEqual(HttpStatusCode.NoContent, result.StatusCode);
     }
 
     [TestMethod]
-    public async Task Get_GetAllReturnOK()
+    public async Task Get_GetAllReturnsOK()
     {
         // Arrange
         var client = CreateAdminClient();
         for (int i = 1; i <= 2; i++)
-        {
-            await client.PostAsJsonAsync("Customer", new Customer
-            {
-                PhoneNumber = "1234567890",
-                CompanyName = $"Test{i} Company",
-                CompanyPhoneNumber = "1234567890",
-                DepartmentName = $"Test{i} Department"
-            });
-        }
+            await CreateCustomerInDb(i);
 
         // Act
-        var response = await client.GetAsync("Customer");
-        var model = await response.Content.ReadFromJsonAsync<List<Customer>>();
-        
+        var result = await client.GetAsync(_endpoint);
+        result.EnsureSuccessStatusCode();
+        var models = await result.Content.ReadFromJsonAsync<List<Customer>>();
 
         // Assert
-        response.EnsureSuccessStatusCode();
-        Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
-        Assert.IsNotNull(model);
-        Assert.IsTrue(model.Any());
+        Assert.AreEqual(HttpStatusCode.OK, result.StatusCode);
+        Assert.IsNotNull(models);
+        Assert.IsTrue(models.Any());
     }
 
     [TestMethod]
-    public async Task Get_GetByIdReturnOk()
+    public async Task Get_GetByIdReturnsOk()
     {
         // Arrange
         var client = CreateAdminClient();
-
-        var model = new Customer
-        {
-            PhoneNumber = "1234567890",
-            CompanyName = "Test Company",
-            CompanyPhoneNumber = "1234567890",
-            DepartmentName = "Test Department"
-        };
-        var response = await client.PostAsJsonAsync("Customer", model);
-        var responseModel = await response.Content.ReadFromJsonAsync<Customer>();
-        Assert.IsNotNull(responseModel);
+        var expectedModel = await CreateCustomerInDb(3);
 
         // Act
-        var response2 = await client.GetAsync($"Customer/{responseModel.Id}");
-        var responseModel2 = await response2.Content.ReadFromJsonAsync<Customer>();
+        var result = await client.GetAsync($"{_endpoint}/{expectedModel.Id}");
+        var resultModel = await result.Content.ReadFromJsonAsync<Customer>();
 
         // Assert
-        Assert.AreEqual(HttpStatusCode.OK, response2.StatusCode);
-        Assert.IsNotNull(responseModel2);
-        Assert.AreEqual(responseModel.Id, responseModel2.Id);
+        Assert.AreEqual(HttpStatusCode.OK, result.StatusCode);
+        Assert.IsNotNull(resultModel);
+        foreach (var property in typeof(Customer).GetProperties())
+            Assert.AreEqual(property.GetValue(expectedModel), property.GetValue(resultModel));
     }
 
     [TestMethod]
-    public async Task Get_GetByIdReturnNoContent()
+    public async Task Get_GetByIdReturnsBadRequest()
     {
         // Arrange
         var client = CreateAdminClient();
 
         // Act
-        var response = await client.GetAsync("Customer/-1");
+        var response = await client.GetAsync($"{_endpoint}/-1");
+        var response2 = await client.GetAsync($"{_endpoint}/0");
+        var response3 = await client.GetAsync($"{_endpoint}/99999");
 
         // Assert
         Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.AreEqual(HttpStatusCode.BadRequest, response2.StatusCode);
+        Assert.AreEqual(HttpStatusCode.BadRequest, response3.StatusCode);
     }
 
     [TestMethod]
@@ -180,23 +112,26 @@ public class CustomerEndpointTests : TestBase
     {
         // Arrange
         var client = CreateAdminClient();
-        var model = new Customer
-        {
-            PhoneNumber = "1234567890",
-            CompanyName = "Test Company",
-            CompanyPhoneNumber = "1234567890",
-            DepartmentName = "Test Department"
-        };
+        var expectedModel = CreateDto(4);
 
         // Act
-        var response = await client.PostAsJsonAsync("Customer", model);
-        var responseModel = await response.Content.ReadFromJsonAsync<Customer>();
+        var result = await client.PostAsJsonAsync(_endpoint, expectedModel);
+        var resultModel = await result.Content.ReadFromJsonAsync<Customer>();
+        result.EnsureSuccessStatusCode();
 
         // Assert
-        response.EnsureSuccessStatusCode();
-        Assert.AreEqual(HttpStatusCode.Created, response.StatusCode);
-        Assert.IsNotNull(responseModel);
-        Assert.AreEqual(model.CompanyName, responseModel.CompanyName);
+        Assert.AreEqual(HttpStatusCode.Created, result.StatusCode);
+        Assert.IsNotNull(resultModel);
+        Assert.AreEqual(expectedModel.Id, resultModel.Id);
+        Assert.AreEqual(expectedModel.CreatedBy, resultModel.CreatedBy);
+        Assert.AreEqual(expectedModel.Username, resultModel.Username);
+        Assert.AreEqual(expectedModel.FirstName, resultModel.FirstName);
+        Assert.AreEqual(expectedModel.LastName, resultModel.LastName);
+        Assert.AreEqual(expectedModel.Email, resultModel.Email);
+        Assert.AreEqual(expectedModel.PhoneNumber, resultModel.PhoneNumber);
+        Assert.AreEqual(expectedModel.CompanyName, resultModel.CompanyName);
+        Assert.AreEqual(expectedModel.CompanyPhoneNumber, resultModel.CompanyPhoneNumber);
+        Assert.AreEqual(expectedModel.DepartmentName, resultModel.DepartmentName);
     }
 
     [TestMethod]
@@ -204,13 +139,13 @@ public class CustomerEndpointTests : TestBase
     {
         // Arrange
         var client = CreateAdminClient();
-        
+
         // Act
-        var response = await client.PostAsJsonAsync("Customer", new Customer { });
+        var result = await client.PostAsJsonAsync("Customer", new CreateCustomerDto { });
 
         // Assert
-        Assert.ThrowsException<HttpRequestException>(response.EnsureSuccessStatusCode);
-        Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.ThrowsException<HttpRequestException>(result.EnsureSuccessStatusCode);
+        Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
     }
 
     [TestMethod]
@@ -218,29 +153,19 @@ public class CustomerEndpointTests : TestBase
     {
         // Arrange
         var client = CreateAdminClient();
-        var model = new Customer
-        {
-            PhoneNumber = "1234567890",
-            CompanyName = "Test Company",
-            CompanyPhoneNumber = "1234567890",
-            DepartmentName = "Test Department"
-        };  
-        var response = await client.PostAsJsonAsync("Customer", model);
-        response.EnsureSuccessStatusCode();
-        var responseModel = await response.Content.ReadFromJsonAsync<Customer>();
-        Assert.IsNotNull(responseModel);
+        var expectedModel = await CreateCustomerInDb(5);
+        var expected = "This is a test";
 
         // Act
-        var expected = "This is a test";
-        responseModel.CompanyName = expected;
-        var response2 = await client.PutAsJsonAsync("Customer", responseModel);
-        var responseModel2 = await response2.Content.ReadFromJsonAsync<Customer>();
+        expectedModel.CompanyName = expected;
+        var result = await client.PutAsJsonAsync(_endpoint, expectedModel);
+        result.EnsureSuccessStatusCode();
+        var resultModel = await result.Content.ReadFromJsonAsync<Customer>();
 
         // Assert
-        response2.EnsureSuccessStatusCode();
-        Assert.AreEqual(HttpStatusCode.OK, response2.StatusCode);
-        Assert.IsNotNull(responseModel2);
-        Assert.AreEqual(expected, responseModel2.CompanyName);
+        Assert.AreEqual(HttpStatusCode.OK, result.StatusCode);
+        Assert.IsNotNull(resultModel);
+        Assert.AreEqual(expected, resultModel.CompanyName);
     }
 
     [TestMethod]
@@ -250,39 +175,31 @@ public class CustomerEndpointTests : TestBase
         var client = CreateAdminClient();
 
         // Act
-        var response = await client.PutAsJsonAsync("Customer", new Customer { });
-        var response2 = await client.PutAsJsonAsync("Customer", new Customer { Id = "-1" });
-    
+        var response = await client.PutAsJsonAsync(_endpoint, new object { });
+        var response2 = await client.PutAsJsonAsync(_endpoint, new Customer { });
+        var response3 = await client.PutAsJsonAsync(_endpoint, new Customer { Id = "-1" });
+
         // Assert
         Assert.ThrowsException<HttpRequestException>(response.EnsureSuccessStatusCode);
         Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
         Assert.ThrowsException<HttpRequestException>(response2.EnsureSuccessStatusCode);
         Assert.AreEqual(HttpStatusCode.BadRequest, response2.StatusCode);
+        Assert.ThrowsException<HttpRequestException>(response3.EnsureSuccessStatusCode);
+        Assert.AreEqual(HttpStatusCode.BadRequest, response3.StatusCode);
     }
 
     [TestMethod]
     public async Task Delete_DeleteReturnsNoContent()
     {
         var client = CreateAdminClient();
-        var model = new Customer
-        {   
-            Id = "123",
-            PhoneNumber = "1234567890",
-            CompanyName = "Test Company",
-            CompanyPhoneNumber = "1234567890",
-            DepartmentName = "Test Department"
-        };
-        var response = await client.PostAsJsonAsync("Customer", model);
-        response.EnsureSuccessStatusCode();
-        var responseModel = await response.Content.ReadFromJsonAsync<Customer>();
-        Assert.IsNotNull(responseModel);
+        var expectedModel = await CreateCustomerInDb(6);
 
         // Act
-        var response2 = await client.DeleteAsync($"Customer/{responseModel.Id}");
+        var result = await client.DeleteAsync($"{_endpoint}/{expectedModel.Id}");
 
         // Assert
-        Assert.IsNotNull(response2);
-        Assert.AreEqual(HttpStatusCode.NoContent, response2.StatusCode);
+        Assert.IsNotNull(result);
+        Assert.AreEqual(HttpStatusCode.NoContent, result.StatusCode);
     }
 
     [TestMethod]
@@ -292,13 +209,62 @@ public class CustomerEndpointTests : TestBase
         var client = CreateAdminClient();
 
         // Act
-        var response = await client.DeleteAsync("Customer/-1");
-        var response2 = await client.DeleteAsync("Customer/1000");
+        var response = await client.DeleteAsync($"{_endpoint}/-1");
+        var response2 = await client.DeleteAsync($"{_endpoint}/1000");
 
         // Assert
         Assert.IsNotNull(response);
         Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
         Assert.IsNotNull(response2);
         Assert.AreEqual(HttpStatusCode.BadRequest, response2.StatusCode);
+    }
+
+    private static CreateCustomerDto CreateDto(int i = 1) => new()
+    {
+        Id = $"Test_{i}",
+        CreatedBy = $"Test{i}",
+        Username = $"Test{i}",
+        FirstName = $"Test{i}",
+        LastName = $"Test{i}",
+        Email = $"test{i}@test.nl",
+        PhoneNumber = "1234567890",
+        CompanyName = $"Test{i} Company",
+        CompanyPhoneNumber = "1234567890",
+        DepartmentName = $"Test{i} Department"
+    };
+
+    private async Task<Customer> CreateCustomerInDb(int i = 1)
+    {
+        var model = CreateDto(i);
+        var client = CreateAdminClient();
+        var result = await client.PostAsJsonAsync(_endpoint, model);
+        try
+        {
+            result.EnsureSuccessStatusCode();
+        }
+        catch (HttpRequestException e)
+        {
+            Assert.Inconclusive($"Unable to create model for test: {e.StatusCode}");
+        }
+        var resultModel = await result.Content.ReadFromJsonAsync<Customer>();
+        if (resultModel is null)
+            Assert.Inconclusive("Failed to create customer");
+        return resultModel;
+    }
+
+    private static async Task DeleteAllExistingCustomers(HttpClient client)
+    {
+        var response = await client.GetAsync(_endpoint);
+        if (response.StatusCode == HttpStatusCode.NoContent)
+            return;
+
+        var models = await response.Content.ReadFromJsonAsync<List<Customer>>();
+        if (models is not null && models.Any())
+        {
+            var tasks = models.Select(customer => client.DeleteAsync($"{_endpoint}/{customer.Id}"));
+            await Task.WhenAll(tasks);
+            if (tasks.Any(task => task.Result.StatusCode != HttpStatusCode.NoContent))
+                Assert.Inconclusive("Unable to delete all customers");
+        }
     }
 }

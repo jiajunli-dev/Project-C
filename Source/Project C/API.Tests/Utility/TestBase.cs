@@ -18,6 +18,35 @@ public abstract class TestBase
         _factory = _provider.GetRequiredService<WebApiFactory<Program>>();
     }
 
+    public virtual async Task Endpoints_EnsureAuthorization(string method,
+                                                string endpoint,
+                                                string? role = null,
+                                                bool isAuthorized = false)
+    {
+        var client = role switch
+        {
+            Roles.ADMIN => CreateAdminClient(),
+            Roles.EMPLOYEE => CreateEmployeeClient(),
+            Roles.CUSTOMER => CreateCustomerClient(),
+            _ => CreateClient(),
+        };
+        var httpMethod = method switch
+        {
+            "Get" => HttpMethod.Get,
+            "Post" => HttpMethod.Post,
+            "Put" => HttpMethod.Put,
+            "Delete" => HttpMethod.Delete,
+            _ => throw new ArgumentException("Invalid HTTP method", nameof(method)),
+        };
+
+        var result = await client.SendAsync(new HttpRequestMessage(httpMethod, endpoint));
+
+        if (isAuthorized)
+            Assert.IsTrue(result.StatusCode is not HttpStatusCode.Forbidden and not HttpStatusCode.Unauthorized);
+        else
+            Assert.IsTrue(result.StatusCode is HttpStatusCode.Forbidden or HttpStatusCode.Unauthorized);
+    }
+
     protected HttpClient CreateClient(string? token = null)
     {
         var client = _factory.CreateClient();

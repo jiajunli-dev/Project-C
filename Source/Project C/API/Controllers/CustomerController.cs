@@ -1,7 +1,10 @@
 ﻿using API.Utility;
+
+using Data.Dtos;
 using Data.Exceptions;
 using Data.Interfaces;
 using Data.Models;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -43,6 +46,8 @@ public class CustomerController : ControllerBase
     [HttpGet("{customerId}")]
     public async Task<IActionResult> GetById(string customerId)
     {
+        _logger.LogInformation($"Fetching customer with ID {customerId}");
+
         try
         {
             var customer = await _customerRepository.GetById(customerId);
@@ -65,16 +70,16 @@ public class CustomerController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] Customer customer)
+    public async Task<IActionResult> Create([FromBody] CreateCustomerDto dto)
     {
-        if (customer is null)
+        if (dto is null)
             return BadRequest("Invalid body content provided");
 
         _logger.LogInformation("Creating customer.");
 
         try
         {
-            var model = await _customerRepository.Create(customer);
+            var model = await _customerRepository.Create(dto.ToModel());
 
             return Created($"Customer/{model.Id}", model);
         }
