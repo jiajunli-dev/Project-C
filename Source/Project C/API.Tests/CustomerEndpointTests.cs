@@ -44,7 +44,7 @@ public class CustomerEndpointTests : TestBase
     {
         // Arrange
         var client = CreateAdminClient();
-        await DeleteAllExistingCustomers(client);
+        await DeleteAllExistingCustomers();
 
         // Act
         var result = await client.GetAsync(_endpoint);
@@ -116,8 +116,8 @@ public class CustomerEndpointTests : TestBase
 
         // Act
         var result = await client.PostAsJsonAsync(_endpoint, expectedModel);
-        var resultModel = await result.Content.ReadFromJsonAsync<Customer>();
         result.EnsureSuccessStatusCode();
+        var resultModel = await result.Content.ReadFromJsonAsync<Customer>();
 
         // Assert
         Assert.AreEqual(HttpStatusCode.Created, result.StatusCode);
@@ -141,7 +141,7 @@ public class CustomerEndpointTests : TestBase
         var client = CreateAdminClient();
 
         // Act
-        var result = await client.PostAsJsonAsync("Customer", new CreateCustomerDto { });
+        var result = await client.PostAsJsonAsync(_endpoint, new CreateCustomerDto { });
 
         // Assert
         Assert.ThrowsException<HttpRequestException>(result.EnsureSuccessStatusCode);
@@ -252,8 +252,9 @@ public class CustomerEndpointTests : TestBase
         return resultModel;
     }
 
-    private static async Task DeleteAllExistingCustomers(HttpClient client)
+    private async Task DeleteAllExistingCustomers()
     {
+        var client = CreateAdminClient();
         var response = await client.GetAsync(_endpoint);
         if (response.StatusCode == HttpStatusCode.NoContent)
             return;
