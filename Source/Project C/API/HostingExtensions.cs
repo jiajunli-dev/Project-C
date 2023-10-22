@@ -117,7 +117,7 @@ namespace API
             app.UseHttpsRedirection();
             app.UseAuthorization();
             app.MapControllers();
-
+            app.UseCors("AllowReactApp");
             return app;
         }
 
@@ -141,7 +141,16 @@ namespace API
                         ClockSkew = TimeSpan.FromSeconds(5)
                     };
                 });
-
+            app.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowReactApp", builder =>
+                {
+                    builder
+                        .WithOrigins("http://localhost:5173") 
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                });
+            });
             return app;
         }
     }
