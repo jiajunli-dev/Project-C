@@ -1,4 +1,6 @@
 ﻿using API.Utility;
+
+using Data.Dtos;
 using Data.Exceptions;
 using Data.Interfaces;
 using Data.Models;
@@ -65,16 +67,16 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] Employee employee)
+    public async Task<IActionResult> Create([FromBody] CreateEmployeeDto dto)
     {
-        if (employee is null)
+        if (dto is null)
             return BadRequest("Invalid body content provided");
 
         _logger.LogInformation("Creating employee.");
 
         try
         {
-            var model = await _employeeRepository.Create(employee);
+            var model = await _employeeRepository.Create(dto.ToModel());
 
             return Created($"Employee/{model.Id}", model);
         }
@@ -92,24 +94,24 @@ public class EmployeeController : ControllerBase
 
     [HttpPut]
     [Authorize(Roles = $"{Roles.ADMIN}, {Roles.EMPLOYEE}")]
-    public async Task<IActionResult> Update([FromBody] Employee employee)
+    public async Task<IActionResult> Update([FromBody] EmployeeDto dto)
     {
-        if (employee is null)
+        if (dto is null)
             return BadRequest("Invalid body content provided");
 
-        _logger.LogInformation("Updating employee with ID: {employeeId}", employee.Id);
+        _logger.LogInformation("Updating employee with ID: {employeeId}", dto.Id);
 
         try
         {
-            return Ok(await _employeeRepository.Update(employee));
+            return Ok(await _employeeRepository.Update(dto.ToModel()));
         }
         catch (ModelNotFoundException)
         {
-            return BadRequest($"A Model with ID \"{employee.Id}\" was not found");
+            return BadRequest($"A Model with ID \"{dto.Id}\" was not found");
         }
         catch (DbUpdateConcurrencyException ex)
         {
-            return Conflict($"Employee with ID \"{employee.Id}\" was updated by another user. Please refresh and try again.");
+            return Conflict($"Employee with ID \"{dto.Id}\" was updated by another user. Please refresh and try again.");
         }
         catch (DbUpdateException ex)
         {

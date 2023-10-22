@@ -4,7 +4,7 @@ using Data.Models;
 
 namespace Data.Dtos;
 
-public class CreateCustomerDto
+public class CreateEmployeeDto
 {
     public string Id { get; set; }
     public string CreatedBy { get; set; }
@@ -16,11 +16,9 @@ public class CreateCustomerDto
     public string Email { get; set; }
     public string PhoneNumber { get; set; }
 
-    public string CompanyName { get; set; }
-    public string CompanyPhoneNumber { get; set; }
-    public string DepartmentName { get; set; }
+    public int DepartmentId { get; set; }
 
-    public Customer ToModel() => new()
+    public Employee ToModel() => new()
     {
         Id = Id,
         CreatedBy = CreatedBy,
@@ -30,8 +28,6 @@ public class CreateCustomerDto
         LastName = LastName,
         Email = Email,
         PhoneNumber = PhoneNumber,
-        CompanyName = CompanyName,
-        CompanyPhoneNumber = CompanyPhoneNumber,
-        DepartmentName = DepartmentName,
+        DepartmentId = DepartmentId,
     };
 }
