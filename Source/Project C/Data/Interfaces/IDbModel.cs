@@ -1,6 +1,6 @@
 ﻿namespace Data.Interfaces;
 
-public interface IDbModel<T> : ICreatable
+public interface IDbModel<T> 
 {
     T Id { get; set; }
 }

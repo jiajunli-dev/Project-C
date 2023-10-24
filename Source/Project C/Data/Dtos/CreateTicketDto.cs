@@ -7,6 +7,7 @@ namespace Data.Dtos;
 
 public class CreateTicketDto
 {
+    [MaxLength(40)]
     public string CreatedBy { get; set; }
     [MaxLength(2048)]
     public string Description { get; set; }
@@ -16,6 +17,7 @@ public class CreateTicketDto
     public string AdditionalNotes { get; set; }
 
     public Priority Priority { get; set; }
+    public Status Status { get; set; }
 
     public Ticket ToModel() => new()
     {
@@ -25,5 +27,6 @@ public class CreateTicketDto
         TriedSolutions = TriedSolutions,
         AdditionalNotes = AdditionalNotes,
         Priority = Priority,
+        Status = Status,
     };
 }

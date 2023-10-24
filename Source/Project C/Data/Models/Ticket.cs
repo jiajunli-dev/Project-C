@@ -9,8 +9,10 @@ public class Ticket : DbModel<int>
 {
     [MaxLength(2048)]
     public string Description { get; set; }
+
     [MaxLength(2048)]
     public string TriedSolutions { get; set; }
+
     [MaxLength(2048)]
     public string AdditionalNotes { get; set; }
 

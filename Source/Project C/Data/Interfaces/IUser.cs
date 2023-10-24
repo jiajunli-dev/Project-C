@@ -6,4 +6,5 @@ public interface IUser : IDbModel<string>
     string FirstName { get; set; }
     string LastName { get; set; }
     string Username { get; set; }
+    string PhoneNumber { get; set; }
 }
