@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 
-using Data.Enums;
 using Data.Models;
 
 namespace Data.Dtos;
@@ -20,17 +19,24 @@ public class DepartmentDto
     }
 
     public int Id { get; set; }
+
     [DataType(DataType.DateTime)]
     public DateTime CreatedAt { get; set; }
+
+    [MaxLength(40)]
     public string CreatedBy { get; set; }
 
     [DataType(DataType.DateTime)]
     public DateTime UpdatedAt { get; set; }
+
+    [MaxLength(40)]
     public string UpdatedBy { get; set; }
 
+    [MaxLength(64)]
     public string Name { get; set; }
-    public string Description { get; set; }
 
+    [MaxLength(2048)]
+    public string Description { get; set; }
 
     public Department ToModel() => new()
     {

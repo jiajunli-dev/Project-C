@@ -23,18 +23,26 @@ public class MalfunctionDto
     }
 
     public int Id { get; set; }
+
     [DataType(DataType.DateTime)]
     public DateTime CreatedAt { get; set; }
+
+    [MaxLength(40)]
     public string CreatedBy { get; set; }
 
     [DataType(DataType.DateTime)]
     public DateTime UpdatedAt { get; set; }
+
+    [MaxLength(40)]
     public string UpdatedBy { get; set; }
 
     public Priority Priority { get; set; }
+
     public Status Status { get; set; }
+
     [MaxLength(2048)]
     public string Description { get; set; }
+
     [MaxLength(2048)]
     public string Solution { get; set; }
 

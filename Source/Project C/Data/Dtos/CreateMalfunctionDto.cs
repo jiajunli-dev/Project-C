@@ -8,12 +8,17 @@ namespace Data.Dtos;
 public class CreateMalfunctionDto
 {
     public int TicketId { get; set; }
+
+    [MaxLength(40)]
     public string CreatedBy { get; set; }
 
     public Priority Priority { get; set; }
+
     public Status Status { get; set; }
+
     [MaxLength(2048)]
     public string Description { get; set; }
+
     [MaxLength(2048)]
     public string Solution { get; set; }
 

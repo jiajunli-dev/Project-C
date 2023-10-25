@@ -20,15 +20,25 @@ public class PhotoDto
     }
 
     public int Id { get; set; }
+
     [DataType(DataType.DateTime)]
     public DateTime CreatedAt { get; set; }
+
+    [MaxLength(40)]
     public string CreatedBy { get; set; }
 
     [DataType(DataType.DateTime)]
     public DateTime UpdatedAt { get; set; }
+
+    [MaxLength(40)]
     public string UpdatedBy { get; set; }
+
+    [MaxLength(256)]
     public string Name { get; set; }
+
+    [MaxLength(20 * 1024 * 1024)]
     public string Data { get; set; } = string.Empty;
+
     public int TicketId { get; set; }
 
     public Photo ToModel() => new()
