@@ -35,17 +35,17 @@ public class AppDbContext : DbContext
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         var entities = ChangeTracker.Entries()
-            .Where(entry => entry is ICreatable && (entry.State == EntityState.Added || entry.State == EntityState.Modified));
+            .Where(entry => entry.State == EntityState.Added || entry.State == EntityState.Modified);
 
         var now = DateTime.UtcNow;
         foreach (var entity in entities)
         {
-            if (entity is ICreatable trackable)
-            {
-                if (entity.State == EntityState.Added)
-                    trackable.CreatedAt = now;
-                trackable.UpdatedAt = now;
-            }
+            var creatable = entity.Entity as ICreatable;
+            if (creatable is null)
+                continue;
+            if (entity.State == EntityState.Added)
+                creatable.CreatedAt = now;
+            creatable.UpdatedAt = now;
         }
 
         return base.SaveChangesAsync(cancellationToken);
