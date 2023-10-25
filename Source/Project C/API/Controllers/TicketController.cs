@@ -85,7 +85,7 @@ public class TicketController : ControllerBase
         {
             var photos = await _photoRepository.GetAllByTicketId(ticketId);
 
-            return photos.Any() ? Ok(photos) : NoContent();
+            return photos.Any() ? Ok(photos.Select(p => new PhotoDto(p)).ToList()) : NoContent();
         }
         catch (Exception ex)
         {

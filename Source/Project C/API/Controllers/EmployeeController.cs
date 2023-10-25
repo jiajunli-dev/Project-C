@@ -3,7 +3,6 @@
 using Data.Dtos;
 using Data.Exceptions;
 using Data.Interfaces;
-using Data.Models;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -34,7 +33,7 @@ public class EmployeeController : ControllerBase
         {
             var employees = await _employeeRepository.GetAll();
 
-            return employees.Any() ? Ok(employees) : NoContent();
+            return employees.Any() ? Ok(employees.Select(m => new EmployeeDto(m)).ToList()) : NoContent();
         }
         catch (Exception ex)
         {
@@ -50,7 +49,7 @@ public class EmployeeController : ControllerBase
         {
             var employee = await _employeeRepository.GetById(employeeId);
 
-            return employee is null ? NoContent() : Ok(employee);
+            return employee is null ? NoContent() : Ok(new EmployeeDto(employee));
         }
         catch (ModelNotFoundException)
         {
@@ -79,7 +78,7 @@ public class EmployeeController : ControllerBase
         {
             var model = await _employeeRepository.Create(dto.ToModel());
 
-            return Created($"Employee/{model.Id}", model);
+            return Created($"Employee/{model.Id}", new EmployeeDto(model));
         }
         catch (DbUpdateException ex)
         {
@@ -104,7 +103,8 @@ public class EmployeeController : ControllerBase
 
         try
         {
-            return Ok(await _employeeRepository.Update(dto.ToModel()));
+            var model = await _employeeRepository.Update(dto.ToModel());
+            return Ok(new EmployeeDto(model));
         }
         catch (ModelNotFoundException)
         {

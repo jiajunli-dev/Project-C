@@ -35,7 +35,7 @@ public class PhotoController : ControllerBase
         try
         {
             var photo = await _photoRepository.GetById(photoId);
-            return photo is null ? NoContent() : Ok(photo);
+            return photo is null ? NoContent() : Ok(new PhotoDto(photo));
         }
         catch (ModelNotFoundException)
         {
@@ -68,7 +68,7 @@ public class PhotoController : ControllerBase
         {
             var model = await _photoRepository.Create(dto.ToModel());
 
-            return Created($"Photo/{model.Id}", model);
+            return Created($"Photo/{model.Id}", new PhotoDto(model));
         }
         catch (DbUpdateException ex)
         {

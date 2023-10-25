@@ -33,7 +33,7 @@ namespace API.Controllers
             {
                 var malfunctions = await _malfunctionRepository.GetAll();
 
-                return malfunctions.Any() ? Ok(malfunctions) : NoContent();
+                return malfunctions.Any() ? Ok(malfunctions.Select(m => new MalfunctionDto(m)).ToList()) : NoContent();
             }
             catch (Exception ex)
             {
@@ -50,7 +50,8 @@ namespace API.Controllers
             try
             {
                 var malfunction = await _malfunctionRepository.GetById(malfunctionId);
-                return malfunction is null ? NoContent() : Ok(malfunction);
+
+                return malfunction is null ? NoContent() : Ok(new MalfunctionDto(malfunction));
             }
             catch (ModelNotFoundException)
             {
@@ -78,7 +79,7 @@ namespace API.Controllers
             try
             {
                 var model = await _malfunctionRepository.Create(dto.ToModel());
-                return Created($"Malfunction/{model.Id}", model);
+                return Created($"Malfunction/{model.Id}", new MalfunctionDto(model));
             }
             catch (DbUpdateException ex)
             {
@@ -90,7 +91,6 @@ namespace API.Controllers
                 _logger.LogError(ex, "An unexpected error occurred while creating the malfunction");
                 return StatusCode(500, "An unexpected error occurred while processing your request.");
             }
-
         }
 
         [HttpPut]
@@ -106,7 +106,8 @@ namespace API.Controllers
 
             try
             {
-                return Ok(await _malfunctionRepository.Update(dto.ToModel()));
+                var model = await _malfunctionRepository.Update(dto.ToModel());
+                return Ok(new MalfunctionDto(model));
             }
             catch (ModelNotFoundException)
             {
