@@ -8,7 +8,7 @@ public class DepartmentEndpointTests : TestBase
     [TestMethod]
     [DataRow("Get", _endpoint, Roles.ADMIN, true)]
     [DataRow("Get", _endpoint, Roles.EMPLOYEE, true)]
-    [DataRow("Get", _endpoint, Roles.CUSTOMER)]
+    [DataRow("Get", _endpoint, Roles.CUSTOMER, true)]
     [DataRow("Get", _endpoint)]
 
     [DataRow("Get", $"{_endpoint}/1", Roles.ADMIN, true)]
@@ -18,7 +18,7 @@ public class DepartmentEndpointTests : TestBase
 
     [DataRow("Post", _endpoint, Roles.ADMIN, true)]
     [DataRow("Post", _endpoint, Roles.EMPLOYEE, true)]
-    [DataRow("Post", _endpoint, Roles.CUSTOMER, true)]
+    [DataRow("Post", _endpoint, Roles.CUSTOMER)]
     [DataRow("Post", _endpoint)]
 
     [DataRow("Put", _endpoint, Roles.ADMIN, true)]
@@ -27,7 +27,7 @@ public class DepartmentEndpointTests : TestBase
     [DataRow("Put", _endpoint)]
 
     [DataRow("Delete", $"{_endpoint}/1", Roles.ADMIN, true)]
-    [DataRow("Delete", $"{_endpoint}/1", Roles.EMPLOYEE)]
+    [DataRow("Delete", $"{_endpoint}/1", Roles.EMPLOYEE, true)]
     [DataRow("Delete", $"{_endpoint}/1", Roles.CUSTOMER)]
     [DataRow("Delete", $"{_endpoint}/1")]
     public override async Task Endpoints_EnsureAuthorization(string method,
@@ -54,13 +54,12 @@ public class DepartmentEndpointTests : TestBase
     public async Task Get_GetAllReturnsOK()
     {
         var client = CreateAdminClient();
-        var expectedTicket = await CreateTicketInDb(1);
         for (int i = 1; i <= 2; i++)
-            await CreateDepartmentInDb(expectedTicket.Id, i);
+            await CreateDepartmentInDb(i);
 
         var result = await client.GetAsync(_endpoint);
         result.EnsureSuccessStatusCode();
-        var models = await result.Content.ReadFromJsonAsync<List<Department>>();
+        var models = await result.Content.ReadFromJsonAsync<List<DepartmentDto>>();
 
         Assert.AreEqual(HttpStatusCode.OK, result.StatusCode);
         Assert.IsNotNull(models);
@@ -71,15 +70,14 @@ public class DepartmentEndpointTests : TestBase
     public async Task Get_GetByIdReturnsOk()
     {
         var client = CreateAdminClient();
-        var expectedTicket = await CreateTicketInDb(3);
-        var expectedModel = await CreateDepartmentInDb(expectedTicket.Id, 3);
+        var expectedModel = await CreateDepartmentInDb(3);
 
         var result = await client.GetAsync($"{_endpoint}/{expectedModel.Id}");
-        var resultModel = await result.Content.ReadFromJsonAsync<Department>();
+        var resultModel = await result.Content.ReadFromJsonAsync<DepartmentDto>();
 
         Assert.AreEqual(HttpStatusCode.OK, result.StatusCode);
         Assert.IsNotNull(resultModel);
-        foreach (var property in typeof(Department).GetProperties())
+        foreach (var property in typeof(DepartmentDto).GetProperties())
             Assert.AreEqual(property.GetValue(expectedModel), property.GetValue(resultModel));
     }
 
@@ -101,12 +99,11 @@ public class DepartmentEndpointTests : TestBase
     public async Task Post_CreateReturnsCreated()
     {
         var client = CreateAdminClient();
-        var expectedTicket = await CreateTicketInDb(4);
-        var expectedModel = CreateDepartmentDto(expectedTicket.Id, 4);
+        var expectedModel = CreateDepartmentDto(4);
 
         var result = await client.PostAsJsonAsync(_endpoint, expectedModel);
         result.EnsureSuccessStatusCode();
-        var resultModel = await result.Content.ReadFromJsonAsync<Department>();
+        var resultModel = await result.Content.ReadFromJsonAsync<DepartmentDto>();
 
         Assert.AreEqual(HttpStatusCode.Created, result.StatusCode);
         Assert.IsNotNull(resultModel);
@@ -131,14 +128,13 @@ public class DepartmentEndpointTests : TestBase
     public async Task Put_UpdateReturnsOk()
     {
         var client = CreateAdminClient();
-        var expectedTicket = await CreateTicketInDb(5);
-        var expectedModel = await CreateDepartmentInDb(expectedTicket.Id, 5);
+        var expectedModel = await CreateDepartmentInDb(5);
         var expected = "This is a changed value";
 
         expectedModel.Description = expected;
         var result = await client.PutAsJsonAsync(_endpoint, expectedModel);
         result.EnsureSuccessStatusCode();
-        var resultModel = await result.Content.ReadFromJsonAsync<Department>();
+        var resultModel = await result.Content.ReadFromJsonAsync<DepartmentDto>();
 
         Assert.AreEqual(HttpStatusCode.OK, result.StatusCode);
         Assert.IsNotNull(resultModel);
@@ -151,8 +147,8 @@ public class DepartmentEndpointTests : TestBase
         var client = CreateAdminClient();
 
         var response = await client.PutAsJsonAsync(_endpoint, new object { });
-        var response2 = await client.PutAsJsonAsync(_endpoint, new Department { Id = -1 });
-        var response3 = await client.PutAsJsonAsync(_endpoint, new Department { Id = 0 });
+        var response2 = await client.PutAsJsonAsync(_endpoint, new DepartmentDto { Id = -1 });
+        var response3 = await client.PutAsJsonAsync(_endpoint, new DepartmentDto { Id = 0 });
 
         Assert.ThrowsException<HttpRequestException>(response.EnsureSuccessStatusCode);
         Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
@@ -166,8 +162,7 @@ public class DepartmentEndpointTests : TestBase
     public async Task Delete_DeleteReturnsNoContent()
     {
         var client = CreateAdminClient();
-        var expectedTicket = await CreateTicketInDb(6);
-        var expectedModel = await CreateDepartmentInDb(expectedTicket.Id, 6);
+        var expectedModel = await CreateDepartmentInDb(6);
 
         var result = await client.DeleteAsync($"{_endpoint}/{expectedModel.Id}");
 
@@ -189,46 +184,16 @@ public class DepartmentEndpointTests : TestBase
         Assert.AreEqual(HttpStatusCode.BadRequest, response2.StatusCode);
     }
 
-    private static CreateDepartmentDto CreateDepartmentDto(int ticketId, int i) => new()
+    private static CreateDepartmentDto CreateDepartmentDto(int i) => new()
     {
         CreatedBy = $"Test_{i}",
         Name = $"Test_{i}",
         Description = $"Test_{i}",
-
     };
 
-    private static CreateTicketDto CreateTicketDto(int i = 1) => new()
+    private async Task<DepartmentDto> CreateDepartmentInDb(int i = 1)
     {
-        CreatedBy = $"Test_{i}",
-        AdditionalNotes = $"Test_{i}",
-        TriedSolutions = $"Test_{i}",
-        Description = $"Test_{i}",
-        Priority = Priority.Critical
-    };
-
-    private async Task<Ticket> CreateTicketInDb(int i = 1)
-    {
-        var model = CreateTicketDto(i);
-        var client = CreateAdminClient();
-        var result = await client.PostAsJsonAsync("Ticket", model);
-        try
-        {
-            result.EnsureSuccessStatusCode();
-        }
-        catch (HttpRequestException e)
-        {
-            Assert.Inconclusive($"Unable to create model for test: {e.StatusCode}");
-        }
-        var resultModel = await result.Content.ReadFromJsonAsync<Ticket>();
-        if (resultModel is null)
-            Assert.Inconclusive("Failed to create ticket");
-
-        return resultModel;
-    }
-
-    private async Task<Department> CreateDepartmentInDb(int ticketId, int i = 1)
-    {
-        var model = CreateDepartmentDto(ticketId, i);
+        var model = CreateDepartmentDto(i);
         var client = CreateAdminClient();
         var result = await client.PostAsJsonAsync(_endpoint, model);
         try
@@ -239,7 +204,7 @@ public class DepartmentEndpointTests : TestBase
         {
             Assert.Inconclusive($"Unable to create model for test: {e.StatusCode}");
         }
-        var resultModel = await result.Content.ReadFromJsonAsync<Department>();
+        var resultModel = await result.Content.ReadFromJsonAsync<DepartmentDto>();
         if (resultModel is null)
             Assert.Inconclusive("Failed to create department");
 
@@ -253,7 +218,7 @@ public class DepartmentEndpointTests : TestBase
         if (response.StatusCode == HttpStatusCode.NoContent)
             return;
 
-        var models = await response.Content.ReadFromJsonAsync<List<Department>>();
+        var models = await response.Content.ReadFromJsonAsync<List<DepartmentDto>>();
         if (models is not null && models.Any())
         {
             var tasks = models.Select(model => client.DeleteAsync($"{_endpoint}/{model.Id}"));
