@@ -5,7 +5,7 @@ export class CreateTicket {
     public createdBy?: string;
 
     public description?: string;
-    public triedSolutions?: string;
+    public triedSolutions?: string[];
     public additionalNotes?: string;
     public priority?: Priority;
     public status?: Status;
@@ -16,6 +16,9 @@ export class CreateTicket {
         }
         if (typeof json.priority === 'number') {
             json.priority = Priority[json.priority];
+        }
+        if (typeof json.triedSolutions === 'string') {
+            json.triedSolutions = json.triedSolutions.split(',');
         }
 
         const model = new CreateTicket();
@@ -35,6 +38,9 @@ export class CreateTicket {
         if (typeof obj.priority !== 'number') {
             obj.priority = Status[obj.priority];
         }
+        if (typeof obj.triedSolutions !== 'string') {
+            obj.triedSolutions = obj.triedSolutions.join(',');
+        }
 
         return JSON.stringify(obj);
     }
@@ -53,6 +59,8 @@ export class CreateTicket {
 
             } else if (['description', 'triedSolutions', 'additionalNotes'].includes(key) && value.length > 2048) {
                 errors.push(`${key} must be no longer than 2048 characters.`);
+            } else if (key === 'triedSolutions' && value.join(',').length > 2048) {
+                errors.push(`${key} must be no longer than 2048 items.`);
             }
         });
 
