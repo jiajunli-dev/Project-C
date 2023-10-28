@@ -1,6 +1,6 @@
-import { SignedIn, SignedOut } from "@clerk/clerk-react";
+import { RedirectToSignIn, SignedIn, SignedOut } from "@clerk/clerk-react";
 import LoginPage from "./LoginPage";
-import AdminDashboard from "./AdminDashboard";
+import AdminDashboard from "./AdminTickets";
 import SideBar from "../components/SideBar";
 
 const HomePage = () => {

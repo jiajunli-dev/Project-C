@@ -5,7 +5,7 @@ import MalfunctionCard from "../components/adminCards/MalfunctionCard";
 import SideBar from "../components/SideBar";
 import TotalTickets from "../components/adminCards/TotalTickets";
 
-const AdminDashboard = () => {
+const AdminTickets = () => {
   return (
     <>
       <div className="flex gap-10 bg-[#F8F8F8] min-h-screen">
@@ -31,4 +31,4 @@ const AdminDashboard = () => {
     </>
   );
 };
-export default AdminDashboard;
+export default AdminTickets;
