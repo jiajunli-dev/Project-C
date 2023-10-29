@@ -4,8 +4,9 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import CreateTicket from "./pages/CreateTicket";
-import AdminDashboard from "./pages/AdminDashboard";
+import AdminDashboard from "./pages/AdminTickets";
 import Users from "./pages/Users";
+import ApiTest from "./pages/ApiTest";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
             <Route path="/users" element={<Users />} />
             <Route path="/tickets" element={<AdminDashboard />} />
             <Route path="/create-ticket" element={<CreateTicket />} />
+            <Route path="/ApiTest" element={<ApiTest />} />
           </Route>
         </Routes>
       </Router>
