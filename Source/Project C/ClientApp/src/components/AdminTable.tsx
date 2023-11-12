@@ -1,4 +1,4 @@
-import { Label, Select, Table, TextInput } from "flowbite-react";
+import { Select, Table, TextInput } from "flowbite-react";
 import { useState } from "react";
 import chevronUp from "../assets/chevron-up.png";
 import chevronDown from "../assets/chevron-down.png";
@@ -215,32 +215,18 @@ export default function DefaultTable() {
   return (
     <>
       <div className="flex items-center justify-between relative  mb-6">
-        <div className="flex items-center gap-3">
-          <p className="text-black">Show</p>
-          <Select
-            value={entriesPerPage.toString()}
-            onChange={(e) => setEntriesPerPage(Number(e.target.value))}
-            className=""
-          >
-            <option value="10">10</option>
-            <option value="25">25</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-          </Select>
-          <p className="text-black">entries</p>
-        </div>
         <TextInput
           id="small"
-          sizing="md"
+          sizing="l"
           className="text-black"
           type="text"
-          placeholder="Search..."
+          placeholder="Filter tickets..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
       </div>
 
-      <Table>
+      <Table className="border border-slate-200 bg-[#F9FAFD] ">
         <Table.Head>
           <Table.HeadCell
             className="cursor-pointer select-none relative"
@@ -360,6 +346,24 @@ export default function DefaultTable() {
           ))}
         </Table.Body>
       </Table>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3 my-7">
+          <p className="text-black">Rows per page</p>
+          <Select
+            value={entriesPerPage.toString()}
+            onChange={(e) => setEntriesPerPage(Number(e.target.value))}
+            className=""
+          >
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </Select>
+        </div>
+        <div>
+          <p className="text-black">Page 1 of 10</p>
+        </div>
+      </div>
     </>
   );
 }

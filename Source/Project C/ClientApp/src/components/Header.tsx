@@ -11,7 +11,7 @@ const Header = () => {
 
   return (
     <>
-      <div className="flex items-center justify-between p-5 border-b-[1px] border-gray-200 bg-white dark:bg-darkmodeBlack ">
+      <header className="flex items-center justify-between p-5 mb-10 border-b-[1px] border-gray-200 bg-white dark:bg-darkmodeBlack ">
         <div>
           <img
             src={logo}
@@ -82,7 +82,7 @@ const Header = () => {
             />
           </div>
         </div>
-      </div>
+      </header>
     </>
   );
 };

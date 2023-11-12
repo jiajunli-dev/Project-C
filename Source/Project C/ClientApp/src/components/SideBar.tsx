@@ -1,6 +1,6 @@
 import "../css/sidebar.css";
 import Darknew from "../Hooks/Darkmode";
-import { SignOutButton, SignedOut } from "@clerk/clerk-react";
+import { SignOutButton } from "@clerk/clerk-react";
 import { SignedIn, UserButton } from "@clerk/clerk-react";
 import ShowName from "./ShowName";
 
