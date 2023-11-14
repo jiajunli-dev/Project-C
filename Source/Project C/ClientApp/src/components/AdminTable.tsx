@@ -1,8 +1,10 @@
 import { Select, Table, TextInput } from "flowbite-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import chevronUp from "../assets/chevron-up.png";
 import chevronDown from "../assets/chevron-down.png";
 import "../css/admintable.css";
+import { Pagination } from "@mui/material";
+import { PaginationButton } from "flowbite-react/lib/esm/components/Pagination/PaginationButton";
 
 interface TableData {
   id: number;
@@ -177,40 +179,68 @@ export default function DefaultTable() {
   );
 
   const [entriesPerPage, setEntriesPerPage] = useState<number>(10);
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
+  
   const toggleSortOrder = (field: keyof TableData) => {
-    const newSortOrder = { ...sortOrder };
-    newSortOrder[field] = sortOrder[field] === "asc" ? "desc" : "asc";
-    setSortOrder(newSortOrder);
-
-    const sortedData = [...data];
-    sortedData.sort((a, b) => {
-      if (newSortOrder[field] === "asc") {
-        return a[field] < b[field] ? -1 : 1;
-      } else {
-        return a[field] > b[field] ? -1 : 1;
-      }
+    setSortOrder((prevSortOrder) => {
+      const newSortOrder = { ...prevSortOrder };
+      newSortOrder[field] = prevSortOrder[field] === "asc" ? "desc" : "asc";
+  
+      const sortedData = [...data];
+      sortedData.sort((a, b) => {
+        if (newSortOrder[field] === "asc") {
+          return a[field] < b[field] ? -1 : 1;
+        } else {
+          return a[field] > b[field] ? -1 : 1;
+        }
+      });
+  
+      console.log("New Sort Order:", newSortOrder);
+      console.log("Sorted Data:", sortedData);
+  
+      setData(sortedData);
+  
+      return newSortOrder;
     });
-
-    setData(sortedData);
   };
 
   const chevronClass = (field: keyof TableData) =>
     sortOrder[field] === "asc" ? chevronDown : chevronUp;
 
-  const filteredData = data.filter((item) => {
-    const query = searchQuery.toLowerCase();
-    return (
-      item.requestedBy.toLowerCase().includes(query) ||
-      item.subject.toLowerCase().includes(query) ||
-      item.assignee.toLowerCase().includes(query) ||
-      item.priority.toLowerCase().includes(query) ||
-      item.createDate.includes(query) ||
-      item.status.toLowerCase().includes(query)
-    );
-  });
+  const updateFilteredData = () => {
+    const updatedFilteredData = initialData.filter((item) => {
+      const query = searchQuery.toLowerCase();
+      return (
+        item.requestedBy.toLowerCase().includes(query) ||
+        item.subject.toLowerCase().includes(query) ||
+        item.assignee.toLowerCase().includes(query) ||
+        item.priority.toLowerCase().includes(query) ||
+        item.createDate.includes(query) ||
+        item.status.toLowerCase().includes(query)
+      );
+    });
 
-  const displayedData = filteredData.slice(0, entriesPerPage);
+    const updatedTotalPages = Math.ceil(
+      updatedFilteredData.length / entriesPerPage
+    );
+
+    if (currentPage > updatedTotalPages) {
+      setCurrentPage(updatedTotalPages);
+    }
+
+    return updatedFilteredData;
+  };
+
+  const filteredData = updateFilteredData();
+
+  const totalPages = Math.ceil(filteredData.length / entriesPerPage);
+
+  const displayedData = filteredData.slice(
+    (currentPage - 1) * entriesPerPage,
+    currentPage * entriesPerPage
+  );
+
 
   return (
     <>
@@ -347,7 +377,7 @@ export default function DefaultTable() {
         </Table.Body>
       </Table>
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3 my-7">
+        <div className="flex items-center gap-3 mt-2">
           <p className="text-black">Rows per page</p>
           <Select
             value={entriesPerPage.toString()}
@@ -360,9 +390,13 @@ export default function DefaultTable() {
             <option value="100">100</option>
           </Select>
         </div>
-        <div>
-          <p className="text-black">Page 1 of 10</p>
-        </div>
+        <Pagination
+          count={totalPages}
+          onChange={(event, page) => {
+            setCurrentPage(page);
+          }}
+          shape="rounded"
+        />
       </div>
     </>
   );

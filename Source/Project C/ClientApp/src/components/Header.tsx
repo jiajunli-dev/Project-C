@@ -1,6 +1,4 @@
 import logo from "../assets/viscon_logo-removebg-preview.png";
-import searchIcon from "../assets/search_icon.png";
-import inboxIcon from "../assets/inbox_icon.png";
 import greenLightIcon from "../assets/green_light_icon.png";
 import { useNavigate } from "react-router-dom";
 import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
@@ -47,7 +45,6 @@ const Header = () => {
               <p className="text-black font-semibold name dark:text-white ">
                 Sign In
               </p>
-              {/* <img className="mx-1 mr-3 w-[28%] " src={chevDownIcon} alt="" /> */}
             </button>
           </SignedOut>
 
@@ -67,19 +64,6 @@ const Header = () => {
                 <UserButton afterSignOutUrl="/"></UserButton>
               </div>
             </SignedIn>
-          </div>
-
-          <div className="flex items-center gap-[1.5rem] pr-[5rem]">
-            <img
-              src={searchIcon}
-              className="object-contain cursor-pointer search__icon hover:scale-105 ease-linear duration-150 dark:bg-white rounded-xl"
-              alt="Search Icon"
-            />
-            <img
-              src={inboxIcon}
-              className="object-contain cursor-pointer hover:scale-105 ease-linear duration-150 dark:bg-white rounded-xl"
-              alt="Inbox Icon"
-            />
           </div>
         </div>
       </header>
