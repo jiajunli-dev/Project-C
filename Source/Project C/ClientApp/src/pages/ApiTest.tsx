@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import SideBar from '../components/SideBar';
 import { TicketService } from '../services/ticketService';
 import { useClerk } from '@clerk/clerk-react';
 import { Ticket } from '../models/Ticket';
@@ -128,7 +127,6 @@ export default function ApiTest() {
     return (
         <>
             <div className="flex gap-10 bg-[#F8F8F8] min-h-screen">
-                <SideBar />
                 <div className="w-full bg-[#F8F8F8] mt-10">
                     <div className="flex flex-col gap-16 pr-5">
                         <main className="grid grid-cols-[repeat(4,minmax(100px,500px))] h-min gap-6">

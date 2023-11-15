@@ -1,10 +1,9 @@
 import { Select, Table, TextInput } from "flowbite-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import chevronUp from "../assets/chevron-up.png";
 import chevronDown from "../assets/chevron-down.png";
 import "../css/admintable.css";
 import { Pagination } from "@mui/material";
-import { PaginationButton } from "flowbite-react/lib/esm/components/Pagination/PaginationButton";
 
 interface TableData {
   id: number;
