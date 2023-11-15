@@ -338,9 +338,9 @@ export default function DefaultTable() {
           <Table.HeadCell>Action</Table.HeadCell>
         </Table.Head>
         <Table.Body className="divide-y">
-          {displayedData.map((item, index) => (
+          {displayedData.map((item) => (
             <Table.Row
-              key={index}
+              key={item.id}
               className="bg-white dark:border-gray-700 dark:bg-gray-800"
             >
               <Table.Cell className="font-bold text-black">
