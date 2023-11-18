@@ -52,7 +52,7 @@ export class employeeService {
     }
 
     async update(token: string, model: Employee): Promise<Employee | undefined> {
-        const request = this.createRequest("PUT", token, `Employee/${model.id}`, model.toJSON());
+        const request = this.createRequest("PUT", token, "Employee", model.toJSON());
         const response = await fetch(request);
 
         if (!response.ok) {
