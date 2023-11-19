@@ -402,3 +402,4 @@ FodyWeavers.xsd
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+/Source/Project C/API/logs/*
