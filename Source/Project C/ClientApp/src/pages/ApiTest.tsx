@@ -6,8 +6,10 @@ import { CreateTicket } from '../models/CreateTicket';
 import { Priority } from '../models/Priority';
 import { Status } from '../models/Status';
 
+// TODO move to config
 const tokenType = 'api_token';
 
+// TODO delete this file when done testing
 function renderArray(result: Ticket[] | undefined) {
     if (result) {
         return (

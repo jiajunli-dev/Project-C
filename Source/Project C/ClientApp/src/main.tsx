@@ -9,6 +9,7 @@ import App from "./App";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ClerkProvider
+      // TODO move to config
       publishableKey={
         "pk_test_c3RpcnJpbmctbXVza294LTMuY2xlcmsuYWNjb3VudHMuZGV2JA"
       }

@@ -3,6 +3,7 @@ import { CreateTicket } from "../models/CreateTicket";
 import { Photo } from "../models/Photo";
 
 export class TicketService {
+    // TODO: Move to config
     constructor(private baseUrl: string = "https://localhost:7004") { }
 
     async getAll(token: string): Promise<Ticket[] | undefined> {
