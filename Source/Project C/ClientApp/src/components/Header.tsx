@@ -1,21 +1,76 @@
-import logo from '../assets/viscon_logo-removebg-preview.png'
-import { useNavigate } from 'react-router-dom'
+import logo from "../assets/viscon_logo-removebg-preview.png";
+import greenLightIcon from "../assets/green_light_icon.png";
+import { useNavigate } from "react-router-dom";
+import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
+import ShowName from "./ShowName";
+import { DarkThemeToggle, Flowbite } from "flowbite-react";
 
 const Header = () => {
-
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   return (
-    <div className='min-h-[60px] absolute top-0 right-0 left-0 flex items-center justify-between bg-white p-1'>
-        <img src={logo} alt="logo" className="h-[50px] max-w-[150px] cursor-pointer hover:scale-95" onClick={() => navigate("/")} />
-        <svg xmlns="http://www.w3.org/2000/svg" fill="#009fe3" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-14 h-14 cursor-pointer"
-          onClick={() => navigate("/authentication")}
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
-        </svg>
+    <>
+      <Flowbite>
+        <header className="flex items-center justify-between p-5 mb-10 border-b-[4px] border-gray-200 bg-white dark:bg-darkmodeBlack ">
+          <div>
+            <img
+              src={logo}
+              alt="A logo of Viscon Group"
+              className="h-[60px] max-w-[180px] cursor-pointer hover:scale-105 ease-linear duration-150 "
+              onClick={() => navigate("/")}
+            />
+          </div>
+          <div className="flex items-center">
+            <ul className="flex text-black items-center text-lg header__ul gap-10">
+              <li onClick={() => navigate("/create-ticket")} className="cursor-pointer hover:text-orange-600 ease-linear duration-150 dark:text-white">
+                Create ticket
+              </li>
+              <li className="cursor-pointer hover:text-orange-600 ease-linear duration-150 dark:text-white">
+                FAQ
+              </li>
+              <li className="cursor-pointer hover:text-orange-600 ease-linear duration-150 dark:text-white">
+                About us
+              </li>
+              <li className="cursor-pointer hover:text-orange-600 ease-linear duration-150 dark:text-white">
+                Contact us
+              </li>
+            </ul>
+          </div>
+          <DarkThemeToggle defaultValue="dark" className="hover:bg-transparent hover:border-black hover:text-initial"/>
+          <div className="flex items-center">
+            <SignedOut>
+              <button
+                className="flex items-center cursor-pointer bg-gray-200 dark:bg-gray-700 mr-[1.75rem]"
+                onClick={() => navigate("/authentication")}
+              >
+                <p className="text-black font-semibold name dark:text-white ">
+                  Sign In
+                </p>
+              </button>
+            </SignedOut>
 
-  </div>
-  )
-}
+            {/* If signed in */}
+            <div className="flex gap-7 items-center">
+              <SignedIn>
+                <div className="flex gap-2 items-center ">
+                  <ShowName></ShowName>
 
-export default Header
+                  <img
+                    className="h-[10px]"
+                    src={greenLightIcon}
+                    alt="Green Light Icon"
+                  />
+                </div>
+                <div className="mr-6">
+                  <UserButton afterSignOutUrl="/"></UserButton>
+                </div>
+              </SignedIn>
+            </div>
+          </div>
+        </header>
+      </Flowbite>
+    </>
+  );
+};
+
+export default Header;

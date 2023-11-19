@@ -1,9 +1,8 @@
-const LoginPage = () => {
-  return (
-    <div className='flex items-center justify-center text-black'>
-        Login Page 
-    </div>
-  )
+import { SignIn } from "@clerk/clerk-react";
+import "../css/loginpage.css"
+
+function LoginPage() {
+  return <div className="signin"><SignIn></SignIn></div>;
 }
 
-export default LoginPage
+export default LoginPage;
