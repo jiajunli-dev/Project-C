@@ -80,7 +80,7 @@ export default function ApiTest() {
                     const ticket = new CreateTicket();
                     ticket.createdBy = 'Test User';
                     ticket.description = 'Test Description';
-                    ticket.triedSolutions = 'Test Solutions';
+                    ticket.triedSolutions = ['Test Solutions'];
                     ticket.additionalNotes = 'Test Notes';
                     ticket.priority = Priority.Low;
                     ticket.status = Status.Open;
@@ -99,7 +99,7 @@ export default function ApiTest() {
                     const ticket = new CreateTicket();
                     ticket.createdBy = 'Test User';
                     ticket.description = 'Test Description';
-                    ticket.triedSolutions = 'Test Solutions';
+                    ticket.triedSolutions = ['Test Solutions'];
                     ticket.additionalNotes = 'Test Notes';
                     ticket.priority = Priority.Low;
                     ticket.status = Status.Open;
