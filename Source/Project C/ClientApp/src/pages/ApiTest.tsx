@@ -6,8 +6,10 @@ import { CreateTicket } from '../models/CreateTicket';
 import { Priority } from '../models/Priority';
 import { Status } from '../models/Status';
 
+// TODO move to config
 const tokenType = 'api_token';
 
+// TODO delete this file when done testing
 function renderArray(result: Ticket[] | undefined) {
     if (result) {
         return (
@@ -80,9 +82,9 @@ export default function ApiTest() {
                     const ticket = new CreateTicket();
                     ticket.createdBy = 'Test User';
                     ticket.description = 'Test Description';
-                    ticket.triedSolutions = 'Test Solutions';
+                    ticket.triedSolutions = ['Test Solutions'];
                     ticket.additionalNotes = 'Test Notes';
-                    ticket.priority = Priority.Low;
+                    ticket.priority = Priority.Normal;
                     ticket.status = Status.Open;
 
                     const model = await service.getById(token, 5);
@@ -99,9 +101,9 @@ export default function ApiTest() {
                     const ticket = new CreateTicket();
                     ticket.createdBy = 'Test User';
                     ticket.description = 'Test Description';
-                    ticket.triedSolutions = 'Test Solutions';
+                    ticket.triedSolutions = ['Test Solutions'];
                     ticket.additionalNotes = 'Test Notes';
-                    ticket.priority = Priority.Low;
+                    ticket.priority = Priority.Normal;
                     ticket.status = Status.Open;
 
                     const data = await service.create(token, ticket);
