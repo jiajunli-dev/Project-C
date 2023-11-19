@@ -1,8 +1,9 @@
 import { CreateEmployee } from "../models/CreateEmployee";
 import { Employee } from "../models/Employee";
+import { baseService } from "./BaseService";
 
-export class employeeService {
-    constructor(private baseUrl: string = "https://localhost:7004") { }
+export class employeeService extends baseService{
+    constructor(baseUrl: string = "https://localhost:7004") { super(baseUrl); }
 
     async getAll(token: string): Promise<Employee[] | undefined> {
         const request = this.createRequest("GET", token, "Employee");
@@ -75,22 +76,5 @@ export class employeeService {
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
-    }
-    
-    private createRequest(method: string, token: string, endpoint: string, data?: string): Request {
-        const tokenParts = token.split('.');
-        const payload = JSON.parse(atob(tokenParts[1]));
-        const expirationTime = (payload.exp + 5) * 1000;
-
-        if (Date.now() >= expirationTime) {
-            throw new Error('Token has expired');
-        }
-
-        const headers = {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-        };
-        const body = data ? data : undefined;
-        return new Request(`${this.baseUrl}/${endpoint}`, { method, headers, body });
     }
 }
