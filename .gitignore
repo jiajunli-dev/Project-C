@@ -403,3 +403,4 @@ FodyWeavers.xsd
 !.vscode/launch.json
 !.vscode/extensions.json
 Source/Project C/ClientApp/src/pages/ApiTest.tsx
+/Source/Project C/API/logs/*
