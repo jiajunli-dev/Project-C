@@ -82,7 +82,7 @@ export default function ApiTest() {
                     ticket.description = 'Test Description';
                     ticket.triedSolutions = ['Test Solutions'];
                     ticket.additionalNotes = 'Test Notes';
-                    ticket.priority = Priority.Low;
+                    ticket.priority = Priority.Normal;
                     ticket.status = Status.Open;
 
                     const model = await service.getById(token, 5);
@@ -101,7 +101,7 @@ export default function ApiTest() {
                     ticket.description = 'Test Description';
                     ticket.triedSolutions = ['Test Solutions'];
                     ticket.additionalNotes = 'Test Notes';
-                    ticket.priority = Priority.Low;
+                    ticket.priority = Priority.Normal;
                     ticket.status = Status.Open;
 
                     const data = await service.create(token, ticket);
