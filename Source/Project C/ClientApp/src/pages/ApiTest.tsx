@@ -78,46 +78,46 @@ export default function ApiTest() {
                     console.error('Token not retrieved');
                 }
 
-                if (token) {
-                    const ticket = new CreateTicket();
-                    ticket.createdBy = 'Test User';
-                    ticket.description = 'Test Description';
-                    ticket.triedSolutions = ['Test Solutions'];
-                    ticket.additionalNotes = 'Test Notes';
-                    ticket.priority = Priority.Normal;
-                    ticket.status = Status.Open;
+                // if (token) {
+                //     const ticket = new CreateTicket();
+                //     ticket.createdBy = 'Test User';
+                //     ticket.description = 'Test Description';
+                //     ticket.triedSolutions = ['Test Solutions'];
+                //     ticket.additionalNotes = 'Test Notes';
+                //     ticket.priority = Priority.Normal;
+                //     ticket.status = Status.Open;
 
-                    const model = await service.getById(token, 5);
-                    if (model) {
-                        model.description = 'Updated Description 3';
-                        const data = await service.update(token, model);
-                        setSingle(data);
-                        console.log(data);
-                    }
+                //     const model = await service.getById(token, 5);
+                //     if (model) {
+                //         model.description = 'Updated Description 3';
+                //         const data = await service.update(token, model);
+                //         setSingle(data);
+                //         console.log(data);
+                //     }
 
-                }
+                // }
 
-                if (token) {
-                    const ticket = new CreateTicket();
-                    ticket.createdBy = 'Test User';
-                    ticket.description = 'Test Description';
-                    ticket.triedSolutions = ['Test Solutions'];
-                    ticket.additionalNotes = 'Test Notes';
-                    ticket.priority = Priority.Normal;
-                    ticket.status = Status.Open;
+                // if (token) {
+                //     const ticket = new CreateTicket();
+                //     ticket.createdBy = 'Test User';
+                //     ticket.description = 'Test Description';
+                //     ticket.triedSolutions = ['Test Solutions'];
+                //     ticket.additionalNotes = 'Test Notes';
+                //     ticket.priority = Priority.Normal;
+                //     ticket.status = Status.Open;
 
-                    const data = await service.create(token, ticket);
-                    if (data) {
-                        if (data.id) {
-                            await service.delete(token, data.id);
-                            const result = await service.getById(token, data.id);
-                            setSingle(result);
-                            console.log(result);
-                        }
+                //     const data = await service.create(token, ticket);
+                //     if (data) {
+                //         if (data.id) {
+                //             await service.delete(token, data.id);
+                //             const result = await service.getById(token, data.id);
+                //             setSingle(result);
+                //             console.log(result);
+                //         }
 
-                    }
+                //     }
 
-                }
+                // }
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
