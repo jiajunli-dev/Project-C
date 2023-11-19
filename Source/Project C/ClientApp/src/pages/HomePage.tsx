@@ -1,20 +1,19 @@
 import { SignedIn, SignedOut } from "@clerk/clerk-react";
 import LoginPage from "./LoginPage";
-import AdminDashboard from "./AdminDashboard";
-import SideBar from "../components/SideBar";
+import AdminDashboard from "./AdminTickets";
+import Header from "../components/Header";
 
 const HomePage = () => {
   return (
-    <>
+    <div className="min-h-screen">
       <SignedOut>
         <LoginPage />
       </SignedOut>
       <SignedIn>
-        <div className="flex min-h-screen">
-          <SideBar></SideBar>
-        </div>
+        <Header></Header>
+        <AdminDashboard/>
       </SignedIn>
-    </>
+    </div>
   );
 };
 

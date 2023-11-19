@@ -3,7 +3,6 @@ import { useState } from "react";
 import chevronUp from "../assets/chevron-up.png";
 import chevronDown from "../assets/chevron-down.png";
 import "../css/admintable.css";
-import SideBar from "../components/SideBar";
 
 interface TableData {
   id: number;
@@ -216,7 +215,6 @@ export default function DefaultTable() {
   return (
     <>
       <div className="flex gap-10 bg-[#F8F8F8] min-h-screen">
-        <SideBar></SideBar>
         <div className="w-full bg-[#F8F8F8] mt-10">
           <div className="flex flex-col gap-16 pr-5">
             <div className="flex items-center justify-between relative  mb-6">

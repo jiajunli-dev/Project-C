@@ -1,10 +1,9 @@
 import Parent from "./Parent";
-import Header from "./components/Header";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import CreateTicket from "./pages/CreateTicket";
-import AdminDashboard from "./pages/AdminDashboard";
+import AdminDashboard from "./pages/AdminTickets";
 import Users from "./pages/Users";
 import ApiTest from "./pages/ApiTest";
 

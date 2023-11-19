@@ -1,8 +1,9 @@
-import { Label, Select, Table, TextInput } from "flowbite-react";
+import { Select, Table, TextInput } from "flowbite-react";
 import { useState } from "react";
 import chevronUp from "../assets/chevron-up.png";
 import chevronDown from "../assets/chevron-down.png";
 import "../css/admintable.css";
+import { Pagination } from "@mui/material";
 
 interface TableData {
   id: number;
@@ -177,70 +178,84 @@ export default function DefaultTable() {
   );
 
   const [entriesPerPage, setEntriesPerPage] = useState<number>(10);
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
+  
   const toggleSortOrder = (field: keyof TableData) => {
-    const newSortOrder = { ...sortOrder };
-    newSortOrder[field] = sortOrder[field] === "asc" ? "desc" : "asc";
-    setSortOrder(newSortOrder);
-
-    const sortedData = [...data];
-    sortedData.sort((a, b) => {
-      if (newSortOrder[field] === "asc") {
-        return a[field] < b[field] ? -1 : 1;
-      } else {
-        return a[field] > b[field] ? -1 : 1;
-      }
+    setSortOrder((prevSortOrder) => {
+      const newSortOrder = { ...prevSortOrder };
+      newSortOrder[field] = prevSortOrder[field] === "asc" ? "desc" : "asc";
+  
+      const sortedData = [...data];
+      sortedData.sort((a, b) => {
+        if (newSortOrder[field] === "asc") {
+          return a[field] < b[field] ? -1 : 1;
+        } else {
+          return a[field] > b[field] ? -1 : 1;
+        }
+      });
+  
+      console.log("New Sort Order:", newSortOrder);
+      console.log("Sorted Data:", sortedData);
+  
+      setData(sortedData);
+  
+      return newSortOrder;
     });
-
-    setData(sortedData);
   };
 
   const chevronClass = (field: keyof TableData) =>
     sortOrder[field] === "asc" ? chevronDown : chevronUp;
 
-  const filteredData = data.filter((item) => {
-    const query = searchQuery.toLowerCase();
-    return (
-      item.requestedBy.toLowerCase().includes(query) ||
-      item.subject.toLowerCase().includes(query) ||
-      item.assignee.toLowerCase().includes(query) ||
-      item.priority.toLowerCase().includes(query) ||
-      item.createDate.includes(query) ||
-      item.status.toLowerCase().includes(query)
-    );
-  });
+  const updateFilteredData = () => {
+    const updatedFilteredData = initialData.filter((item) => {
+      const query = searchQuery.toLowerCase();
+      return (
+        item.requestedBy.toLowerCase().includes(query) ||
+        item.subject.toLowerCase().includes(query) ||
+        item.assignee.toLowerCase().includes(query) ||
+        item.priority.toLowerCase().includes(query) ||
+        item.createDate.includes(query) ||
+        item.status.toLowerCase().includes(query)
+      );
+    });
 
-  const displayedData = filteredData.slice(0, entriesPerPage);
+    const updatedTotalPages = Math.ceil(
+      updatedFilteredData.length / entriesPerPage
+    );
+
+    if (currentPage > updatedTotalPages) {
+      setCurrentPage(updatedTotalPages);
+    }
+
+    return updatedFilteredData;
+  };
+
+  const filteredData = updateFilteredData();
+
+  const totalPages = Math.ceil(filteredData.length / entriesPerPage);
+
+  const displayedData = filteredData.slice(
+    (currentPage - 1) * entriesPerPage,
+    currentPage * entriesPerPage
+  );
+
 
   return (
     <>
       <div className="flex items-center justify-between relative  mb-6">
-        <div className="flex items-center gap-3">
-          <p className="text-black">Show</p>
-          <Select
-            value={entriesPerPage.toString()}
-            onChange={(e) => setEntriesPerPage(Number(e.target.value))}
-            className=""
-          >
-            <option value="10">10</option>
-            <option value="25">25</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-          </Select>
-          <p className="text-black">entries</p>
-        </div>
         <TextInput
           id="small"
-          sizing="md"
+          sizing="l"
           className="text-black"
           type="text"
-          placeholder="Search..."
+          placeholder="Filter tickets..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
       </div>
 
-      <Table>
+      <Table className="border border-slate-200 bg-[#F9FAFD] ">
         <Table.Head>
           <Table.HeadCell
             className="cursor-pointer select-none relative"
@@ -322,9 +337,9 @@ export default function DefaultTable() {
           <Table.HeadCell>Action</Table.HeadCell>
         </Table.Head>
         <Table.Body className="divide-y">
-          {displayedData.map((item, index) => (
+          {displayedData.map((item) => (
             <Table.Row
-              key={index}
+              key={item.id}
               className="bg-white dark:border-gray-700 dark:bg-gray-800"
             >
               <Table.Cell className="font-bold text-black">
@@ -360,6 +375,28 @@ export default function DefaultTable() {
           ))}
         </Table.Body>
       </Table>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3 mt-2">
+          <p className="text-black">Rows per page</p>
+          <Select
+            value={entriesPerPage.toString()}
+            onChange={(e) => setEntriesPerPage(Number(e.target.value))}
+            className=""
+          >
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </Select>
+        </div>
+        <Pagination
+          count={totalPages}
+          onChange={(event, page) => {
+            setCurrentPage(page);
+          }}
+          shape="rounded"
+        />
+      </div>
     </>
   );
 }
