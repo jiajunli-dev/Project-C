@@ -11,7 +11,7 @@ const Header = () => {
   return (
     <>
       <Flowbite>
-        <header className="flex items-center justify-between p-5 mb-10 border-b-[1px] border-gray-200 bg-white dark:bg-darkmodeBlack ">
+        <header className="flex items-center justify-between p-5 mb-10 border-b-[4px] border-gray-200 bg-white dark:bg-darkmodeBlack ">
           <div>
             <img
               src={logo}
@@ -22,7 +22,7 @@ const Header = () => {
           </div>
           <div className="flex items-center">
             <ul className="flex text-black items-center text-lg header__ul gap-10">
-              <li className="cursor-pointer hover:text-orange-600 ease-linear duration-150 dark:text-white">
+              <li onClick={() => navigate("/create-ticket")} className="cursor-pointer hover:text-orange-600 ease-linear duration-150 dark:text-white">
                 Create ticket
               </li>
               <li className="cursor-pointer hover:text-orange-600 ease-linear duration-150 dark:text-white">

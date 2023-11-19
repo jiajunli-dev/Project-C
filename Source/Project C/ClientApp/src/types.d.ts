@@ -2,23 +2,14 @@ export interface Ticket {
     description: string;
     triedSolutions: string;
     additionalNotes: string;
-    priority: Priority;
     status: Status;
 }
 
-export enum Priority {
-    Low = 0,
-    Medium = 1,
-    High = 2
-}
 
 export enum Status {
-    Critical = 1,
-    Urgent = 2,
-    High = 3,
-    Medium = 4,
-    Low = 5,
-    None = 6
+    NonCritical = 1,
+    Critical = 2,
+
 }
 
 export interface Customer {
