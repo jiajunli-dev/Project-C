@@ -5,6 +5,9 @@ import chevronDown from "../assets/chevron-down.png";
 import "../css/admintable.css";
 import { Pagination } from "@mui/material";
 
+import { Button } from "@/components/ui/button"
+
+
 interface TableData {
   id: number;
   requestedBy: string;
@@ -195,8 +198,7 @@ export default function DefaultTable() {
         }
       });
   
-      console.log("New Sort Order:", newSortOrder);
-      console.log("Sorted Data:", sortedData);
+
   
       setData(sortedData);
   
@@ -337,9 +339,9 @@ export default function DefaultTable() {
           <Table.HeadCell>Action</Table.HeadCell>
         </Table.Head>
         <Table.Body className="divide-y">
-          {displayedData.map((item) => (
+          {displayedData.map((item, index) => (
             <Table.Row
-              key={item.id}
+              key={index}
               className="bg-white dark:border-gray-700 dark:bg-gray-800"
             >
               <Table.Cell className="font-bold text-black">

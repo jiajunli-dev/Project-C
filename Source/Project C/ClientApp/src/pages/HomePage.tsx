@@ -2,6 +2,7 @@ import { SignedIn, SignedOut } from "@clerk/clerk-react";
 import LoginPage from "./LoginPage";
 import AdminDashboard from "./AdminTickets";
 import Header from "../components/Header";
+import Page from "../components/tickets/page"
 
 const HomePage = () => {
   return (
@@ -11,7 +12,7 @@ const HomePage = () => {
       </SignedOut>
       <SignedIn>
         <Header></Header>
-        <AdminDashboard/>
+        <Page />
       </SignedIn>
     </div>
   );
