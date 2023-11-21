@@ -1,21 +1,10 @@
 "use client";
-import { Button } from "@/components/ui/button";
-
+import ColumnHeader from "@/components/tickets/components/ColumnHeader";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "../ui/checkbox";
+import { DataTableTicket } from "@/types";
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
-export type Payment = {
-  id: string;
-  amount: number;
-  status: "pending" | "processing" | "success" | "failed";
-  email: string;
-};
-
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<DataTableTicket>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -26,6 +15,7 @@ export const columns: ColumnDef<Payment>[] = [
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
+        className="translate-y-[2px]"
       />
     ),
     cell: ({ row }) => (
@@ -33,51 +23,51 @@ export const columns: ColumnDef<Payment>[] = [
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
         aria-label="Select row"
+        className="translate-y-[2px]"
       />
     ),
     enableSorting: false,
     enableHiding: false,
   },
   {
+    accessorKey: "id",
+    header: ({ column }) => <ColumnHeader column={column} title="ID" />,
+    cell: ({ row }) => <div className="w-[80px]">{row.getValue("id")}</div>,
+  },
+  {
+    accessorKey: "requestedBy",
+    header: ({ column }) => {
+      return <ColumnHeader column={column} title="Requested By" />;
+    },
+  },
+  {
+    accessorKey: "machine",
+    header: ({ column }) => {
+      return <ColumnHeader column={column} title="Machine" />;
+    },
+  },
+  {
+    accessorKey: "assignee",
+    header: ({ column }) => {
+      return <ColumnHeader column={column} title="Assignee"/>;
+    },
+  },
+  {
+    accessorKey: "priority",
+    header: ({ column }) => {
+      return <ColumnHeader column={column} title="Priority"/>;
+    },
+  },
+  {
     accessorKey: "status",
     header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Status
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
+      return <ColumnHeader column={column} title="Status"/>;
     },
   },
   {
-    accessorKey: "email",
+    accessorKey: "createdAt",
     header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Email
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-  },
-  {
-    accessorKey: "amount",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Amount
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
+      return <ColumnHeader column={column} title="Created At"/>;
     },
   },
 ];

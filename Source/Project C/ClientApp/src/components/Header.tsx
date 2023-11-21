@@ -4,14 +4,14 @@ import { useNavigate } from "react-router-dom";
 import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
 import ShowName from "./ShowName";
 import { DarkThemeToggle, Flowbite } from "flowbite-react";
+import DarkModeToggle from "./DarkModeToggle";
 
 const Header = () => {
   const navigate = useNavigate();
 
   return (
     <>
-      <Flowbite>
-        <header className="flex items-center justify-between p-5 mb-10 border-b-[4px] border-gray-200 bg-white dark:bg-darkmodeBlack ">
+        <header className="flex items-center justify-between p-5  border-b-[4px] border-gray-200 bg-white dark:bg-darkmodeBlack ">
           <div>
             <img
               src={logo}
@@ -36,7 +36,6 @@ const Header = () => {
               </li>
             </ul>
           </div>
-          <DarkThemeToggle defaultValue="dark" className="hover:bg-transparent hover:border-black hover:text-initial"/>
           <div className="flex items-center">
             <SignedOut>
               <button
@@ -52,6 +51,7 @@ const Header = () => {
             {/* If signed in */}
             <div className="flex gap-7 items-center">
               <SignedIn>
+                <DarkModeToggle/>
                 <div className="flex gap-2 items-center ">
                   <ShowName></ShowName>
 
@@ -68,7 +68,6 @@ const Header = () => {
             </div>
           </div>
         </header>
-      </Flowbite>
     </>
   );
 };

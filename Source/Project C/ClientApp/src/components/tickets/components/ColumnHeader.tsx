@@ -22,7 +22,7 @@ import {
     title: string
   }
   
-  export function DataTableColumnHeader<TData, TValue>({
+  export default function DataTableColumnHeader<TData, TValue>({
     column,
     title,
     className,
