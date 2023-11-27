@@ -49,25 +49,25 @@ export const columns: ColumnDef<DataTableTicket>[] = [
   {
     accessorKey: "assignee",
     header: ({ column }) => {
-      return <ColumnHeader column={column} title="Assignee"/>;
+      return <ColumnHeader column={column} title="Assignee" />;
     },
   },
   {
     accessorKey: "priority",
     header: ({ column }) => {
-      return <ColumnHeader column={column} title="Priority"/>;
+      return <ColumnHeader column={column} title="Priority" />;
     },
   },
   {
     accessorKey: "status",
     header: ({ column }) => {
-      return <ColumnHeader column={column} title="Status"/>;
+      return <ColumnHeader column={column} title="Status" />;
     },
   },
   {
     accessorKey: "createdAt",
     header: ({ column }) => {
-      return <ColumnHeader column={column} title="Created At"/>;
+      return <ColumnHeader column={column} title="Created At" />;
     },
   },
 ];

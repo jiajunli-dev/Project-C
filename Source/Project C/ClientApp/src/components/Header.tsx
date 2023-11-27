@@ -3,7 +3,6 @@ import greenLightIcon from "../assets/green_light_icon.png";
 import { useNavigate } from "react-router-dom";
 import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
 import ShowName from "./ShowName";
-import { DarkThemeToggle, Flowbite } from "flowbite-react";
 import DarkModeToggle from "./DarkModeToggle";
 
 const Header = () => {
@@ -11,7 +10,7 @@ const Header = () => {
 
   return (
     <>
-        <header className="flex items-center justify-between p-5  border-b-[4px] border-gray-200 bg-white dark:bg-darkmodeBlack ">
+        <header className="flex items-center justify-between p-5  border-b-[1px] border-gray-200  dark:border-gray-800 dark:bg-background ">
           <div>
             <img
               src={logo}
@@ -23,16 +22,11 @@ const Header = () => {
           <div className="flex items-center">
             <ul className="flex text-black items-center text-lg header__ul gap-10">
               <li onClick={() => navigate("/create-ticket")} className="cursor-pointer hover:text-orange-600 ease-linear duration-150 dark:text-white">
-                Create ticket
+                Create Ticket
               </li>
-              <li className="cursor-pointer hover:text-orange-600 ease-linear duration-150 dark:text-white">
-                FAQ
-              </li>
-              <li className="cursor-pointer hover:text-orange-600 ease-linear duration-150 dark:text-white">
-                About us
-              </li>
-              <li className="cursor-pointer hover:text-orange-600 ease-linear duration-150 dark:text-white">
-                Contact us
+   
+              <li onClick={() => navigate("/view-tickets")} className="cursor-pointer hover:text-orange-600 ease-linear duration-150 dark:text-white">
+                View Tickets
               </li>
             </ul>
           </div>
@@ -61,8 +55,8 @@ const Header = () => {
                     alt="Green Light Icon"
                   />
                 </div>
-                <div className="mr-6">
-                  <UserButton afterSignOutUrl="/"></UserButton>
+                <div className="mr-6 dark:border-2 dark:border-white rounded-full ">
+                  <UserButton afterSignOutUrl="/" ></UserButton>
                 </div>
               </SignedIn>
             </div>
