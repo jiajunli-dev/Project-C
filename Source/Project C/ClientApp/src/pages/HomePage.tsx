@@ -1,19 +1,17 @@
+import NewCard from "@/components/adminCards/newCard";
 import { SignedIn, SignedOut } from "@clerk/clerk-react";
-import LoginPage from "./LoginPage";
-import AdminDashboard from "./AdminTickets";
-import Header from "../components/Header";
+import LoginPage from "@/pages/LoginPage";
 
 const HomePage = () => {
   return (
-    <div className="min-h-screen">
-      <SignedOut>
-        <LoginPage />
-      </SignedOut>
+    <>
       <SignedIn>
-        <Header></Header>
-        <AdminDashboard/>
+        <NewCard />
       </SignedIn>
-    </div>
+      <SignedOut>
+        <LoginPage/>
+      </SignedOut>
+    </>
   );
 };
 
