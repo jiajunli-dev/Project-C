@@ -15,7 +15,7 @@ const Header = () => {
             <img
               src={logo}
               alt="A logo of Viscon Group"
-              className="h-[60px] max-w-[180px] cursor-pointer hover:scale-105 ease-linear duration-150 "
+              className="h-[60px] max-w-[180px] cursor-pointer hover:scale-95 ease-linear duration-150 "
               onClick={() => navigate("/")}
             />
           </div>
