@@ -7,6 +7,7 @@ import FormPageFour from "../components/FormPages/FormPageFour";
 import FormPageFive from "../components/FormPages/FormPageFive";
 import { Ticket, Status } from "../types";
 import { SignedIn } from "@clerk/clerk-react";
+import { TicketService } from "@/services/ticketService";
 
 const CreateTicket = () => {
   const navigate = useNavigate();
@@ -35,6 +36,9 @@ const CreateTicket = () => {
 
   const handleSubmit = async () => {
     // SEND TICKET TO API
+    // const ticketService = new TicketService();
+    
+    // ticketService.create("abc123", )
 
     setCurrForm(5);
   };
@@ -77,7 +81,7 @@ const CreateTicket = () => {
                         handleSubmit();
                       }}
                       type="button"
-                      className=" flex justify-center text-black  border-gray-300 rounded border-2 bg-white hover:text-black hover:bg-white hover:border-2 hover:border-black focus:outline-none focus:ring-black font-medium text-sm sm:w-auto p-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                      className=" flex justify-center text-black  border-gray-300 rounded border-2 bg-white hover:text-black hover:bg-white hover:border-2 hover:border-black focus:outline-none focus:ring-black font-medium text-sm sm:w-auto p-2 text-center"
                     >
                       Submit
                     </button>
@@ -87,7 +91,7 @@ const CreateTicket = () => {
                     <button
                       onClick={() => currForm > 0 && setCurrForm(currForm - 1)}
                       type="button"
-                      className="flex justify-center rounded-none text-white bg-white border-2 hover:text-black hover:bg-white hover:border-2 hover:border-black focus:outline-none focus:ring-black font-medium text-sm sm:w-auto p-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                      className="flex justify-center rounded-none text-white bg-white border-2 hover:text-black hover:bg-white hover:border-2 hover:opacity-80 focus:outline-none focus:ring-black font-medium text-sm sm:w-auto p-2 text-center "
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -113,7 +117,7 @@ const CreateTicket = () => {
                         }
                       }}
                       type="button"
-                      className=" flex justify-center  rounded-none text-white border-2 bg-white hover:text-black hover:bg-white hover:border-2 hover:border-black focus:outline-none focus:ring-black font-medium text-sm sm:w-auto p-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                      className=" flex justify-center  rounded-none text-white border-2 bg-white hover:text-black hover:bg-white hover:border-2 hover:opacity-80 focus:outline-none focus:ring-black font-medium text-sm sm:w-auto p-2 text-center"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"

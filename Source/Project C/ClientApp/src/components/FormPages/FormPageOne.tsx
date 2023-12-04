@@ -15,8 +15,8 @@ const FormPageOne = ({ currForm, setTicketDescription, ticketDescription, maxFor
             
             <StepCount currForm={currForm} maxForm={maxForm} />
             
-            <h1 className="text-black text-lg font-bold mb-8">
-                Explain the problem your facing in detail!
+            <h1 className="text-black text-lg font-bold mb-8 dark:text-white">
+                Explain the problem you're facing in detail!
             </h1>
 
             <div className="relative z-0 w-full mb-6 group">

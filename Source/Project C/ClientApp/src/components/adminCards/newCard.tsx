@@ -12,12 +12,12 @@ import { Overview } from "./OverviewTickets";
 import { Button } from "../ui/button";
 const newCard = () => {
   return (
-    <div className="flex-1 space-y-4 p-8 pt-6 ">
+    <div  className="flex-1 space-y-4 p-8 pt-6 ">
       <div className="flex items-center justify-between space-y-2">
         <h2 className="text-3xl font-bold tracking-tight dark:text-white">Dashboard</h2>
         <div className="flex items-center space-x-2">
           <CalendarDateRangePicker />
-          <Button>Download</Button>
+          <Button variant={"ghost"}>Download</Button>
         </div>
       </div>
       <Tabs defaultValue="overview" className="space-y-4">
@@ -44,7 +44,7 @@ const newCard = () => {
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
-                  fill="none"
+                  fill=""
                   stroke="currentColor"
                   strokeLinecap="round"
                   strokeLinejoin="round"
