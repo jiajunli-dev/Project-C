@@ -1,10 +1,10 @@
 export interface DataTableTicket {
   id: number;
-  requestedBy: string;
-  machine: string;
-  assignee: string;
-  priority: "critical" | "non-critical";
-  status: "open" | "closed";
+  createdBy: string;
+  // none - normal - critical
+  priority: 1 | 2 | 3;
+  // registered - open - closed - unresolved
+  status: 1 | 2 | 3 | 4;
   createdAt: string;
 }
 

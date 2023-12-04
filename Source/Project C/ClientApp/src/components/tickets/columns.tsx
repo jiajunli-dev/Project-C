@@ -2,9 +2,9 @@
 import ColumnHeader from "@/components/tickets/components/ColumnHeader";
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "../ui/checkbox";
-import { DataTableTicket } from "@/types";
+import { Ticket } from "@/models/Ticket";
 
-export const columns: ColumnDef<DataTableTicket>[] = [
+export const columns: ColumnDef<Ticket>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -35,21 +35,9 @@ export const columns: ColumnDef<DataTableTicket>[] = [
     cell: ({ row }) => <div className="w-[80px]">{row.getValue("id")}</div>,
   },
   {
-    accessorKey: "requestedBy",
+    accessorKey: "createdBy",
     header: ({ column }) => {
-      return <ColumnHeader column={column} title="Requested By" />;
-    },
-  },
-  {
-    accessorKey: "machine",
-    header: ({ column }) => {
-      return <ColumnHeader column={column} title="Machine" />;
-    },
-  },
-  {
-    accessorKey: "assignee",
-    header: ({ column }) => {
-      return <ColumnHeader column={column} title="Assignee" />;
+      return <ColumnHeader column={column} title="Created By" />;
     },
   },
   {
@@ -62,12 +50,6 @@ export const columns: ColumnDef<DataTableTicket>[] = [
     accessorKey: "status",
     header: ({ column }) => {
       return <ColumnHeader column={column} title="Status" />;
-    },
-  },
-  {
-    accessorKey: "createdAt",
-    header: ({ column }) => {
-      return <ColumnHeader column={column} title="Created At" />;
     },
   },
 ];

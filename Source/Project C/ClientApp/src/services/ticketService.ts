@@ -1,7 +1,7 @@
 import { Ticket } from "../models/Ticket";
 import { CreateTicket } from "../models/CreateTicket";
 import { Photo } from "../models/Photo";
-import { baseService } from "./BaseService";
+import { baseService } from "./baseService";
 
 export class TicketService extends baseService {
     // TODO: Move api url to config
