@@ -12,11 +12,11 @@ const FormPageOne = ({ formOneError, currForm, setTicketDescription, ticketDescr
 
   return (
             
-            <form className="w-3/5 border-2 p-4">
+            <form className="w-3/5 border-2 p-4 bg-[#121212]">
             
             <StepCount currForm={currForm} maxForm={maxForm} />
             
-            <h1 className="text-black text-lg font-bold mb-4">
+            <h1 className="text-black text-lg font-bold mb-4 dark:text-white">
                 Explain the problem your facing in detail!
 
             </h1>

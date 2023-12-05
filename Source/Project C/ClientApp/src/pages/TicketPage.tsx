@@ -11,7 +11,7 @@ import {
     CardHeader,
     CardTitle,
   } from "@/components/ui/card"
-import 'moment/locale/nl';
+// import 'moment/locale/nl';
 import { Priority } from "@/models/Priority";
 enum Status {
     Open = 1,

@@ -11,10 +11,10 @@ interface FormPageThreeProps {
 const FormPageThree = ({formThreeError, setTicketAdditionalNotes,ticketAdditionalNotes, currForm, maxForm}:FormPageThreeProps) => {
   return (
     
-    <form className="w-3/5 border-2 p-4">
+    <form className="w-3/5 border-2 p-4 dark:bg-[#121212]">
 
     <StepCount currForm={currForm} maxForm={maxForm} />
-            <h1 className="text-black text-lg font-bold mb-4">
+            <h1 className="text-black text-lg font-bold mb-4 dark:text-white">
                 Add additional notes to clarify the issue even further!
             </h1>
             {

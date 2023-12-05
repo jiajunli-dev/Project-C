@@ -10,7 +10,7 @@ const Header = () => {
 
   return (
     <>
-        <header className="flex items-center justify-between p-5  border-b-[1px] border-gray-200  dark:border-gray-800 dark:bg-background ">
+        <header className="flex items-center justify-between p-5  border-b-[1px] border-gray-200  dark:border-gray-800 dark:bg-[#121212] ">
           <div>
             <img
               src={logo}
