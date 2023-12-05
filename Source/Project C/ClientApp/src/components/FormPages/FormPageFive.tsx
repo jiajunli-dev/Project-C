@@ -17,7 +17,6 @@ interface FormPageFiveProps {
     ticketPriority: number
 }
 const FormPageFive = ({ticketPriority,ticketAdditionalNotes,ticketDescription,ticketTriedSolutions, ticketStatus, currForm, maxForm}:FormPageFiveProps) => {
-import StepCount from "./StepCount";
 
   return (
     <form className="w-3/5 border-2 p-4">
