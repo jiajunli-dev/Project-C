@@ -1,6 +1,6 @@
 import { CreateMalfunction } from "../models/CreateMalfunction";
 import { Malfunction } from "../models/Malfunction";
-import { baseService } from "./BaseService";
+import { baseService } from "./baseService";
 
 export class malfunctionService extends baseService{
     constructor(baseUrl: string = "https://localhost:7004") { super(baseUrl); }

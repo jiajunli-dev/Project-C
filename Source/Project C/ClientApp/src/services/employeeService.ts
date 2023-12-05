@@ -1,6 +1,6 @@
 import { CreateEmployee } from "../models/CreateEmployee";
 import { Employee } from "../models/Employee";
-import { baseService } from "./BaseService";
+import { baseService } from "./baseService";
 
 export class employeeService extends baseService{
     constructor(baseUrl: string = "https://localhost:7004") { super(baseUrl); }

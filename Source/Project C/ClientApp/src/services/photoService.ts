@@ -1,5 +1,5 @@
 import { Photo, CreatePhoto } from "../models/Photo";
-import { baseService } from "./BaseService";
+import { baseService } from "./baseService";
 
 export class PhotoService extends baseService {
     // TODO: Move api url to config
