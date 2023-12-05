@@ -1,3 +1,4 @@
+
 import { Priority } from "@/models/Priority"
 import StepCount from "./StepCount"
 enum Status {
@@ -16,8 +17,9 @@ interface FormPageFiveProps {
     ticketPriority: number
 }
 const FormPageFive = ({ticketPriority,ticketAdditionalNotes,ticketDescription,ticketTriedSolutions, ticketStatus, currForm, maxForm}:FormPageFiveProps) => {
+import StepCount from "./StepCount";
+
   return (
-    
     <form className="w-3/5 border-2 p-4">
 
     <StepCount currForm={currForm} maxForm={maxForm} />
@@ -49,7 +51,7 @@ const FormPageFive = ({ticketPriority,ticketAdditionalNotes,ticketDescription,ti
         </h3>
     </div>
     </form>
-  )
-}
+  );
+};
 
-export default FormPageFive
+export default FormPageFive;

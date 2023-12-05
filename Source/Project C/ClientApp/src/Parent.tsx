@@ -4,13 +4,13 @@ import { SignedIn } from "@clerk/clerk-react";
 
 const Parent = () => {
   return (
-    <>
+    <section className="min-h-screen">
       <SignedIn>
         <Header />
       </SignedIn>
       <Outlet />
       {/* <Footer /> */}
-    </>
+    </section>
   );
 };
 

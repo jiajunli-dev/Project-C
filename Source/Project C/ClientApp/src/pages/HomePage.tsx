@@ -1,4 +1,4 @@
-import NewCard from "@/components/adminCards/newCard";
+import NewCard from "@/components/adminCards/AdminDashboard";
 import { SignedIn, SignedOut } from "@clerk/clerk-react";
 import LoginPage from "@/pages/LoginPage";
 

@@ -7,6 +7,7 @@ export interface DataTableTicket {
   assignee: string;
   priority: "None" | "Critical";
   status: "open" | "closed";
+  createdBy: string;
   createdAt: string;
 }
 

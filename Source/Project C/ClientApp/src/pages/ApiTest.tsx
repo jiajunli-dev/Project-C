@@ -69,7 +69,7 @@ export default function ApiTest() {
             try {
                 const token = await clerk.session?.getToken({ template: tokenType });
                 const service = new TicketService();
-
+                console.log(token)
                 if (token) {
                     const data = await service.getAll(token);
                     setResult(data);
@@ -134,7 +134,7 @@ export default function ApiTest() {
                         <main className="grid grid-cols-[repeat(4,minmax(100px,500px))] h-min gap-6">
                             <div>
                                 <div className="text-black">
-                                    {renderSingle(single)}
+                                    {renderArray(result)}
                                 </div>
                             </div>
                         </main>
