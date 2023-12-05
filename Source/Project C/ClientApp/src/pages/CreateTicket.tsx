@@ -1,43 +1,120 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import FormPageOne from "../components/FormPages/FormPageOne";
 import FormPageTwo from "../components/FormPages/FormPageTwo";
 import FormPageThree from "../components/FormPages/FormPageThree";
 import FormPageFour from "../components/FormPages/FormPageFour";
 import FormPageFive from "../components/FormPages/FormPageFive";
-import { Ticket, Status } from "../types";
+enum Status {
+  Open,
+  Closed
+}
 import { SignedIn } from "@clerk/clerk-react";
+import { useClerk } from '@clerk/clerk-react';
+import { TicketService } from "@/services/ticketService";
+import { Priority } from "@/models/Priority";
+import { CreateTicket as ticketCreationType } from "@/models/CreateTicket";
+
 
 const CreateTicket = () => {
   const navigate = useNavigate();
+  const clerk = useClerk();
+  const tokenType = 'api_token';
+
   const maxForm = 4;
   const [currForm, setCurrForm] = useState<number>(0);
-  const [ticket, setTicket] = useState<Ticket>({
-    description: "",
-    triedSolutions: "",
-    additionalNotes: "",
-    status: 1,
-  });
 
   const [ticketDescription, setTicketDescription] = useState<string>("");
-  const [ticketTriedSolutions, setTicketTriedSolutions] = useState<string>("");
+  const [ticketTriedSolutions, setTicketTriedSolutions] = useState<string[]>([]);
   const [ticketAdditionalNotes, setTicketAdditionalNotes] =
     useState<string>("");
-  const [ticketStatus, setTicketStatus] = useState<Status>(1);
+  const [ticketPriority, setTicketPriority] = useState<Priority>(1);
+  const [formOneError, setFormOneError] = useState<boolean>(false);
+  const [formTwoError, setFormTwoError] = useState<boolean>(false);
+  const [formThreeError, setFormThreeError] = useState<boolean>(false);
+  const [formFourError, setFormFourError] = useState<boolean>(false);
+
 
   const checkInput = () => {
-    if (currForm === 0 && ticketDescription === "") return false;
-    if (currForm === 1 && ticketTriedSolutions === "") return false;
-    if (currForm === 2 && ticketAdditionalNotes === "") return false;
-    if (currForm === 3 && !ticketStatus) return false;
+    if (currForm === 0 && ticketDescription === "")
+    {
+      setFormOneError(true);
+      return false;
+    };
+    if (currForm === 1 && ticketTriedSolutions.length < 1)
+    {
+      setFormTwoError(true);
+      return false;
+    }
+    if (currForm === 2 && ticketAdditionalNotes === ""){
+      setFormThreeError(true);
+      return false;
+    }
+    if (currForm === 3 && !ticketPriority){
+      setFormFourError(true);
+      return false;
+    }
     return true;
   };
 
   const handleSubmit = async () => {
-    // SEND TICKET TO API
+      try {
+          // Get the authentication token
+          const token = await clerk.session?.getToken({ template: tokenType });
 
-    setCurrForm(5);
+          // Create an instance of the TicketService
+          const service = new TicketService();
+
+          if (token) {
+              // Create a new ticket object
+              const finalTicket = new ticketCreationType();
+              finalTicket.createdBy = 'User';
+              finalTicket.description = ticketDescription;
+              finalTicket.triedSolutions = ticketTriedSolutions;
+              finalTicket.additionalNotes = ticketAdditionalNotes;
+              finalTicket.priority = ticketPriority;
+              finalTicket.status = 1;
+
+              // Validate the ticket object
+              const errors = finalTicket.validate();
+              console.log(errors);
+              if (errors.length > 0) {
+                  console.log('Validation errors');
+                  return;
+              }
+
+              // Call the create function from the TicketService
+              try {
+                  const data = await service.create(token, finalTicket);
+                  // If creation is successful, perform additional actions
+                  if (data && data.id) {
+                      // Get the ticket by its ID (just an example, adjust as needed)
+                      const result = await service.getById(token, data.id);
+                      console.log(result);
+                      if(!result) return;
+                      navigate(`/ticket/${result.id}`);
+                  }
+              } catch (createError) { 
+                  console.error('Error creating ticket:', createError);
+              }
+          }
+      } catch (error) {
+          console.error('Error fetching data:', error);
+      }
   };
+
+  const resetErrors = () => {
+    setFormOneError(false);
+    setFormTwoError(false);
+    setFormThreeError(false);
+    setFormFourError(false);
+  }
+
+  useEffect(() => {
+    resetErrors();
+  },[currForm])
+
+
 
   return (
     <SignedIn>
@@ -48,12 +125,78 @@ const CreateTicket = () => {
               <h1 className="text-lg  font-semibold text-blue-500">
                 Create ticket
               </h1>
-              {currForm === maxForm ? (
-                <div className="flex gap-2">
+
+            </div>
+          )}
+
+          {/* Form 1  */}
+          {currForm === 0 && (
+            <FormPageOne
+              ticketDescription={ticketDescription}
+              setTicketDescription={setTicketDescription}
+              maxForm={maxForm}
+              setCurrForm={setCurrForm}
+              currForm={currForm}
+              formOneError={formOneError}
+            />
+          )}
+
+          {/* Form 2  */}
+          {currForm === 1 && (
+            <FormPageTwo
+              ticketTriedSolutions={ticketTriedSolutions}
+              setTicketTriedSolutions={setTicketTriedSolutions}
+              setCurrForm={setCurrForm}
+              currForm={currForm}
+              maxForm={maxForm}
+              formTwoError={formTwoError}
+            />
+          )}
+
+          {/* Form 3  */}
+          {currForm === 2 && (
+            <FormPageThree
+              ticketAdditionalNotes={ticketAdditionalNotes}
+              setTicketAdditionalNotes={setTicketAdditionalNotes}
+              setCurrForm={setCurrForm}
+              currForm={currForm}
+              maxForm={maxForm}
+              formThreeError={formThreeError}
+            />
+          )}
+
+          {/* Form 4  */}
+          {currForm === 3 && (
+            <FormPageFour
+              ticketPriority={ticketPriority}
+              setTicketPriority={setTicketPriority}
+              setCurrForm={setCurrForm}
+              currForm={currForm}
+              maxForm={maxForm}
+              formFourError={formFourError}
+            />
+          )}
+
+          {/* Form 5  */}
+          {currForm === 4 && (
+            <FormPageFive
+              ticketAdditionalNotes={ticketAdditionalNotes}
+              ticketDescription={ticketDescription}
+              ticketTriedSolutions={ticketTriedSolutions}
+              ticketPriority={ticketPriority}
+              ticketStatus={Status.Open}
+              setCurrForm={setCurrForm}
+              currForm={currForm}
+              maxForm={maxForm}
+            />
+          )}
+          <div className="w-3/5 border-t-0">
+          {currForm === maxForm ? (
+                <div className="flex ">
                   <button
                     onClick={() => currForm > 0 && setCurrForm(currForm - 1)}
                     type="button"
-                    className="flex justify-center rounded-none text-white bg-white border-2 hover:text-black hover:bg-white hover:border-2 hover:border-black focus:outline-none focus:ring-black font-medium text-sm sm:w-auto p-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                    className="min-w-[50%] flex justify-center rounded-none text-white bg-white border-2 hover:text-black hover:bg-white hover:border-2 hover:border-black focus:outline-none focus:ring-black font-medium text-sm sm:w-auto p-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -77,17 +220,17 @@ const CreateTicket = () => {
                       handleSubmit();
                     }}
                     type="button"
-                    className=" flex justify-center text-black  border-gray-300 rounded border-2 bg-white hover:text-black hover:bg-white hover:border-2 hover:border-black focus:outline-none focus:ring-black font-medium text-sm sm:w-auto p-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                    className="min-w-[50%] font-semibold flex justify-center text-black  border-gray-300 rounded border-2 bg-white hover:text-black hover:bg-white hover:border-2 hover:border-black focus:outline-none focus:ring-black font-medium text-sm sm:w-auto p-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                   >
                     Submit
                   </button>
                 </div>
               ) : (
-                <div className="flex gap-2">
+                <div className="flex">
                   <button
                     onClick={() => currForm > 0 && setCurrForm(currForm - 1)}
                     type="button"
-                    className="flex justify-center rounded-none text-white bg-white border-2 hover:text-black hover:bg-white hover:border-2 hover:border-black focus:outline-none focus:ring-black font-medium text-sm sm:w-auto p-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                    className="min-w-[50%] flex justify-center rounded-none text-white bg-white border-2 hover:text-black hover:bg-white hover:border-2 hover:border-black focus:outline-none focus:ring-black font-medium text-sm sm:w-auto p-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -113,7 +256,7 @@ const CreateTicket = () => {
                       }
                     }}
                     type="button"
-                    className=" flex justify-center  rounded-none text-white border-2 bg-white hover:text-black hover:bg-white hover:border-2 hover:border-black focus:outline-none focus:ring-black font-medium text-sm sm:w-auto p-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                    className="min-w-[50%] flex justify-center rounded-none text-white border-2 bg-white hover:text-black hover:bg-white hover:border-2 hover:border-black focus:outline-none focus:ring-black font-medium text-sm sm:w-auto p-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -132,65 +275,7 @@ const CreateTicket = () => {
                   </button>
                 </div>
               )}
-            </div>
-          )}
-
-          {/* Form 1  */}
-          {currForm === 0 && (
-            <FormPageOne
-              ticketDescription={ticketDescription}
-              setTicketDescription={setTicketDescription}
-              maxForm={maxForm}
-              setCurrForm={setCurrForm}
-              currForm={currForm}
-            />
-          )}
-
-          {/* Form 2  */}
-          {currForm === 1 && (
-            <FormPageTwo
-              ticketTriedSolutions={ticketTriedSolutions}
-              setTicketTriedSolutions={setTicketTriedSolutions}
-              setCurrForm={setCurrForm}
-              currForm={currForm}
-              maxForm={maxForm}
-            />
-          )}
-
-          {/* Form 3  */}
-          {currForm === 2 && (
-            <FormPageThree
-              ticketAdditionalNotes={ticketAdditionalNotes}
-              setTicketAdditionalNotes={setTicketAdditionalNotes}
-              setCurrForm={setCurrForm}
-              currForm={currForm}
-              maxForm={maxForm}
-            />
-          )}
-
-          {/* Form 4  */}
-          {currForm === 3 && (
-            <FormPageFour
-              setTicketStatus={setTicketStatus}
-              ticketStatus={ticketStatus}
-              setCurrForm={setCurrForm}
-              currForm={currForm}
-              maxForm={maxForm}
-            />
-          )}
-
-          {/* Form 5  */}
-          {currForm === 4 && (
-            <FormPageFive
-              ticketAdditionalNotes={ticketAdditionalNotes}
-              ticketDescription={ticketDescription}
-              ticketTriedSolutions={ticketTriedSolutions}
-              ticketStatus={ticketStatus}
-              setCurrForm={setCurrForm}
-              currForm={currForm}
-              maxForm={maxForm}
-            />
-          )}
+          </div>
 
           {/* Final Screen   */}
           {currForm === 5 && (
@@ -240,7 +325,6 @@ const CreateTicket = () => {
         </div>
       </div>
     </SignedIn>
-  );
-};
+  )};
 
 export default CreateTicket;
