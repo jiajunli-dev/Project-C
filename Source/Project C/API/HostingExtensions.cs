@@ -54,6 +54,7 @@ namespace API
             app.Services.AddScoped<ICustomerRepository, CustomerRepository>();
             app.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             app.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+            app.Services.AddScoped<IMachineRepository, MachineRepository>();
 
             app.Services.AddControllers(configure =>
             {
