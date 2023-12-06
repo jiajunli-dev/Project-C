@@ -3,6 +3,7 @@ import ColumnHeader from "@/components/tickets/components/ColumnHeader";
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "../ui/checkbox";
 import { Ticket } from "@/models/Ticket";
+import { DataTableRowActions } from "./components/data-table-row-actions";
 
 export const columns: ColumnDef<Ticket>[] = [
   {
@@ -15,7 +16,7 @@ export const columns: ColumnDef<Ticket>[] = [
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
-        className="translate-y-[2px]"
+        className="translate-y-[2px] "
       />
     ),
     cell: ({ row }) => (
@@ -23,7 +24,7 @@ export const columns: ColumnDef<Ticket>[] = [
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
         aria-label="Select row"
-        className="translate-y-[2px]"
+        className="translate-y-[2px] "
       />
     ),
     enableSorting: false,
@@ -37,7 +38,7 @@ export const columns: ColumnDef<Ticket>[] = [
   {
     accessorKey: "createdBy",
     header: ({ column }) => {
-      return <ColumnHeader column={column} title="Created By" />;
+      return <ColumnHeader column={column} title="Created By" className="bg-red-500" />;
     },
   },
   {
@@ -51,5 +52,9 @@ export const columns: ColumnDef<Ticket>[] = [
     header: ({ column }) => {
       return <ColumnHeader column={column} title="Status" />;
     },
+  },
+  {
+    id: "actions",
+    cell: ({ row }) => <DataTableRowActions row={row} />,
   },
 ];
