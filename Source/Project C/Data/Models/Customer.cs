@@ -14,4 +14,6 @@ public class Customer : User
 
     [MaxLength(64)]
     public string DepartmentName { get; set; }
+
+    public List<Machine> Machines { get; set; }
 }
