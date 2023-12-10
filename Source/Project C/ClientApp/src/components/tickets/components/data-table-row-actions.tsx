@@ -18,10 +18,40 @@ import {
   DropdownMenuTrigger,
 } from "../../ui/dropdown-menu";
 import useIsDarkMode from "./IsDarkModeChecker";
-
+import UpdateTicketStatus from "./UpdateTicketStatus";
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
 }
+const status = [
+  {
+    value: "registered",
+    label: "Registered",
+  },
+  {
+    value: "open",
+    label: "Open",
+  },
+  {
+    value: "closed",
+    label: "Closed",
+  },
+  {
+    value: "unresolved",
+    label: "Unresolved",
+  },
+];
+
+const priority = [
+  {
+    value: "none",
+    label: "None",
+  },
+  {
+    value: "critical",
+    label: "Critical",
+  },
+
+];
 
 export function DataTableRowActions<
   TData
@@ -56,13 +86,31 @@ export function DataTableRowActions<
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
-        <DropdownMenuItem className="dark:text-white">Edit</DropdownMenuItem>
-        <DropdownMenuItem className="dark:text-white">
-          Make a copy
-        </DropdownMenuItem>
-        <DropdownMenuItem className="dark:text-white">
-          Favorite
-        </DropdownMenuItem>
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger className="dark:text-white">Change Status</DropdownMenuSubTrigger>
+          <DropdownMenuSubContent>
+            <DropdownMenuRadioGroup>
+              {status.map((status) => (
+                <DropdownMenuRadioItem key={status.value} value={status.value}>
+                  <span className="dark:text-white">{status.label}</span>
+                </DropdownMenuRadioItem>
+              ))}
+            </DropdownMenuRadioGroup>
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
+
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger className="dark:text-white">Change Priority</DropdownMenuSubTrigger>
+          <DropdownMenuSubContent>
+            <DropdownMenuRadioGroup>
+              {priority.map((priority) => (
+                <DropdownMenuRadioItem  onClick={e=>UpdateTicketStatus("Test")}  key={priority.value} value={priority.value}>
+                  <span className="dark:text-white">{priority.label}</span>
+                </DropdownMenuRadioItem>
+              ))}
+            </DropdownMenuRadioGroup>
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
         <DropdownMenuItem className="dark:text-white">Delete</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

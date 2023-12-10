@@ -6,17 +6,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { CalendarDateRangePicker } from "@/components/adminCards/DateRangePicker";
 import { RecentTickets } from "./recentTickets";
 import { Overview } from "./OverviewTickets";
 const AdminDashboard = () => {
   return (
-    <div  className="flex-1 space-y-4 p-8 pt-6 dark:bg-[#121212]">
+    <div className="flex-1 space-y-4 p-8 pt-6 ">
       <div className="flex items-center justify-between space-y-2">
-        <h2 className="text-3xl font-bold tracking-tight dark:text-white">Dashboard</h2>
-        <div className="flex items-center space-x-2">
-          <CalendarDateRangePicker />
-        </div>
+        <h2 className="text-3xl font-bold tracking-tight dark:text-white">
+          Admin Dashboard
+        </h2>
       </div>
       <Tabs defaultValue="overview" className="space-y-4">
         <TabsContent value="overview" className="space-y-4 ">
@@ -129,7 +127,9 @@ const AdminDashboard = () => {
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
             <Card className="col-span-4">
               <CardHeader>
-                <CardTitle className="dark:text-white">Overview Tickets</CardTitle>
+                <CardTitle className="dark:text-white">
+                  Overview Tickets
+                </CardTitle>
               </CardHeader>
               <CardContent className="pl-2">
                 <Overview />
@@ -137,8 +137,10 @@ const AdminDashboard = () => {
             </Card>
             <Card className="col-span-3">
               <CardHeader>
-                <CardTitle className="dark:text-white">Recent Tickets</CardTitle>
-                <CardDescription >
+                <CardTitle className="dark:text-white">
+                  Recent Tickets
+                </CardTitle>
+                <CardDescription>
                   There have been 50 tickets created this month.
                 </CardDescription>
               </CardHeader>

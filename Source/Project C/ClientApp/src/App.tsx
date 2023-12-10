@@ -6,7 +6,6 @@ import CreateTicket from "./pages/CreateTicket";
 import ApiTest from "./pages/ApiTest";
 import { ThemeProvider } from "@/components/DarkMode";
 
-import AdminDashboard from "@/components/tickets/page";
 import TicketPage from "./pages/TicketPage";
 import AdminTickets from "@/components/tickets/page";
 

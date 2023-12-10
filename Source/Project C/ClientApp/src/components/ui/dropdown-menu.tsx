@@ -2,8 +2,7 @@
 
 import * as React from "react";
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
-import { Check, ChevronRight, Circle } from "lucide-react";
-
+import { Circle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import IsDarkModeChecker from "../tickets/components/IsDarkModeChecker";
 
@@ -24,20 +23,39 @@ const DropdownMenuSubTrigger = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.SubTrigger> & {
     inset?: boolean;
   }
->(({ className, inset, children, ...props }, ref) => (
-  <DropdownMenuPrimitive.SubTrigger
-    ref={ref}
-    className={cn(
-      "flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-accent data-[state=open]:bg-accent",
-      inset && "pl-8",
-      className
-    )}
-    {...props}
-  >
-    {children}
-    <ChevronRight className="ml-auto h-4 w-4" />
-  </DropdownMenuPrimitive.SubTrigger>
-));
+>(({ className, inset, children, ...props }, ref) => {
+  const isDarkMode = IsDarkModeChecker();
+
+  return (
+    <DropdownMenuPrimitive.SubTrigger
+      ref={ref}
+      className={cn(
+        "flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-accent data-[state=open]:bg-accent",
+        inset && "pl-8",
+        className
+      )}
+      {...props}
+    >
+      {children}
+      <div className="ml-auto h-4 w-4">
+        <svg
+          width="15"
+          height="15"
+          viewBox="0 0 15 15"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M6.1584 3.13508C6.35985 2.94621 6.67627 2.95642 6.86514 3.15788L10.6151 7.15788C10.7954 7.3502 10.7954 7.64949 10.6151 7.84182L6.86514 11.8418C6.67627 12.0433 6.35985 12.0535 6.1584 11.8646C5.95694 11.6757 5.94673 11.3593 6.1356 11.1579L9.565 7.49985L6.1356 3.84182C5.94673 3.64036 5.95694 3.32394 6.1584 3.13508Z"
+            fill={isDarkMode ? "#fff" : "#000"}
+            fillRule="evenodd"
+            clipRule="evenodd"
+          ></path>
+        </svg>
+      </div>
+    </DropdownMenuPrimitive.SubTrigger>
+  );
+});
 DropdownMenuSubTrigger.displayName =
   DropdownMenuPrimitive.SubTrigger.displayName;
 
