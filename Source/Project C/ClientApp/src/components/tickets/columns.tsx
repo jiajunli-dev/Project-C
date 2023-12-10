@@ -32,25 +32,25 @@ export const columns: ColumnDef<Ticket>[] = [
   },
   {
     accessorKey: "id",
-    header: ({ column }) => <ColumnHeader column={column} title="ID" />,
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue("id")}</div>,
+    header: ({ column }) => <ColumnHeader column={column} className="dark:[&>button>span]:text-white" title="ID" />,
+    cell: ({ row }) => <div className="w-[80px] dark:text-white">{row.getValue("id")}</div>,
   },
   {
     accessorKey: "createdBy",
     header: ({ column }) => {
-      return <ColumnHeader column={column} title="Created By" className="bg-red-500" />;
+      return <ColumnHeader column={column} title="Created By" className="dark:[&>button>span]:text-white" />;
     },
   },
   {
     accessorKey: "priority",
     header: ({ column }) => {
-      return <ColumnHeader column={column} title="Priority" />;
+      return <ColumnHeader column={column} title="Priority" className="dark:[&>button>span]:text-white"/>;
     },
   },
   {
     accessorKey: "status",
     header: ({ column }) => {
-      return <ColumnHeader column={column} title="Status" />;
+      return <ColumnHeader column={column} title="Status" className="dark:[&>button>span]:text-white"/>;
     },
   },
   {

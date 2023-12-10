@@ -13,7 +13,6 @@ import {
   ColumnFiltersState,
   getFilteredRowModel,
 } from "@tanstack/react-table";
-
 import {
   Table,
   TableBody,
@@ -60,7 +59,6 @@ export function DataTable<TData, TValue>({
       rowSelection,
     },
   });
-
   return (
     <div>
       <div className="flex items-center py-4">
@@ -70,20 +68,20 @@ export function DataTable<TData, TValue>({
           onChange={(event) =>
             table.getColumn("id")?.setFilterValue(event.target.value)
           }
-          className="max-w-sm"
+          className="max-w-sm dark:text-white dark:bg-[#09090B]"
         />
         <DataTableViewOptions table={table} />
       </div>
 
-      <div className="rounded-md border">
+      <div className="rounded-md border ">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow key={headerGroup.id} >
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
+                    <TableHead key={header.id} >
+                      {header.isPlaceholder 
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
@@ -125,16 +123,17 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
         <div className="flex items-center">
-          <div className="flex-1 text-sm text-muted-foreground">
+          <div className="flex-1 text-sm text-muted-foreground ml-3">
             {table.getFilteredSelectedRowModel().rows.length} of{" "}
             {table.getFilteredRowModel().rows.length} row(s) selected.
           </div>
-          <div className="flex items-center space-x-2 py-3">
+          <div className="flex items-center space-x-2 py-3 mr-3">
             <Button
               variant="outline"
               size="sm"
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
+              className="dark:text-white dark:bg-[#09090B]"
             >
               Previous
             </Button>
@@ -143,6 +142,7 @@ export function DataTable<TData, TValue>({
               size="sm"
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
+              className="dark:text-white dark:bg-[#09090B]"
             >
               Next
             </Button>
