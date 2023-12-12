@@ -188,11 +188,12 @@ const CreateTicket = () => {
           )}
           <div className="w-3/5 border-t-0">
             {currForm === maxForm ? (
-              <div className="flex ">
+              <div className="flex border-x-2 border-b-2 w-full justify-end">
                 <button
                   onClick={() => currForm > 0 && setCurrForm(currForm - 1)}
                   type="button"
-                  className="min-w-[50%] flex justify-center rounded-none text-white bg-white border-2 hover:text-black hover:bg-white hover:border-2 hover:border-black focus:outline-none focus:ring-black font-medium text-sm sm:w-auto p-2 text-center "
+                  className="min-w-[10%] flex border justify-center rounded-none text-white bg-gray-200  hover:text-black hover:bg-white  hover:border-black focus:outline-none focus:ring-black font-medium text-sm sm:w-auto p-2 text-center "
+
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -216,17 +217,17 @@ const CreateTicket = () => {
                     handleSubmit();
                   }}
                   type="button"
-                  className="min-w-[50%] font-semibold flex justify-center text-black  border-gray-300 rounded border-2 bg-white hover:text-black hover:bg-white hover:border-2 hover:border-black focus:outline-none focus:ring-black font-medium text-sm sm:w-auto p-2 text-center "
+                  className="min-w-[10%] flex justify-center text-white  border-black border-2 bg-blue-500 hover:opacity-80  focus:ring-black text-xs font-bold sm:w-auto p-2 text-center "
                 >
                   Submit
                 </button>
               </div>
             ) : (
-              <div className="flex">
+              <div className="flex border-2 w-full justify-end">
                 <button
                   onClick={() => currForm > 0 && setCurrForm(currForm - 1)}
                   type="button"
-                  className="min-w-[50%] flex justify-center rounded-none text-white bg-white border-2 hover:text-black hover:bg-white hover:border-2 hover:border-black focus:outline-none focus:ring-black font-medium text-sm sm:w-auto p-2 text-center "
+                  className="min-w-[10%] flex justify-center rounded-none text-white bg-gray-200 border-x-2 hover:text-black hover:bg-white hover:border-2 focus:outline-none focus:ring-black font-medium text-sm sm:w-auto p-2 text-center "
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -252,7 +253,8 @@ const CreateTicket = () => {
                     }
                   }}
                   type="button"
-                  className="min-w-[50%] flex justify-center rounded-none text-white border-2 bg-white hover:text-black hover:bg-white hover:border-2 hover:border-black focus:outline-none focus:ring-black font-medium text-sm sm:w-auto p-2 text-center"
+                  className="min-w-[10%] flex justify-center rounded-none text-white border-x-2  hover:text-black hover:bg-white hover:border-2 hover:border-black focus:outline-none focus:ring-black font-medium text-sm sm:w-auto p-2 text-center"
+
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
