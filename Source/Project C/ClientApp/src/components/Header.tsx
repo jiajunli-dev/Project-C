@@ -28,6 +28,9 @@ const Header = () => {
               <li onClick={() => navigate("/view-tickets")} className="cursor-pointer hover:text-orange-600 ease-linear duration-150 dark:text-white">
                 View Tickets
               </li>
+            <li onClick={() => navigate("/view-users")} className="cursor-pointer hover:text-orange-600 ease-linear duration-150 dark:text-white">
+                View Users
+              </li>
             </ul>
           </div>
           <div className="flex items-center">
