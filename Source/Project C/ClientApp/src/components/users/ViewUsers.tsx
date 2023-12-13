@@ -27,8 +27,8 @@ export default function ViewUsers() {
   // }, [clerk.session]);
   useEffect(() => {
     const newData: Customer[] = [
-      new Customer { id: "1", username: "Omar", email: "omar@gmail.com", companyName: "Viscon Group", departmentName: "IT" },
-      new Customer { id: "2", username: "JiaJun", email: "jiajun@gmail.com", companyName: "Viscon Group", departmentName: "Cleaning" },
+      new Customer({ id: "1", username: "Omar", email: "omar@gmail.com", companyName: "Viscon Group", departmentName: "IT" }),
+      new Customer({ id: "2", username: "JiaJun", email: "jiajun@gmail.com", companyName: "Viscon Group", departmentName: "Cleaning" }),
     ];
     setData(newData);
   }, []);
