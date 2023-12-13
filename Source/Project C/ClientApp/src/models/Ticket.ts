@@ -14,6 +14,10 @@ export class Ticket {
     public priority?: Priority;
     public status?: Status;
 
+    constructor(data?: Partial<Ticket>) {
+        if (data) Object.assign(this, data);
+    }
+
     static fromJson(json: any): Ticket {
         if (typeof json.createdAt === 'string') {
             json.createdAt = new Date(json.createdAt);

@@ -12,6 +12,10 @@ export class CreateCustomer {
     public companyPhoneNumber?: string;
     public departmentName?: string;
 
+    constructor(data?: Partial<CreateCustomer>) {
+        if (data) Object.assign(this, data);
+    }
+
     static fromJson(json: any): CreateCustomer {
         const model = new CreateCustomer();
         Object.assign(model, json);

@@ -15,6 +15,10 @@ export class Malfunction {
 
     public ticketId?: number;
 
+    constructor(data?: Partial<Malfunction>) {
+        if (data) Object.assign(this, data);
+    }
+
     static fromJson(json: any): Malfunction {
         if (typeof json.createdAt === 'string') {
             json.createdAt = new Date(json.createdAt);

@@ -13,6 +13,10 @@ export class Employee {
 
     public departmentId?: number;
 
+    constructor(data?: Partial<Employee>) {
+        if (data) Object.assign(this, data);
+    }
+
     static fromJson(json: any): Employee {
         if (typeof json.createdAt === 'string') {
             json.createdAt = new Date(json.createdAt);

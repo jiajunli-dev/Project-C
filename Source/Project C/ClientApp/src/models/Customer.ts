@@ -16,9 +16,7 @@ export class Customer {
     public departmentName?: string;
 
     constructor(data?: Partial<Customer>) {
-        if (data) {
-            Object.assign(this, data);
-        }
+        if (data) Object.assign(this, data);
     }
 
     static fromJson(json: any): Customer {
