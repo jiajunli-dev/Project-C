@@ -48,13 +48,13 @@ export const columns: ColumnDef<Customer>[] = [
     },
   },
   {
-    accessorKey: "company",
+    accessorKey: "companyName",
     header: ({ column }) => {
       return <ColumnHeader column={column} title="Company Name" className="dark:[&>button>span]:text-white"/>;
     },
   },
   {
-    accessorKey: "department",
+    accessorKey: "departmentName",
     header: ({ column }) => {
       return <ColumnHeader column={column} title="Department Name" className="dark:[&>button>span]:text-white"/>;
     },

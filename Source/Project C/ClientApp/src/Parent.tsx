@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import Header from "@/components/Header";
 import { SignedIn } from "@clerk/clerk-react";
+import { Toaster } from "@/components/ui/toaster"
 
 const Parent = () => {
   return (
@@ -9,6 +10,7 @@ const Parent = () => {
         <Header />
       </SignedIn>
       <Outlet />
+      <Toaster />
     </section>
   );
 };

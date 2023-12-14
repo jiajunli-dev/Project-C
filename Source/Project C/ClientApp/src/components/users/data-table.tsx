@@ -25,7 +25,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 
 import DataTableViewOptions from "./components/TableViewOptions";
-
+import CreateUserDialogue from "./components/CreateUserDialogue";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -59,29 +59,32 @@ export function DataTable<TData, TValue>({
       rowSelection,
     },
   });
+
   return (
     <div>
-      <div className="flex items-center py-4">
+      <div className="flex items-center  py-4">
         <Input
-          placeholder="Filter id..."
-          value={(table.getColumn("id")?.getFilterValue() as string) ?? ""}
+          placeholder="Filter username..."
+          value={
+            (table.getColumn("username")?.getFilterValue() as string) ?? ""
+          }
           onChange={(event) =>
-            table.getColumn("id")?.setFilterValue(event.target.value)
+            table.getColumn("username")?.setFilterValue(event.target.value)
           }
           className="max-w-sm dark:text-white dark:bg-[#09090B]"
         />
+        <CreateUserDialogue />
         <DataTableViewOptions table={table} />
       </div>
-
       <div className="rounded-md border ">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} >
+              <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id} >
-                      {header.isPlaceholder 
+                    <TableHead key={header.id}>
+                      {header.isPlaceholder
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
