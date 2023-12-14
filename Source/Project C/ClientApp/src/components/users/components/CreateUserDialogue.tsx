@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
-
+// TODO backend handle creating a user
 export default function CreateUserDialogue() {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
