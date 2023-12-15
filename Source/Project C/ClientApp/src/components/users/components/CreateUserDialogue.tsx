@@ -9,14 +9,37 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
-// TODO backend handle creating a user
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 export default function CreateUserDialogue() {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const wait = () => new Promise((resolve) => setTimeout(resolve, 100));
+  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
+  const [selectedRole, setSelectedRole] = useState("");
+
+  const handleUserCreation = (event: any) => {
+    event.preventDefault();
+    // TODO backend handle the object userToBeAdded
+    const userToBeAdded = { name, username, selectedRole };
+    console.log(userToBeAdded);
+    wait().then(() => setOpen(false));
+    toast({
+      description: "User successfully added.",
+      duration: 3500,
+    });
+    event.preventDefault();
+  };
 
   return (
     <div className="mx-auto">
@@ -35,30 +58,44 @@ export default function CreateUserDialogue() {
               <Label htmlFor="name" className="text-right dark:text-white">
                 Name
               </Label>
-              <Input id="name" className="col-span-3 dark:bg-inherit dark:border-slate-700 dark:text-white" />
+              <Input
+                id="name"
+                className="col-span-3 dark:bg-inherit dark:border-slate-700 dark:text-white"
+                onChange={(e) => setName(e.target.value)}
+              />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="username" className="text-right dark:text-white">
                 Username
               </Label>
-              <Input id="username" className="col-span-3  dark:bg-inherit dark:border-slate-700 dark:text-white" />
+              <Input
+                id="username"
+                className="col-span-3  dark:bg-inherit dark:border-slate-700 dark:text-white"
+                onChange={(e) => setUsername(e.target.value)}
+              />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="employee" className="text-right dark:text-white ">
-                Employee
+                Roles
               </Label>
-              <Checkbox id="employee" className="col-span-3  dark:border-slate-700 dark:text-white" />
+              <Select onValueChange={setSelectedRole}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select a role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="customer">Customer</SelectItem>
+                    <SelectItem value="employee">Employee</SelectItem>
+                    <SelectItem value="admin">Admin</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <DialogFooter>
             <form
               onSubmit={(event) => {
-                wait().then(() => setOpen(false));
-                event.preventDefault();
-                toast({
-                  description: "User successfully added.",
-                  duration: 3000,
-                });
+                handleUserCreation(event);
               }}
             >
               <Button type="submit">Add user</Button>
