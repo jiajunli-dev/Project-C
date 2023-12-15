@@ -80,13 +80,19 @@ export default function CreateUserDialogue() {
               </Label>
               <Select onValueChange={setSelectedRole}>
                 <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Select a role" />
+                  <SelectValue  placeholder="Select a role" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectItem value="customer">Customer</SelectItem>
-                    <SelectItem value="employee">Employee</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
+                    <SelectItem value="customer">
+                      <span className="dark:text-white">Customer</span>
+                    </SelectItem>
+                    <SelectItem value="employee">
+                      <span className="dark:text-white">Employee</span>
+                    </SelectItem>
+                    <SelectItem value="admin">
+                      <span className="dark:text-white">Admin</span>
+                    </SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>

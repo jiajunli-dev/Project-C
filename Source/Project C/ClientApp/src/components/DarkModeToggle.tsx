@@ -28,9 +28,6 @@ export default function DarkModeToggle() {
         <DropdownMenuItem className="dark:text-white" onClick={() => setTheme("dark")}>
           Dark
         </DropdownMenuItem>
-        <DropdownMenuItem className="dark:text-white" onClick={() => setTheme("system")}>
-          System
-        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )
