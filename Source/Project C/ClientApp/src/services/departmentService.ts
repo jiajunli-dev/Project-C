@@ -2,7 +2,7 @@ import { CreateDepartment } from "../models/CreateDepartment";
 import { Department } from "../models/Department";
 import { baseService } from "./baseService";
 
-export class employeeService extends baseService {
+export class departmentService extends baseService {
     constructor(baseUrl: string = "https://localhost:7004") { super(baseUrl); }
 
     async getAll(token: string): Promise<Department[] | undefined> {

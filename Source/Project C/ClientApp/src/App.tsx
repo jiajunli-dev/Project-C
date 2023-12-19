@@ -9,6 +9,7 @@ import { ThemeProvider } from "@/components/DarkMode";
 import AdminDashboard from "@/components/tickets/page";
 import TicketPage from "./pages/TicketPage";
 import AdminTickets from "@/components/tickets/page";
+import DepartmentPage from "./pages/DepartmentPage";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
               <Route path="/view-tickets" element={<AdminTickets />} />
               <Route path="/ApiTest" element={<ApiTest />} />
               <Route path="/ticket/:id" element={<TicketPage/>} />
+              <Route path="/department" element={<DepartmentPage/>} />
             </Route>
           </Routes>
         </Router>
