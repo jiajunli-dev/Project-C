@@ -1,5 +1,4 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,12 +6,13 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SignOutButton, useUser } from "@clerk/clerk-react";
+import { useNavigate } from "react-router-dom";
 
 export function UserNav() {
+  const navigate = useNavigate();
   const { user } = useUser();
   if (!user) {
     return null;
@@ -31,9 +31,6 @@ export function UserNav() {
             <p className="text-sm font-medium leading-none dark:text-white">
               {user.username}
             </p>
-            {/* <p className="text-xs leading-none text-muted-foreground dark:text-white">
-              {user.publicMetadata.role }
-            </p> */}
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -46,7 +43,7 @@ export function UserNav() {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
-          <SignOutButton>
+          <SignOutButton signOutCallback={() => navigate("/")}>
             <p className="cursor-pointer dark:text-white">Sign Out</p>
           </SignOutButton>
         </DropdownMenuItem>
