@@ -8,25 +8,31 @@ import { ThemeProvider } from "@/components/DarkMode";
 import TicketPage from "./pages/TicketPage";
 import AdminTickets from "@/components/tickets/page";
 import ViewUsers from "./components/users/ViewUsers";
+import ArticlePage from "./components/Article/ArticlePage/ArticlePage";
+import { ArticlesContext } from "./components/Article/ArticleContext";
+import { Articles } from "./components/Article/Articles";
 
 function App() {
   return (
     <>
-      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <Router>
-          <Routes>
-            <Route path="/" element={<Parent />}>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/authentication" element={<LoginPage />} />
-              <Route path="/create-ticket" element={<CreateTicket />} />
-              <Route path="/view-tickets" element={<AdminTickets />} />
-              <Route path="/view-users" element={<ViewUsers />} />
-              <Route path="/ApiTest" element={<ApiTest />} />
-              <Route path="/ticket/:id" element={<TicketPage/>} />
-            </Route>
-          </Routes>
-        </Router>
-      </ThemeProvider>
+      <ArticlesContext.Provider value={Articles}>
+        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+          <Router>
+            <Routes>
+              <Route path="/" element={<Parent />}>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/authentication" element={<LoginPage />} />
+                <Route path="/create-ticket" element={<CreateTicket />} />
+                <Route path="/view-tickets" element={<AdminTickets />} />
+                <Route path="/view-users" element={<ViewUsers />} />
+                <Route path="/ApiTest" element={<ApiTest />} />
+                <Route path="/ticket/:id" element={<TicketPage />} />
+                <Route path="/article/:id" element={<ArticlePage />} />
+              </Route>
+            </Routes>
+          </Router>
+        </ThemeProvider>
+      </ArticlesContext.Provider>
     </>
   );
 }

@@ -3,6 +3,9 @@ import { SignedIn, SignedOut } from "@clerk/clerk-react";
 import LoginPage from "@/pages/LoginPage";
 import { useUser } from "@clerk/clerk-react";
 import Employee from "./Employee";
+import CustomerPage from "./CustomerPage";
+
+
 
 const HomePage = () => {
   const { user } = useUser();
@@ -15,7 +18,7 @@ const HomePage = () => {
         ) : user?.publicMetadata.role === "employee" ? (
           <Employee />
         ) : user?.publicMetadata.role === "customer" ? (
-          <h1 className="text-black">Not logged in</h1>
+          <CustomerPage />
         ) : (
           <h1 className="text-black">Error</h1>
         )}

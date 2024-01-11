@@ -5,10 +5,11 @@ import { SignedIn, SignedOut } from "@clerk/clerk-react";
 import ShowName from "./ShowName";
 import DarkModeToggle from "./DarkModeToggle";
 import { UserNav } from "./UserNav";
+import { useUser } from "@clerk/clerk-react";
 
 const Header = () => {
   const navigate = useNavigate();
-
+  const { user } = useUser();
   return (
     <>
       <header className="flex items-center justify-between p-5  border-b-[1px] border-gray-200  dark:border-gray-800 dark:bg-[#121212] ">
@@ -36,7 +37,7 @@ const Header = () => {
             </li>
             <li
               onClick={() => navigate("/view-users")}
-              className="cursor-pointer hover:text-orange-600 ease-linear duration-150 dark:text-white"
+              className={`${user?.publicMetadata.role == "customer" ? "hidden" : ""} cursor-pointer hover:text-orange-600 ease-linear duration-150 dark:text-white`}
             >
               View Users
             </li>
