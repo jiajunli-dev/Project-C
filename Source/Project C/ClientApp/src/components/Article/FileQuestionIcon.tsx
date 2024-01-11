@@ -1,3 +1,5 @@
+import useIsDarkMode from "../tickets/components/IsDarkModeChecker";
+
 export function FileQuestionIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
@@ -7,7 +9,7 @@ export function FileQuestionIcon(props: React.SVGProps<SVGSVGElement>) {
       height="24"
       viewBox="0 0 24 24"
       fill="none"
-      stroke="currentColor"
+      stroke={useIsDarkMode() ? "#fff" : "black"}
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
