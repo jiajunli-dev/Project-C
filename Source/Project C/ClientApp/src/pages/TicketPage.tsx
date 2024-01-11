@@ -59,9 +59,14 @@ const TicketPage = () => {
 
   return (
     ticket && (
-        <Card>
+    <div className="flex justify-center items-center bg-gray-50 h-screen">
+        <Card className="w-4/5 -mt-[10%]">
         <CardHeader>
-            <CardTitle>Ticket created by {ticket.createdBy}</CardTitle> 
+            <div className="flex w-full justify-between">
+                <CardTitle>Ticket created by {ticket.createdBy} </CardTitle> 
+                {ticket.status == 2 ? (<p className="text-sm text-red-500"> {Status[2]}</p>) 
+                : (<p className="text-sm text-green-500"> {Status[1]}</p>)}
+            </div>
             <CardDescription>     
                 { ticket.createdAt &&
                 <p className="text-xs text-gray-500">Created on {format(new Date(ticket.createdAt),'MMM d yyyy, h:mm:ss ')}</p>
@@ -85,17 +90,22 @@ const TicketPage = () => {
             <div className="flex gap-16">
                 <div>
                     <p className="text-sm font-semibold">Priority:</p>
-                    <p className="text-sm">{Priority[1]}</p>
-                </div>
-                <div>
-                    <p className="text-sm font-semibold">Status:</p>
-                    <p className="text-sm">{Status[1]}</p>
+                    {ticket.priority == 1 ? (<p className="text-sm ">{Priority[1]}</p>)
+                    : (<p className="text-sm underline underline-offset-2">{Priority[2]}</p>)}
                 </div>
             </div>
+
+            {/* { isAdmin && 
+             <div className="flex w-full justify-end">
+                 <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mt-4 rounded">
+                   Edit
+                 </button>
+             </div>} */}
 
             <br/>
         </CardContent>
         </Card>
+        </div>
     )
   )
 }
