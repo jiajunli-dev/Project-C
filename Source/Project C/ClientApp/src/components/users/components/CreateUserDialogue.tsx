@@ -19,8 +19,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useUser } from "@clerk/clerk-react";
 
 export default function CreateUserDialogue() {
+  const { user } = useUser();
+
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const wait = () => new Promise((resolve) => setTimeout(resolve, 100));
@@ -80,17 +83,24 @@ export default function CreateUserDialogue() {
               </Label>
               <Select onValueChange={setSelectedRole}>
                 <SelectTrigger className="w-[180px]">
-                  <SelectValue  placeholder="Select a role" />
+                  <SelectValue placeholder="Select a role" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
                     <SelectItem value="customer">
                       <span className="dark:text-white">Customer</span>
                     </SelectItem>
-                    <SelectItem value="employee">
+
+                    <SelectItem
+                      disabled={user?.publicMetadata.role !== "admin"}
+                      value="employee"
+                    >
                       <span className="dark:text-white">Employee</span>
                     </SelectItem>
-                    <SelectItem value="admin">
+                    <SelectItem
+                      disabled={user?.publicMetadata.role !== "admin"}
+                      value="admin"
+                    >
                       <span className="dark:text-white">Admin</span>
                     </SelectItem>
                   </SelectGroup>

@@ -34,14 +34,6 @@ export function UserNav() {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <button className=" cursor-pointer dark:text-white">
-              Change Password
-            </button>
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
         <DropdownMenuItem>
           <SignOutButton signOutCallback={() => navigate("/")}>
             <p className="cursor-pointer dark:text-white">Sign Out</p>
