@@ -5,6 +5,7 @@ import FormPageTwo from "../components/FormPages/FormPageTwo";
 import FormPageThree from "../components/FormPages/FormPageThree";
 import FormPageFour from "../components/FormPages/FormPageFour";
 import FormPageFive from "../components/FormPages/FormPageFive";
+import FormPagePictures from "../components/FormPages/FormPagePictures";
 enum Status {
   Open,
   Closed,
@@ -20,13 +21,15 @@ const CreateTicket = () => {
   const clerk = useClerk();
   const tokenType = "api_token";
 
-  const maxForm = 4;
+  const maxForm = 5;
   const [currForm, setCurrForm] = useState<number>(0);
 
   const [ticketDescription, setTicketDescription] = useState<string>("");
   const [ticketTriedSolutions, setTicketTriedSolutions] = useState<string[]>(
     []
   );
+  const [ticketImages, setTicketImages] = useState<string[]>([]); // TODO: Add images to ticket object ad send to back end
+
   const [ticketAdditionalNotes, setTicketAdditionalNotes] =
     useState<string>("");
   const [ticketPriority, setTicketPriority] = useState<Priority>(1);
@@ -172,9 +175,20 @@ const CreateTicket = () => {
               formFourError={formFourError}
             />
           )}
-
           {/* Form 5  */}
           {currForm === 4 && (
+            <FormPagePictures
+              setCurrentShow={setCurrForm}
+              currentShow={currForm}
+              finishedImages={ticketImages}
+              setFinishedImages={setTicketImages}
+              maxForm={maxForm}
+              />
+        )}
+
+          {/* Form 6  */}
+          {currForm === 5 && (
+          
             <FormPageFive
               ticketAdditionalNotes={ticketAdditionalNotes}
               ticketDescription={ticketDescription}
@@ -183,9 +197,10 @@ const CreateTicket = () => {
               ticketStatus={Status.Open}
               setCurrForm={setCurrForm}
               currForm={currForm}
-              maxForm={maxForm}
-            />
+              maxForm={maxForm}/>
+          
           )}
+
           <div className="w-3/5 border-t-0">
             {currForm === maxForm ? (
               <div className="flex border-x-2 border-b-2 w-full justify-end">
