@@ -18,17 +18,6 @@ const UploadImages = ({ setCurrentShow, setFinishedImages, currentShow, finished
         if(finishedImages.length > 0) setImages(finishedImages)
     }, [])
 
-
-    const handleNext = () => {
-        setFinishedImages(images)
-        setCurrentShow(currentShow + 1)
-    }
-
-
-    const handleBack = () => {
-        setCurrentShow(currentShow - 1)
-    }
-
     const handleNewImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (images.length > 6) return
         e.preventDefault()
