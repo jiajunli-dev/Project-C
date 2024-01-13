@@ -10,6 +10,10 @@ export class Photo {
 
     public ticketId?: number;
 
+    constructor(data?: Partial<Photo>) {
+        if (data) Object.assign(this, data);
+    }
+
     static fromJson(json: any): Photo {
         if (typeof json.createdAt === 'string') {
             json.createdAt = new Date(json.createdAt);

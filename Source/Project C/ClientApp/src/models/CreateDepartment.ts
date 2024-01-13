@@ -4,6 +4,10 @@ export class CreateDepartment {
     public name?: string;
     public description?: string;
 
+    constructor(data?: Partial<CreateDepartment>) {
+        if (data) Object.assign(this, data);
+    }
+
     static fromJson(json: any): CreateDepartment {
         const model = new CreateDepartment();
         Object.assign(model, json);

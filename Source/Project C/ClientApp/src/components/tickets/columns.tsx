@@ -2,9 +2,10 @@
 import ColumnHeader from "@/components/tickets/components/ColumnHeader";
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "../ui/checkbox";
-import { DataTableTicket } from "@/types";
+import { Ticket } from "@/models/Ticket";
+import { DataTableRowActions } from "./components/data-table-row-actions";
 
-export const columns: ColumnDef<DataTableTicket>[] = [
+export const columns: ColumnDef<Ticket>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -15,7 +16,7 @@ export const columns: ColumnDef<DataTableTicket>[] = [
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
-        className="translate-y-[2px]"
+        className="translate-y-[2px] "
       />
     ),
     cell: ({ row }) => (
@@ -23,7 +24,7 @@ export const columns: ColumnDef<DataTableTicket>[] = [
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
         aria-label="Select row"
-        className="translate-y-[2px]"
+        className="translate-y-[2px] "
       />
     ),
     enableSorting: false,
@@ -31,43 +32,29 @@ export const columns: ColumnDef<DataTableTicket>[] = [
   },
   {
     accessorKey: "id",
-    header: ({ column }) => <ColumnHeader column={column} title="ID" />,
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue("id")}</div>,
+    header: ({ column }) => <ColumnHeader column={column} className="dark:[&>button>span]:text-white" title="ID" />,
+    cell: ({ row }) => <div className="w-[80px] dark:text-white">{row.getValue("id")}</div>,
   },
   {
-    accessorKey: "requestedBy",
+    accessorKey: "createdBy",
     header: ({ column }) => {
-      return <ColumnHeader column={column} title="Requested By" />;
-    },
-  },
-  {
-    accessorKey: "machine",
-    header: ({ column }) => {
-      return <ColumnHeader column={column} title="Machine" />;
-    },
-  },
-  {
-    accessorKey: "assignee",
-    header: ({ column }) => {
-      return <ColumnHeader column={column} title="Assignee" />;
+      return <ColumnHeader column={column} title="Created By" className="dark:[&>button>span]:text-white" />;
     },
   },
   {
     accessorKey: "priority",
     header: ({ column }) => {
-      return <ColumnHeader column={column} title="Priority" />;
+      return <ColumnHeader column={column} title="Priority" className="dark:[&>button>span]:text-white"/>;
     },
   },
   {
     accessorKey: "status",
     header: ({ column }) => {
-      return <ColumnHeader column={column} title="Status" />;
+      return <ColumnHeader column={column} title="Status" className="dark:[&>button>span]:text-white"/>;
     },
   },
   {
-    accessorKey: "createdAt",
-    header: ({ column }) => {
-      return <ColumnHeader column={column} title="Created At" />;
-    },
+    id: "actions",
+    cell: ({ row }) => <DataTableRowActions row={row} />,
   },
 ];

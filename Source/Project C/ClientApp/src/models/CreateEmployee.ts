@@ -10,6 +10,10 @@ export class CreateEmployee {
 
     public departmentId?: number;
 
+    constructor(data?: Partial<CreateEmployee>) {
+        if (data) Object.assign(this, data);
+    }
+
     static fromJson(json: any): CreateEmployee {
         const model = new CreateEmployee();
         Object.assign(model, json);

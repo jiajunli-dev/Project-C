@@ -1,10 +1,13 @@
+import { Priority } from "./models/Priority";
+
 export interface DataTableTicket {
   id: number;
   requestedBy: string;
   machine: string;
   assignee: string;
-  priority: "critical" | "non-critical";
+  priority: "None" | "Critical";
   status: "open" | "closed";
+  createdBy: string;
   createdAt: string;
 }
 
@@ -12,12 +15,13 @@ export interface Ticket {
   description: string;
   triedSolutions: string;
   additionalNotes: string;
+  priority: Priority;
   status: Status;
 }
 
 export enum Status {
-  NonCritical = 1,
-  Critical = 2,
+  Open = 1,
+  Closed = 2,
 }
 
 export interface Customer {

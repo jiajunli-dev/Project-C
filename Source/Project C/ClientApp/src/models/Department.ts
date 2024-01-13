@@ -8,6 +8,10 @@ export class Department {
     public name?: string;
     public description?: string;
 
+    constructor(data?: Partial<Department>) {
+        if (data) Object.assign(this, data);
+    }
+
     static fromJson(json: any): Department {
         if (typeof json.createdAt === 'string') {
             json.createdAt = new Date(json.createdAt);

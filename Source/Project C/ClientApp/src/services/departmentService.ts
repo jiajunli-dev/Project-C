@@ -1,6 +1,6 @@
 import { CreateDepartment } from "../models/CreateDepartment";
 import { Department } from "../models/Department";
-import { baseService } from "./BaseService";
+import { baseService } from "./baseService";
 
 export class employeeService extends baseService {
     constructor(baseUrl: string = "https://localhost:7004") { super(baseUrl); }

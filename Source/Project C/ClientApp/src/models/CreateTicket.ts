@@ -10,6 +10,10 @@ export class CreateTicket {
     public priority?: Priority;
     public status?: Status;
 
+    constructor(data?: Partial<CreateTicket>) {
+        if (data) Object.assign(this, data);
+    }
+
     static fromJson(json: any): CreateTicket {
         if (typeof json.status === 'number') {
             json.status = Status[json.status];
