@@ -5,7 +5,7 @@ import { FileQuestionIcon } from "./FileQuestionIcon";
 const Article = (props: ArticleProps): JSX.Element => {
   return (
     <div className="flex flex-col gap-6 mt-8  w-[50rem] ">
-      <div className="flex items-start gap-4   cursor-pointer [&>div>h2]:hover:text-black">
+      <div className="flex items-start gap-4   cursor-pointer [&>div>h2]:hover:text-slate-400">
         <FileQuestionIcon className="h-6 w-6 flex-shrink-0" />
         <div>
           <h2 className="text-lg font-bold text-purple-800 dark:text-white">
