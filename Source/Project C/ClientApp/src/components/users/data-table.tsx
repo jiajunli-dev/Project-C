@@ -13,7 +13,6 @@ import {
   ColumnFiltersState,
   getFilteredRowModel,
 } from "@tanstack/react-table";
-
 import {
   Table,
   TableBody,
@@ -26,7 +25,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 
 import DataTableViewOptions from "./components/TableViewOptions";
-
+import CreateUserDialogue from "./components/CreateUserDialogue";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -63,19 +62,21 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="flex items-center py-4">
+      <div className="flex items-center  py-4">
         <Input
-          placeholder="Filter id..."
-          value={(table.getColumn("id")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("id")?.setFilterValue(event.target.value)
+          placeholder="Filter username..."
+          value={
+            (table.getColumn("username")?.getFilterValue() as string) ?? ""
           }
-          className="max-w-sm"
+          onChange={(event) =>
+            table.getColumn("username")?.setFilterValue(event.target.value)
+          }
+          className="max-w-sm dark:text-white dark:bg-[#09090B]"
         />
+        <CreateUserDialogue />
         <DataTableViewOptions table={table} />
       </div>
-
-      <div className="rounded-md border">
+      <div className="rounded-md border ">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -125,16 +126,17 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
         <div className="flex items-center">
-          <div className="flex-1 text-sm text-muted-foreground">
+          <div className="flex-1 text-sm text-muted-foreground ml-3">
             {table.getFilteredSelectedRowModel().rows.length} of{" "}
             {table.getFilteredRowModel().rows.length} row(s) selected.
           </div>
-          <div className="flex items-center space-x-2 py-3">
+          <div className="flex items-center space-x-2 py-3 mr-3">
             <Button
               variant="outline"
               size="sm"
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
+              className="dark:text-white dark:bg-[#09090B]"
             >
               Previous
             </Button>
@@ -143,6 +145,7 @@ export function DataTable<TData, TValue>({
               size="sm"
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
+              className="dark:text-white dark:bg-[#09090B]"
             >
               Next
             </Button>

@@ -14,7 +14,7 @@ export default function Home() {
 
   if (isSignedIn) {
     return (
-      <div className="text-white">{capitalizeFirstLetter(user.username)}</div>
+      <div className="dark:text-white">{capitalizeFirstLetter(user.username)}</div>
     );
   }
 

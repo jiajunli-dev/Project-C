@@ -11,6 +11,10 @@ export class CreateMalfunction {
 
     public ticketId?: number;
 
+    constructor(data?: Partial<CreateMalfunction>) {
+        if (data) Object.assign(this, data);
+    }
+
     static fromJson(json: any): CreateMalfunction {
         if (typeof json.status === 'number') {
             json.status = Status[json.status];

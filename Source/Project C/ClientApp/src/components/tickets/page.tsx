@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { columns } from "./columns";
-import { DataTable } from "./data-table";
+import { DataTable } from "./tickets-data-table";
 import { useClerk } from "@clerk/clerk-react";
 import { TicketService } from "@/services/ticketService";
 import { Ticket } from "../../models/Ticket";
-
-export default function DemoPage() {
+export default function TicketsPage() {
   const tokenType = "api_token";
   const [data, setData] = useState<Ticket[]>([]);
   const clerk = useClerk();
@@ -26,7 +25,7 @@ export default function DemoPage() {
 
     fetchDataAsync();
   }, [clerk.session]);
-
+  
   return (
     <div className="container mx-auto py-10">
       <DataTable columns={columns} data={data} />
