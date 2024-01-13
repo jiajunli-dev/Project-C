@@ -4,13 +4,15 @@ import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import CreateTicket from "./pages/CreateTicket";
 import ApiTest from "./pages/ApiTest";
-import { ThemeProvider } from "@/components/DarkMode";
+import { ThemeProvider } from "@/components/DarkMode/DarkMode";
 import TicketPage from "./pages/TicketPage";
 import AdminTickets from "@/components/tickets/page";
 import ViewUsers from "./components/users/ViewUsers";
 import ArticlePage from "./components/Article/ArticlePage/ArticlePage";
 import { ArticlesContext } from "./components/Article/ArticleContext";
 import { Articles } from "./components/Article/Articles";
+import ArticlesPage from "./pages/ArticlesPage";
+import FAQPage from "./pages/FAQPage";
 
 function App() {
   return (
@@ -27,6 +29,8 @@ function App() {
                 <Route path="/view-users" element={<ViewUsers />} />
                 <Route path="/ApiTest" element={<ApiTest />} />
                 <Route path="/ticket/:id" element={<TicketPage />} />
+                <Route path="/faq" element={<FAQPage />} />
+                <Route path="/articles" element={<ArticlesPage />} />
                 <Route path="/article/:id" element={<ArticlePage />} />
               </Route>
             </Routes>

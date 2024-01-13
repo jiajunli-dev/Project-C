@@ -3,7 +3,7 @@ import greenLightIcon from "../assets/green_light_icon.png";
 import { useNavigate } from "react-router-dom";
 import { SignedIn, SignedOut } from "@clerk/clerk-react";
 import ShowName from "./ShowName";
-import DarkModeToggle from "./DarkModeToggle";
+import DarkModeToggle from "./DarkMode/DarkModeToggle";
 import { UserNav } from "./UserNav";
 import { useUser } from "@clerk/clerk-react";
 
@@ -30,10 +30,16 @@ const Header = () => {
               Create Ticket
             </li>
             <li
-              onClick={() => navigate("/view-tickets")}
+              onClick={() => navigate("/articles")}
               className="cursor-pointer hover:text-orange-600 ease-linear duration-150 dark:text-white"
             >
-              View Tickets
+              Popular Articles
+            </li>
+            <li
+              onClick={() => navigate("/faq")}
+              className="cursor-pointer hover:text-orange-600 ease-linear duration-150 dark:text-white"
+            >
+              FAQ
             </li>
             <li
               onClick={() => navigate("/view-users")}

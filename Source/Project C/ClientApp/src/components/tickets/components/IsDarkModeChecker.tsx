@@ -1,4 +1,4 @@
-import { useTheme } from "@/components/DarkMode";
+import { useTheme } from "@/components/DarkMode/DarkMode";
 import { createContext, useContext, useEffect, useState } from "react";
 
 type Theme = "dark" | "light" | "system";

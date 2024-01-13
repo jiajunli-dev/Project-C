@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/toaster"
 
 const Parent = () => {
   return (
-    <section className="min-h-screen ">
+    <section className="min-h-screen">
       <SignedIn>
         <Header />
       </SignedIn>

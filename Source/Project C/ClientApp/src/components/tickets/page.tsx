@@ -4,7 +4,6 @@ import { DataTable } from "./tickets-data-table";
 import { useClerk } from "@clerk/clerk-react";
 import { TicketService } from "@/services/ticketService";
 import { Ticket } from "../../models/Ticket";
-
 export default function TicketsPage() {
   const tokenType = "api_token";
   const [data, setData] = useState<Ticket[]>([]);
@@ -26,14 +25,7 @@ export default function TicketsPage() {
 
     fetchDataAsync();
   }, [clerk.session]);
-  // useEffect(() => {
-  //   const newData = [
-  //     { id: 1, createdBy: "test", priority: "test", status: "test" },
-  //     { id: 2, createdBy: "test", priority: "test", status: "test" },
-  //   ];
-  //   setData(newData);
-  // }, []);
-
+  
   return (
     <div className="container mx-auto py-10">
       <DataTable columns={columns} data={data} />
