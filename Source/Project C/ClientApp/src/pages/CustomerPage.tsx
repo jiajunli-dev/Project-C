@@ -1,6 +1,6 @@
+import RecentTickets from "@/components/tickets/RecentTickets/RecentTickets";
+
 const CustomerPage = () => {
-  return (
-    <div>CustomerPage</div>
-  )
-}
-export default CustomerPage
+  return <RecentTickets />;
+};
+export default CustomerPage;

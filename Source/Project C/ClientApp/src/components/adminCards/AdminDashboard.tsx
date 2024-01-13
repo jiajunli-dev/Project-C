@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { RecentTickets } from "./recentTickets";
+import { RecentTickets } from "./AdminRecentTickets";
 import { Overview } from "./OverviewTickets";
 const AdminDashboard = () => {
   return (
