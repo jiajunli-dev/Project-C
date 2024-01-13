@@ -10,7 +10,7 @@ enum Status {
   Open,
   Closed,
 }
-import { SignedIn } from "@clerk/clerk-react";
+import { SignedIn, useUser } from "@clerk/clerk-react";
 import { useClerk } from "@clerk/clerk-react";
 import { TicketService } from "@/services/ticketService";
 import { Priority } from "@/models/Priority";
@@ -20,6 +20,7 @@ const CreateTicket = () => {
   const navigate = useNavigate();
   const clerk = useClerk();
   const tokenType = "api_token";
+  const user = useUser();
 
   const maxForm = 5;
   const [currForm, setCurrForm] = useState<number>(0);
@@ -69,7 +70,7 @@ const CreateTicket = () => {
       if (token) {
         // Create a new ticket object
         const finalTicket = new ticketCreationType();
-        finalTicket.createdBy = "User";
+        finalTicket.createdBy = user.user?.username ?? "Unknown";
         finalTicket.description = ticketDescription;
         finalTicket.triedSolutions = ticketTriedSolutions;
         finalTicket.additionalNotes = ticketAdditionalNotes;

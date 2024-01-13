@@ -12,7 +12,7 @@ const Header = () => {
   const { user } = useUser();
   return (
     <>
-      <header className="flex items-center justify-between p-5  border-b-[1px] border-gray-200  dark:border-gray-800 dark:bg-[#121212] ">
+      <header className="bg-white flex items-center justify-between p-5  border-b-[1px] border-gray-200  dark:border-gray-800 dark:bg-[#121212] ">
         <div>
           <img
             src={logo}
