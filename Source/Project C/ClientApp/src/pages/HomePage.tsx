@@ -15,6 +15,7 @@ const HomePage = () => {
       <SignedIn>
         {user?.publicMetadata.role === "admin" ? (
           <AdminDashboard />
+
         ) : user?.publicMetadata.role === "employee" ? (
           <Employee />
         ) : user?.publicMetadata.role === "customer" ? (
