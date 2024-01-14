@@ -1,14 +1,9 @@
 import { CardHeader, CardContent, Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import FetchCustomerRecentTickets from "./FetchCustomerRecentTickets";
-import { useUser } from "@clerk/clerk-react";
 const RecentTicketCard = () => {
-  const user = useUser();
-  // TODO: FETCH TICKET DATA
-  // TODO: Replace with actual ticket data
   const fetchedData = FetchCustomerRecentTickets();
   const navigate = useNavigate();
-  console.log(user.user?.username);
   return fetchedData?.map((ticket) => (
     <Card
       onClick={() => navigate(`/ticket/${ticket.id}`)}
