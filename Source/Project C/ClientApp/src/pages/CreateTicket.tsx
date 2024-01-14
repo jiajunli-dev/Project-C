@@ -117,7 +117,6 @@ const CreateTicket = () => {
   }, [currForm]);
 
   return (
-    <SignedIn>
       <div className="mt-4 ">
         <div className=" h-full flex flex-col justify-center items-center ">
           {currForm <= maxForm && (
@@ -243,7 +242,7 @@ const CreateTicket = () => {
                 <button
                   onClick={() => currForm > 0 && setCurrForm(currForm - 1)}
                   type="button"
-                  className="min-w-[10%] flex justify-center rounded-none text-white bg-gray-200 border-x-2 hover:text-black hover:bg-white hover:border-2 focus:outline-none focus:ring-black font-medium text-sm sm:w-auto p-2 text-center "
+                  className="min-w-[10%] flex justify-center rounded-none text-white  border-x-2  hover:bg-white hover:border-2 focus:outline-none focus:ring-black font-medium text-sm sm:w-auto p-2 text-center dark:bg-slate-200 "
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -269,7 +268,7 @@ const CreateTicket = () => {
                     }
                   }}
                   type="button"
-                  className="min-w-[10%] flex justify-center rounded-none text-white border-x-2  hover:text-black hover:bg-white hover:border-2 hover:border-black focus:outline-none focus:ring-black font-medium text-sm sm:w-auto p-2 text-center"
+                  className="dark:bg-slate-200 min-w-[10%] flex justify-center rounded-none text-white border-x-2  hover:text-black hover:bg-white hover:border-2 hover:border-black focus:outline-none focus:ring-black font-medium text-sm sm:w-auto p-2 text-center"
 
                 >
                   <svg
@@ -292,7 +291,6 @@ const CreateTicket = () => {
           </div>
         </div>
       </div>
-    </SignedIn>
   );
 };
 

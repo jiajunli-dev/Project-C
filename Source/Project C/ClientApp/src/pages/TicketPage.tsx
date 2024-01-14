@@ -57,11 +57,11 @@ const TicketPage = () => {
 
   return (
     ticket && (
-      <div className="flex justify-center items-center bg-gray-50 h-screen">
+      <div className=" flex justify-center items-center dark:bg-background h-screen">
         <Card className="w-4/5 -mt-[10%]">
           <CardHeader>
             <div className="flex w-full justify-between">
-              <CardTitle>Ticket created by {ticket.createdBy} </CardTitle>
+              <CardTitle className="dark:text-white">Ticket created by {ticket.createdBy} </CardTitle>
               {ticket.status == 2 ? (
                 <p className="text-sm text-red-500"> {Status[2]}</p>
               ) : (
@@ -70,14 +70,14 @@ const TicketPage = () => {
             </div>
             <CardDescription>
               {ticket.createdAt && (
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-gray-500 dark:text-white">
                   Created on{" "}
                   {format(new Date(ticket.createdAt), "MMM d yyyy, h:mm:ss ")}
                 </p>
               )}
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="dark:[&>p]:text-gray-100">
             <p className="text-sm font-semibold">Description:</p>
             <p className="text-sm">{ticket.description}</p>
             <br />
@@ -93,13 +93,13 @@ const TicketPage = () => {
               ))}
             <br />
 
-            <div className="flex gap-16">
-              <div>
+            <div className="flex gap-16 ">
+              <div className="dark:[&>p]:text-gray-100">
                 <p className="text-sm font-semibold">Priority:</p>
                 {ticket.priority == 1 ? (
                   <p className="text-sm ">{Priority[1]}</p>
                 ) : (
-                  <p className="text-sm underline underline-offset-2">
+                  <p className="text-sm ">
                     {Priority[2]}
                   </p>
                 )}

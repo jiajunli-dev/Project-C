@@ -10,7 +10,7 @@ const RecentTicketCard = () => {
         <h2 className="text-3xl font-bold text-center text-gray-900 dark:text-gray-100">
           No tickets found
         </h2>
-        <p className="text-center text-xl font-bold">
+        <p className="text-center text-xl font-bold dark:text-gray-100">
           Create a{" "}
           <Link to="/create-ticket" className="text-blue-600">
             new ticket
@@ -25,7 +25,7 @@ const RecentTicketCard = () => {
         Your Tickets
       </h2>
       {fetchedData?.map((ticket) => (
-        <Card
+      <Card
           onClick={() => navigate(`/ticket/${ticket.id}`)}
           className="cursor-pointer  rounded-lg   duration-500 hover:scale-105"
         >

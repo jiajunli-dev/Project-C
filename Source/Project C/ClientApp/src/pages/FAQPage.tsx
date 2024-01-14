@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 export default function FAQPage() {
   const navigate = useNavigate();
   return (
-    <div className="flex flex-col items-center justify-center h-[87vh] ">
+    <div className="flex flex-col items-center justify-center h-[88vh] dark:bg-background">
       <div className="w-full max-w-3xl p-4 space-y-6">
         <h2 className="text-3xl font-bold text-center text-gray-900 dark:text-gray-100">
           Frequently Asked Questions
