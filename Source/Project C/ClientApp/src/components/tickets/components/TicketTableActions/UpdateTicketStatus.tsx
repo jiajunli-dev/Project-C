@@ -1,6 +1,6 @@
 import { Ticket } from "@/models/Ticket";
 import { useEffect, useState } from "react";
-import { TicketService } from '../../../services/ticketService';
+import { TicketService } from '../../../../services/ticketService';
 
 import { useClerk } from "@clerk/clerk-react";
 import { CreateTicket } from "@/models/CreateTicket";

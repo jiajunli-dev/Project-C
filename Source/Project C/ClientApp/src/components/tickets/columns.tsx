@@ -5,7 +5,9 @@ import { Checkbox } from "../ui/checkbox";
 import { Ticket } from "@/models/Ticket";
 import { DataTableRowActions } from "./components/data-table-row-actions";
 
-export const columns: ColumnDef<Ticket>[] = [
+export const columns = (
+  deleteTicket: (ticket: Ticket) => Promise<void>
+): ColumnDef<Ticket>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -32,29 +34,57 @@ export const columns: ColumnDef<Ticket>[] = [
   },
   {
     accessorKey: "id",
-    header: ({ column }) => <ColumnHeader column={column} className="dark:[&>button>span]:text-white" title="ID" />,
-    cell: ({ row }) => <div className="w-[80px] dark:text-white">{row.getValue("id")}</div>,
+    header: ({ column }) => (
+      <ColumnHeader
+        column={column}
+        className="dark:[&>button>span]:text-white"
+        title="ID"
+      />
+    ),
+    cell: ({ row }) => (
+      <div className="w-[80px] dark:text-white">{row.getValue("id")}</div>
+    ),
   },
   {
     accessorKey: "createdBy",
     header: ({ column }) => {
-      return <ColumnHeader column={column} title="Created By" className="dark:[&>button>span]:text-white" />;
+      return (
+        <ColumnHeader
+          column={column}
+          title="Created By"
+          className="dark:[&>button>span]:text-white"
+        />
+      );
     },
   },
   {
     accessorKey: "priority",
     header: ({ column }) => {
-      return <ColumnHeader column={column} title="Priority" className="dark:[&>button>span]:text-white"/>;
+      return (
+        <ColumnHeader
+          column={column}
+          title="Priority"
+          className="dark:[&>button>span]:text-white"
+        />
+      );
     },
   },
   {
     accessorKey: "status",
     header: ({ column }) => {
-      return <ColumnHeader column={column} title="Status" className="dark:[&>button>span]:text-white"/>;
+      return (
+        <ColumnHeader
+          column={column}
+          title="Status"
+          className="dark:[&>button>span]:text-white"
+        />
+      );
     },
   },
   {
     id: "actions",
-    cell: ({ row }) => <DataTableRowActions row={row} />,
+    cell: ({ row }) => (
+      <DataTableRowActions row={row} deleteTicket={deleteTicket} />
+    ),
   },
 ];

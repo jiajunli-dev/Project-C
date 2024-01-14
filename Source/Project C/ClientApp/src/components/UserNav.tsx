@@ -8,8 +8,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SignOutButton, useUser } from "@clerk/clerk-react";
+import { useNavigate } from "react-router-dom";
 
 export function UserNav() {
+  const navigate = useNavigate();
   const { user } = useUser();
   if (!user) {
     return null;
@@ -31,7 +33,7 @@ export function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="">
-          <SignOutButton className="w-[100%] text-left cursor-pointer" />
+          <SignOutButton signOutCallback={() => navigate("/")} className="w-[100%] text-left cursor-pointer" />
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

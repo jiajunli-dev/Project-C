@@ -4,10 +4,27 @@ import { DataTable } from "./tickets-data-table";
 import { useClerk } from "@clerk/clerk-react";
 import { TicketService } from "@/services/ticketService";
 import { Ticket } from "../../models/Ticket";
+
 export default function TicketsPage() {
   const tokenType = "api_token";
   const [data, setData] = useState<Ticket[]>([]);
   const clerk = useClerk();
+
+  const deleteTicket = async (ticket: Ticket) => {
+    try {
+      const token = await clerk.session?.getToken({ template: tokenType });
+      const service = new TicketService();
+      if (token) {
+        if (ticket.id) await service.delete(token, ticket.id);
+        const updatedData = data.filter(
+          (ticketMap) => ticketMap.id !== ticket.id
+        );
+        setData(updatedData);
+      }
+    } catch (error) {
+      console.error("Error deleting ticket:", error);
+    }
+  };
 
   useEffect(() => {
     async function fetchDataAsync() {
@@ -25,10 +42,10 @@ export default function TicketsPage() {
 
     fetchDataAsync();
   }, [clerk.session]);
-  
+
   return (
     <div className="container mx-auto py-10">
-      <DataTable columns={columns} data={data} />
+      <DataTable columns={columns(deleteTicket)} data={data} deleteTicket={deleteTicket} />
     </div>
   );
 }

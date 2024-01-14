@@ -42,6 +42,12 @@ const Header = () => {
               FAQ
             </li>
             <li
+              onClick={() => navigate("/view-tickets")}
+              className={`${user?.publicMetadata.role == "customer" ? "hidden" : ""} cursor-pointer hover:text-orange-600 ease-linear duration-150 dark:text-white`}
+            >
+              View Tickets
+            </li>
+            <li
               onClick={() => navigate("/view-users")}
               className={`${user?.publicMetadata.role == "customer" ? "hidden" : ""} cursor-pointer hover:text-orange-600 ease-linear duration-150 dark:text-white`}
             >

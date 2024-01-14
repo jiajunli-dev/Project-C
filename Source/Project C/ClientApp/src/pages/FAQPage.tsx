@@ -15,8 +15,11 @@ export default function FAQPage() {
         </h2>
         <p className="text-gray-600 dark:text-gray-300 text-center">
           Find answers and solutions to common issues. If you can't find what
-          you're looking for, feel free to create a
-          <span onClick={() => navigate("/create-ticket")} className="cursor-pointer text-blue-800 ml-[0.4rem]" >
+          you're looking for, feel free to create a{" "}
+          <span
+            onClick={() => navigate("/create-ticket")}
+            className="cursor-pointer text-blue-800"
+          >
             ticket
           </span>
           .

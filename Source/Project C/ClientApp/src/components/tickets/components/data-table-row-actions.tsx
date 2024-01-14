@@ -10,15 +10,17 @@ import {
   DropdownMenuItem,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "../../ui/dropdown-menu";
 import useIsDarkMode from "./IsDarkModeChecker";
-import UpdateTicketStatus from "./UpdateTicketStatus";
+import UpdateTicketStatus from "./TicketTableActions/UpdateTicketStatus";
+import { Ticket } from "@/models/Ticket";
+import { useClerk } from "@clerk/clerk-react";
+import { toast } from "@/components/ui/use-toast";
+
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
 }
@@ -50,13 +52,27 @@ const priority = [
     value: "critical",
     label: "Critical",
   },
-
 ];
 
-export function DataTableRowActions<
-  TData
->({}: DataTableRowActionsProps<TData>) {
+export function DataTableRowActions<TData>({
+  row,
+  deleteTicket,
+}: DataTableRowActionsProps<TData> & {
+  deleteTicket: (ticket: Ticket) => Promise<void>;
+}) {
   const isDarkMode = useIsDarkMode();
+  const ticket: Ticket = {
+    id: row.original.id,
+  };
+  function DeleteTicket() {
+    deleteTicket(ticket).then(() => {
+      toast({
+        title: "Ticket deleted",
+        description: `Ticket #${ticket.id} deleted successfully`,
+        duration: 3000,
+      });
+    });
+  }
 
   return (
     <DropdownMenu>
@@ -87,7 +103,9 @@ export function DataTableRowActions<
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
         <DropdownMenuSub>
-          <DropdownMenuSubTrigger className="dark:text-white">Change Status</DropdownMenuSubTrigger>
+          <DropdownMenuSubTrigger className="dark:text-white">
+            Change Status
+          </DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
             <DropdownMenuRadioGroup>
               {status.map((status) => (
@@ -100,18 +118,28 @@ export function DataTableRowActions<
         </DropdownMenuSub>
 
         <DropdownMenuSub>
-          <DropdownMenuSubTrigger className="dark:text-white">Change Priority</DropdownMenuSubTrigger>
+          <DropdownMenuSubTrigger className="dark:text-white">
+            Change Priority
+          </DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
             <DropdownMenuRadioGroup>
               {priority.map((priority) => (
-                <DropdownMenuRadioItem  onClick={e=>UpdateTicketStatus("Test")}  key={priority.value} value={priority.value}>
+                <DropdownMenuRadioItem
+                  key={priority.value}
+                  value={priority.value}
+                >
                   <span className="dark:text-white">{priority.label}</span>
                 </DropdownMenuRadioItem>
               ))}
             </DropdownMenuRadioGroup>
           </DropdownMenuSubContent>
         </DropdownMenuSub>
-        <DropdownMenuItem className="dark:text-white">Delete</DropdownMenuItem>
+        <DropdownMenuItem
+          className="dark:text-white"
+          onClick={() => DeleteTicket()}
+        >
+          Delete
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

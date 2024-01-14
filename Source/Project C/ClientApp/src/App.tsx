@@ -13,6 +13,7 @@ import { ArticlesContext } from "./components/Article/ArticleContext";
 import { Articles } from "./components/Article/Articles";
 import ArticlesPage from "./pages/ArticlesPage";
 import FAQPage from "./pages/FAQPage";
+import SignedOutRedirect from "./components/SignedOutRedirect";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
       <ArticlesContext.Provider value={Articles}>
         <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
           <Router>
+            <SignedOutRedirect />
             <Routes>
               <Route path="/" element={<Parent />}>
                 <Route path="/" element={<HomePage />} />

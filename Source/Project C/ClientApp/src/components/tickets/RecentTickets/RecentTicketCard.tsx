@@ -5,7 +5,7 @@ const RecentTicketCard = () => {
   const fetchedData = FetchCustomerRecentTickets();
   const navigate = useNavigate();
   return fetchedData?.map((ticket) => (
-    <Card
+    <Card key={ticket.id}
       onClick={() => navigate(`/ticket/${ticket.id}`)}
       className="cursor-pointer  rounded-lg   duration-500 hover:scale-105"
     >
