@@ -6,7 +6,7 @@ export class machineService extends baseService{
     constructor(baseUrl: string = "https://localhost:7004") { super(baseUrl); }
 
     async getAll(token: string): Promise<Machine[] | undefined> {
-        const request = this.createRequest("GET", token, "Malfunction");
+        const request = this.createRequest("GET", token, "Machine");
         const response = await fetch(request);
         
         if (!response.ok) {
