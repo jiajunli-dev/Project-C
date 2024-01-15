@@ -71,6 +71,7 @@ const TicketPage = () => {
       if (token) {
         // Create a new ticket object
         const finalTicket = new Ticket();
+        finalTicket.id = ticket?.id || 0;
         finalTicket.createdBy = ticket?.createdBy;
         finalTicket.updatedBy = user?.user?.username ?? "Unknown";
         finalTicket.createdAt = ticket?.createdAt;
@@ -93,7 +94,6 @@ const TicketPage = () => {
             console.log(result);
             if (!result) return;
             window.location.reload();
-
 
           }
         } catch (createError) {
@@ -146,7 +146,6 @@ const TicketPage = () => {
   return (
     <>
       <SignedIn>
-
         {ticket && (
           <div className="flex flex-col justify-center items-center bg-gray-50 h-full mt-4">
             <Card className="w-4/5">
