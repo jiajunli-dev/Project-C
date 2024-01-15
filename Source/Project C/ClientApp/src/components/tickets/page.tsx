@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { columns } from "./columns";
 import { DataTable } from "./tickets-data-table";
-import { useClerk } from "@clerk/clerk-react";
+import { SignedIn, SignedOut, useClerk } from "@clerk/clerk-react";
 import { TicketService } from "@/services/ticketService";
 import { Ticket } from "../../models/Ticket";
+import LoginPage from "@/pages/LoginPage";
 
 export default function TicketsPage() {
   const tokenType = "api_token";
@@ -44,8 +45,16 @@ export default function TicketsPage() {
   }, [clerk.session]);
 
   return (
+    <>
+    <SignedIn>
     <div className="container mx-auto py-10">
       <DataTable columns={columns(deleteTicket)} data={data} deleteTicket={deleteTicket} />
     </div>
+    </SignedIn>
+    <SignedOut>
+      <LoginPage/>
+    </SignedOut>
+    </>
+
   );
 }
