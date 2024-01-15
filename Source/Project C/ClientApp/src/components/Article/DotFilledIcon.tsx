@@ -1,4 +1,4 @@
-import useIsDarkMode from "../tickets/components/IsDarkModeChecker";
+import useIsDarkMode from "../IsDarkModeChecker";
 
 export function DotFilledIcon(props: React.SVGProps<SVGSVGElement>) {
   return (

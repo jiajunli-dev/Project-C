@@ -15,7 +15,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "../../ui/dropdown-menu";
-import useIsDarkMode from "./IsDarkModeChecker";
+import useIsDarkMode from "../../IsDarkModeChecker";
 import UpdateTicketStatus from "./TicketTableActions/UpdateTicketStatus";
 import { Ticket } from "@/models/Ticket";
 import { useClerk } from "@clerk/clerk-react";

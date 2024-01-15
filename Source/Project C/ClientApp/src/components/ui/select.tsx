@@ -3,7 +3,7 @@ import * as SelectPrimitive from "@radix-ui/react-select";
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import useIsDarkMode from "../tickets/components/IsDarkModeChecker";
+import useIsDarkMode from "../IsDarkModeChecker";
 const Select = SelectPrimitive.Root;
 
 const SelectGroup = SelectPrimitive.Group;

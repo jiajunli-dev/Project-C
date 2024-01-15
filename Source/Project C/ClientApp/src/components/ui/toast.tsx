@@ -4,7 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { X } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import useIsDarkMode from "../tickets/components/IsDarkModeChecker";
+import useIsDarkMode from "../IsDarkModeChecker";
 
 const ToastProvider = ToastPrimitives.Provider;
 

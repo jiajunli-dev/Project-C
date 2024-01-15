@@ -1,4 +1,4 @@
-import useIsDarkMode from "../tickets/components/IsDarkModeChecker";
+import useIsDarkMode from "../IsDarkModeChecker";
 
 export function FileQuestionIcon(props: React.SVGProps<SVGSVGElement>) {
   return (

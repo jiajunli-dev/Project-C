@@ -1,14 +1,16 @@
 import { Tabs, TabsContent } from "@/components/ui/tabs";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RecentTickets } from "./AdminRecentTickets";
 import { Overview } from "./OverviewTickets";
+import TotalTickets from "./GetData/TotalTickets";
+import TotalClients from "./GetData/TotalClients";
+import OpenTickets from "./GetData/OpenTickets";
+import ClosedTickets from "./GetData/ClosedTickets";
 const AdminDashboard = () => {
+  const totalClients = TotalClients();
+  const totalTickets = TotalTickets();
+  const openTickets = OpenTickets();
+  const closedTickets = ClosedTickets();
   return (
     <div className="flex-1 space-y-4 p-8 pt-6 ">
       <div className="flex items-center justify-between space-y-2">
@@ -41,10 +43,9 @@ const AdminDashboard = () => {
                 </svg>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold dark:text-white">35</div>
-                <p className="text-xs text-muted-foreground">
-                  +20.1% from last month
-                </p>
+                <div className="text-2xl font-bold dark:text-white">
+                  {totalClients}
+                </div>
               </CardContent>
             </Card>
             <Card>
@@ -66,10 +67,9 @@ const AdminDashboard = () => {
                 </svg>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold dark:text-white">52</div>
-                <p className="text-xs text-muted-foreground">
-                  +180.1% from last month
-                </p>
+                <div className="text-2xl font-bold dark:text-white">
+                  {totalTickets}
+                </div>
               </CardContent>
             </Card>
             <Card>
@@ -92,10 +92,9 @@ const AdminDashboard = () => {
                 </svg>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold dark:text-white">5</div>
-                <p className="text-xs text-muted-foreground ">
-                  +19% from last month
-                </p>
+                <div className="text-2xl font-bold dark:text-white">
+                  {openTickets}
+                </div>
               </CardContent>
             </Card>
             <Card>
@@ -117,10 +116,9 @@ const AdminDashboard = () => {
                 </svg>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold dark:text-white">47</div>
-                <p className="text-xs text-muted-foreground">
-                  +1 since last hour
-                </p>
+                <div className="text-2xl font-bold dark:text-white">
+                  {closedTickets}
+                </div>
               </CardContent>
             </Card>
           </div>
@@ -140,9 +138,6 @@ const AdminDashboard = () => {
                 <CardTitle className="dark:text-white">
                   Recent Tickets
                 </CardTitle>
-                <CardDescription>
-                  There have been 50 tickets created this month.
-                </CardDescription>
               </CardHeader>
               <CardContent>
                 <RecentTickets />

@@ -6,7 +6,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useTheme } from "./DarkMode";
-import useIsDarkMode from "../tickets/components/IsDarkModeChecker";
+import useIsDarkMode from "../IsDarkModeChecker";
 export default function DarkModeToggle() {
   const { setTheme } = useTheme();
   const isDarkMode = useIsDarkMode();

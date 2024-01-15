@@ -70,6 +70,6 @@ const useIsDarkMode = (): boolean => {
   if (theme === undefined)
     throw new Error("useIsDarkMode must be used within a ThemeProvider");
 
-  return theme === 'dark';
+  return theme === "dark";
 };
 export default useIsDarkMode;
