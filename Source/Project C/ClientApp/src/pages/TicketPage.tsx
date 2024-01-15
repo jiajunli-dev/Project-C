@@ -30,16 +30,16 @@ const TicketPage = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [newTicketStatus, setNewTicketStatus] = useState<number>(ticket?.status || 1);
     const [newAdditionalNotes, setNewAdditionalNotes] = useState<string>("")
+    const [ticketImages, setTicketImages] = useState<string[]>([]); // TODO load with data from ticket/backend to replace tempImages thats being used now
     const [isUpdating, setIsUpdating] = useState<boolean>(false);
     const user = useUser();
+
 
     useEffect(() => {
         async function fetchDataAsync() {
             try {
                 const token = await clerk.session?.getToken({ template: tokenType });
                 const service = new TicketService();
-
-
 
                 if (token && id) {
                     const result = await service.getById(token, parseInt(id));
@@ -93,8 +93,7 @@ const TicketPage = () => {
                 const result = await service.getById(token, data.id);
                 console.log(result);
                 if (!result) return;
-                window.location.reload();
-
+                
 
               }
             } catch (createError) {
