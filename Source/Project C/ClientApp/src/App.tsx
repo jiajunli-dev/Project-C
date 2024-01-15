@@ -6,22 +6,19 @@ import CreateTicket from "./pages/CreateTicket";
 import ApiTest from "./pages/ApiTest";
 import { ThemeProvider } from "@/components/DarkMode/DarkMode";
 import TicketPage from "./pages/TicketPage";
-import AdminTickets from "@/components/tickets/page";
+import AdminTickets from "@/components/tickets/AdminTicketsPage";
 import ViewUsers from "./components/users/ViewUsers";
 import ArticlePage from "./components/Article/ArticlePage/ArticlePage";
 import { ArticlesContext } from "./components/Article/ArticleContext";
 import { Articles } from "./components/Article/Articles";
 import ArticlesPage from "./pages/ArticlesPage";
 import FAQPage from "./pages/FAQPage";
-import SignedOutRedirect from "./components/SignedOutRedirect";
-
 function App() {
   return (
     <>
       <ArticlesContext.Provider value={Articles}>
         <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
           <Router>
-            <SignedOutRedirect />
             <Routes>
               <Route path="/" element={<Parent />}>
                 <Route path="/" element={<HomePage />} />
@@ -32,8 +29,8 @@ function App() {
                 <Route path="/ApiTest" element={<ApiTest />} />
                 <Route path="/ticket/:id" element={<TicketPage />} />
                 <Route path="/faq" element={<FAQPage />} />
-                <Route path="/articles" element={<ArticlesPage />} />
                 <Route path="/article/:id" element={<ArticlePage />} />
+                <Route path="/articles" element={<ArticlesPage />} />
               </Route>
             </Routes>
           </Router>

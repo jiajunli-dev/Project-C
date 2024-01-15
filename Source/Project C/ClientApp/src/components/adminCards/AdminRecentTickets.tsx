@@ -1,67 +1,32 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import RecentTicketsAdminData from "./GetData/RecentTicketsAdminData";
+import { useNavigate } from "react-router-dom";
 export function RecentTickets() {
+  const data = RecentTicketsAdminData();
+  const navigate = useNavigate();
+  if (!data) return null;
   return (
-    <div className="space-y-8">
-      <div className="flex items-center">
-        <Avatar className="h-9 w-9">
-          <AvatarImage src="/avatars/01.png" alt="Avatar" />
-          <AvatarFallback>OM</AvatarFallback>
-        </Avatar>
-        <div className="ml-4 space-y-1">
-          <p className="text-sm font-medium leading-none dark:text-white">Olivia Martin</p>
-          <p className="text-sm text-muted-foreground">
-            olivia.martin@email.com
-          </p>
+    <div>
+      {data.map((ticket) => (
+        <div className="space-y-8" key={ticket.id}>
+          <div className="flex items-center">
+            <Avatar className="h-9 w-9">
+              <AvatarFallback>{ticket.createdBy?.slice(0, 2)}</AvatarFallback>
+            </Avatar>
+            <div className="ml-4 space-y-1">
+              <p className="text-sm font-medium leading-none dark:text-white">
+                {ticket.createdBy}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {ticket.additionalNotes?.slice(0, 50)}...
+              </p>
+          </div>
+            <div onClick={() =>  navigate(`/ticket/${ticket.id}`)} className="ml-auto font-medium dark:text-white cursor-pointer">
+              Go to Ticket
+            </div>
+          </div>
         </div>
-        <div className="ml-auto font-medium dark:text-white cursor-pointer">Go to Ticket</div>
-      </div>
-      <div className="flex items-center">
-        <Avatar className="flex h-9 w-9 items-center justify-center space-y-0 border">
-          <AvatarImage src="/avatars/02.png" alt="Avatar" />
-          <AvatarFallback>OA</AvatarFallback>
-        </Avatar>
-        <div className="ml-4 space-y-1">
-          <p className="text-sm font-medium leading-none dark:text-white">Jackson Lee</p>
-          <p className="text-sm text-muted-foreground">jackson.lee@email.com</p>
-        </div>
-        <div className="ml-auto font-medium dark:text-white cursor-pointer">Go to Ticket</div>
-      </div>
-      <div className="flex items-center">
-        <Avatar className="h-9 w-9">
-          <AvatarImage src="/avatars/03.png" alt="Avatar" />
-          <AvatarFallback>IN</AvatarFallback>
-        </Avatar>
-        <div className="ml-4 space-y-1">
-          <p className="text-sm font-medium leading-none dark:text-white">Isabella Nguyen</p>
-          <p className="text-sm text-muted-foreground">
-            isabella.nguyen@email.com
-          </p>
-        </div>
-        <div className="ml-auto font-medium dark:text-white cursor-pointer">Go to Ticket</div>
-      </div>
-      <div className="flex items-center">
-        <Avatar className="h-9 w-9">
-          <AvatarImage src="/avatars/04.png" alt="Avatar" />
-          <AvatarFallback>WK</AvatarFallback>
-        </Avatar>
-        <div className="ml-4 space-y-1">
-          <p className="text-sm font-medium leading-none dark:text-white">William Kim</p>
-          <p className="text-sm text-muted-foreground">will@email.com</p>
-        </div>
-        <div className="ml-auto font-medium dark:text-white cursor-pointer">Go to Ticket</div>
-      </div>
-      <div className="flex items-center">
-        <Avatar className="h-9 w-9">
-          <AvatarImage src="/avatars/05.png" alt="Avatar" />
-          <AvatarFallback>SD</AvatarFallback>
-        </Avatar>
-        <div className="ml-4 space-y-1">
-          <p className="text-sm font-medium leading-none dark:text-white">Sofia Davis</p>
-          <p className="text-sm text-muted-foreground">sofia.davis@email.com</p>
-        </div>
-        <div className="ml-auto font-medium dark:text-white cursor-pointer">Go to Ticket</div>
-      </div>
+      ))}
     </div>
   );
 }

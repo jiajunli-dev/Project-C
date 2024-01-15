@@ -5,7 +5,7 @@ import { useClerk } from "@clerk/clerk-react";
 import { TicketService } from "@/services/ticketService";
 import { Ticket } from "../../models/Ticket";
 
-export default function TicketsPage() {
+export default function AdminTicketsPage() {
   const tokenType = "api_token";
   const [data, setData] = useState<Ticket[]>([]);
   const clerk = useClerk();

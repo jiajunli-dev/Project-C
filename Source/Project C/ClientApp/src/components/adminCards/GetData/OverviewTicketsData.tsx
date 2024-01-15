@@ -1,9 +1,9 @@
 import { useClerk } from "@clerk/clerk-react";
 import { useEffect, useState } from "react";
 import { TicketService } from "@/services/ticketService";
-import { Status } from "@/models/Status";
-export default function ClosedTickets() {
-  const [result, setResult] = useState<number>();
+import { Ticket } from "@/models/Ticket";
+export default function OpenTickets() {
+  const [result, setResult] = useState();
   const clerk = useClerk();
   const tokenType = "api_token";
 
@@ -15,8 +15,17 @@ export default function ClosedTickets() {
         if (token) {
           const data = await service.getAll(token);
           if (!data) return;
-          const filteredData = data.filter((ticket) => ticket.status == Status.Closed);
-          setResult(filteredData.length);
+          if (!data.length) return;
+          const monthCounts = data.reduce((counts, ticket) => {
+            const month = ticket.createdAt.getMonth() + 1;
+            if (month) {
+              counts[month] = (counts[month] || 0) + 1;
+            }
+            return counts;
+          }, {});
+
+
+          setResult(monthCounts);
         } else {
           console.error("Token not retrieved");
         }

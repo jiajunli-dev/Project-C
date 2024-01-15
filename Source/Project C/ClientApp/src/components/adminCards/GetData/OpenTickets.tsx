@@ -15,7 +15,6 @@ export default function OpenTickets() {
         if (token) {
           const data = await service.getAll(token);
           if (!data) return;
-          console.log(data)
           const filteredData = data.filter((ticket) => ticket.status == Status.Registered);
           setResult(filteredData.length);
         } else {
