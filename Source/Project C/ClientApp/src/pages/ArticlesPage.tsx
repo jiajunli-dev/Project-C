@@ -1,8 +1,12 @@
 import Article from "@/components/Article/Article";
 import { Link } from "react-router-dom";
 import { Articles } from "../components/Article/Articles";
+import { SignedIn, SignedOut } from "@clerk/clerk-react";
+import LoginPage from "./LoginPage";
 const ArticlesPage = () => {
   return (
+    <>
+    <SignedIn>
     <main className="dark:bg-background">
       <section className="w-full py-12 md:py-18 lg:py-22 ">
         <div className="container px-4 md:px-36">
@@ -20,6 +24,12 @@ const ArticlesPage = () => {
         </div>
       </section>
     </main>
+    </SignedIn>
+    <SignedOut>
+      <LoginPage/>
+    </SignedOut>
+    </>
+
   );
 };
 export default ArticlesPage;
