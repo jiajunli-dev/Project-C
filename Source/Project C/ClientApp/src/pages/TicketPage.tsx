@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom"
 import { SignedIn, SignedOut, useClerk, useUser } from "@clerk/clerk-react"
 import { TicketService } from '../services/ticketService';
 import { Ticket } from '../models/Ticket';
-import {format} from 'date-fns';
+import { format } from 'date-fns';
 import {
   Card,
   CardContent,
@@ -16,6 +16,7 @@ import {
 import { Priority } from "@/models/Priority";
 import LoginPage from "./LoginPage";
 import { time } from "console";
+import Carousel from "@/components/ticketPage/Carousel";
 enum Status {
   Open = 1,
   Closed = 2,
@@ -100,34 +101,91 @@ const TicketPage = () => {
               console.error("Error creating ticket:", createError);
             }
           }
-        } catch (error) {
-          console.error("Error fetching data:", error);
         }
-      };
 
-    const deleteTicket = async () => {
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchDataAsync();
+
+  }, [clerk.session]);
+
+  const handleUpdate = async () => {
+    try {
+      // Get the authentication token
+      const token = await clerk.session?.getToken({ template: tokenType });
+
+      // Create an instance of the TicketService
+      const service = new TicketService();
+
+      if (token) {
+        // Create a new ticket object
+        const finalTicket = new Ticket();
+        finalTicket.id = ticket?.id || 0;
+        finalTicket.createdBy = ticket?.createdBy;
+        finalTicket.updatedBy = user?.user?.username ?? "Unknown";
+        finalTicket.createdAt = ticket?.createdAt;
+        const currentDatetime = new Date();
+        finalTicket.updatedAt = currentDatetime;
+        finalTicket.description = ticket?.description;
+        finalTicket.triedSolutions = ticket?.triedSolutions;
+        finalTicket.additionalNotes = newAdditionalNotes;
+        finalTicket.priority = ticket?.priority || 1;
+        finalTicket.status = newTicketStatus;
+
+
+        // Call the create function from the TicketService
         try {
-          // Get the authentication token
-          const token = await clerk.session?.getToken({ template: tokenType });
-    
-          // Create an instance of the TicketService
-          const service = new TicketService();
-    
-          if (token) {
-            // Call the create function from the TicketService
-            try {
-              const data = await service.delete(token, ticket?.id || 0);
-              // If creation is successful, perform additional actions
-                console.log(data);
-                navigate('/view-tickets');
-            } catch (createError) {
-              console.error("Error creating ticket:", createError);
-            }
+          const data = await service.update(token, finalTicket);
+          // If creation is successful, perform additional actions
+          if (data && data.id) {
+            // Get the ticket by its ID (just an example, adjust as needed)
+            const result = await service.getById(token, data.id);
+            console.log(result);
+            if (!result) return;
+            window.location.reload();
+
           }
-        } catch (error) {
-          console.error("Error fetching data:", error);
+        } catch (createError) {
+          console.error("Error creating ticket:", createError);
         }
       }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const deleteTicket = async () => {
+    try {
+      // Get the authentication token
+      const token = await clerk.session?.getToken({ template: tokenType });
+
+      // Create an instance of the TicketService
+      const service = new TicketService();
+
+      if (token) {
+        // Call the create function from the TicketService
+        try {
+          const data = await service.delete(token, ticket?.id || 0);
+          // If creation is successful, perform additional actions
+          console.log(data);
+          navigate('/view-tickets');
+        } catch (createError) {
+          console.error("Error creating ticket:", createError);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }
+  //temporary imge links for testing dit moet vervangen worden door de images van de ticket
+  const tempImages =
+    [
+      "https://res.cloudinary.com/ddpwhqyyq/image/upload/v1684019583/owljm2bfllhto8cbsbcq.png",
+      "https://res.cloudinary.com/ddpwhqyyq/image/upload/v1680638328/efw8qag93xzmln6orpn6.png"
+    ]
 
   if (!loading && !ticket) {
     return (
@@ -139,102 +197,117 @@ const TicketPage = () => {
 
   return (
     <>
-    <SignedIn>
-
-    {ticket &&  (
-    <div className="flex justify-center items-center bg-gray-50 h-screen">
-        <Card className="w-4/5">
-        <CardHeader>
-            <div className="flex w-full justify-between">
-                <CardTitle>Ticket created by {ticket.createdBy} </CardTitle> 
-                {!isUpdating && (<> 
-                {newTicketStatus == 2 ? (<p className="text-sm text-red-500"> {Status[2]}</p>) 
-                : (<p className="text-sm text-green-500"> {Status[1]}</p>)}
-                 </>)}
-                {isUpdating && (
+      <SignedIn>
+        {ticket && (
+          <div className="flex flex-col justify-center items-center bg-gray-50 h-full mt-4">
+            <Card className="w-4/5">
+              <CardHeader>
+                <div className="flex w-full justify-between">
+                  <CardTitle>Malfunction ticket:  </CardTitle>
+                  {!isUpdating && (<>
+                    {newTicketStatus == 2 ? (<p className="text-sm text-red-500"> {Status[2]}</p>)
+                      : (<p className="text-sm text-green-500"> {Status[1]}</p>)}
+                  </>)}
+                  {isUpdating && (
                     <select value={newTicketStatus} onChange={(e) => setNewTicketStatus(parseInt(e.target.value))} className="block py-2.5 px-0 w-fit text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-white focus:outline-none focus:ring-0 focus:border-black peer" name="ticket_status" id="ticket_status">
-                        <option value={1}>{Status[1]}</option>
-                        <option value={2}>{Status[2]}</option>
+                      <option value={1}>{Status[1]}</option>
+                      <option value={2}>{Status[2]}</option>
                     </select>
-                )}
-            </div>
-            <CardDescription>
-              {ticket.createdAt && (
-                <p className="text-xs text-gray-500 dark:text-white">
-                  Created on{" "}
-                  {format(new Date(ticket.createdAt), "MMM d yyyy, h:mm:ss ")}
-                </p>
-              )}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="dark:[&>p]:text-gray-100">
-            <p className="text-sm font-semibold">Description:</p>
-            <p className="text-sm">{ticket.description}</p>
-            <br/>
+                  )}
+                </div>
+                <CardDescription>
+                  {ticket.createdAt && (
+                    <p className="text-xs text-gray-500 dark:text-white">
+                      Created on{" "}
+                      {format(new Date(ticket.createdAt), "MMM d yyyy, h:mm:ss ")}
+                    </p>
+                  )}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="dark:[&>p]:text-gray-100">
+                <p className="text-sm font-semibold">Description:</p>
+                <p className="text-sm">{ticket.description}</p>
+                <br />
 
-            {isUpdating ? 
-            (<div className="w-full ">
-                <textarea value={newAdditionalNotes} maxLength={2048} rows={4} onChange={(e) => setNewAdditionalNotes(e.target.value)} name="ticket_triedsolutions" id="ticket_triedsolutions" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-white focus:outline-none focus:ring-0 focus:border-black peer" placeholder=" " required />
-            </div>)  
-            : 
-            (<>
-            <p className="text-sm font-semibold">Additional notes:</p>
-            <p className="text-sm">{ticket.additionalNotes}</p>
-            </>)}
+                {isUpdating ?
+                  (<div className="w-full ">
+                    <textarea value={newAdditionalNotes} maxLength={2048} rows={4} onChange={(e) => setNewAdditionalNotes(e.target.value)} name="ticket_triedsolutions" id="ticket_triedsolutions" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-white focus:outline-none focus:ring-0 focus:border-black peer" placeholder=" " required />
+                  </div>)
+                  :
+                  (<>
+                    <p className="text-sm font-semibold">Additional notes:</p>
+                    <p className="text-sm">{ticket.additionalNotes}</p>
+                  </>)}
 
-            <br/>
-            <p className="text-sm font-semibold">Tried solutions:</p>
-            {ticket.triedSolutions &&
-              ticket.triedSolutions.map((solution) => (
-                <p className="text-sm" key={solution}>
-                  {solution} <br />
-                </p>
-              ))}
-            <br />
+                <br />
+                <p className="text-sm font-semibold">Tried solutions:</p>
+                {ticket.triedSolutions &&
+                  ticket.triedSolutions.map((solution) => (
+                    <p className="text-sm" key={solution}>
+                      {solution} <br />
+                    </p>
+                  ))}
+                <br />
 
-            <div className="flex gap-16 ">
-              <div className="dark:[&>p]:text-gray-100">
-                <p className="text-sm font-semibold">Priority:</p>
-                {ticket.priority == 1 ? (
-                  <p className="text-sm ">{Priority[1]}</p>
-                ) : (
-                  <p className="text-sm ">
-                    {Priority[2]}
-                  </p>
-                )}
-              </div>
-            </div>
-            {user?.user?.publicMetadata.role === "admin" && 
-            (isUpdating ? 
-                (
-                    <div className="flex w-full justify-between">
+                <div className="flex gap-16 ">
+                  <div className="dark:[&>p]:text-gray-100">
+                    <p className="text-sm font-semibold">Priority:</p>
+                    {ticket.priority == 1 ? (
+                      <p className="text-sm ">{Priority[1]}</p>
+                    ) : (
+                      <p className="text-sm ">
+                        {Priority[2]}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <br />
+
+                <div className="w-full flex justify-center">
+                  <div className='max-w-[400px] flex justify-center items-center rounded-xl shadow-md'
+                  >
+                    <Carousel>
+                      {tempImages.map((image, i) => (
+                        <img src={image} alt="" key={i} className='min-w-full max-h-[300px] W-[400px] object-contain' />
+                      ))}
+                    </Carousel>
+
+                  </div>
+                </div>
+
+
+                {user?.user?.publicMetadata.role === "admin" &&
+                  (isUpdating ?
+                    (
+                      <div className="flex w-full justify-between">
                         <button onClick={() => setIsUpdating(false)} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 mt-4 rounded">
-                        Cancel
+                          Cancel
                         </button>
                         <button onClick={() => handleUpdate()} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 mt-4 rounded">
-                        Save
+                          Save
                         </button>
-                    </div>
-                ):(
-                    <div className="flex w-full justify-end gap-2">
-                 <button onClick={() => setIsUpdating(true)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mt-4 rounded">
-                   Edit
-                 </button>
-                 <button onClick={() => deleteTicket()} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 mt-4 rounded">
-                   Delete ticket
-                 </button>
-             </div>)
-            )}
+                      </div>
+                    ) : (
+                      <div className="flex w-full justify-end gap-2">
+                        <button onClick={() => setIsUpdating(true)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mt-4 rounded">
+                          Edit
+                        </button>
+                        <button onClick={() => deleteTicket()} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 mt-4 rounded">
+                          Delete ticket
+                        </button>
+                      </div>)
+                  )}
 
-            <br/>
-        </CardContent>
-        </Card>
-        </div>
-    )}
-    </SignedIn>
-    <SignedOut>
+                <br />
+              </CardContent>
+            </Card>
+          </div>
+        )}
+      </SignedIn>
+      <SignedOut>
         <LoginPage />
-    </SignedOut>
+      </SignedOut>
     </>
   )
 };

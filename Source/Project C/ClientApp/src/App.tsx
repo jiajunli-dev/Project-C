@@ -21,7 +21,6 @@ function App() {
       <ArticlesContext.Provider value={Articles}>
         <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
           <Router>
-            <SignedOutRedirect />
             <Routes>
               <Route path="/" element={<Parent />}>
                 <Route path="/" element={<HomePage />} />
