@@ -8,7 +8,7 @@ export function RecentTickets() {
   return (
     <div>
       {data.map((ticket) => (
-        <div className="space-y-8" key={ticket.id}>
+        <div className="mb-5" key={ticket.id}>
           <div className="flex items-center">
             <Avatar className="h-9 w-9">
               <AvatarFallback>{ticket.createdBy?.slice(0, 2)}</AvatarFallback>

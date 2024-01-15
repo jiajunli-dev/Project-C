@@ -1,7 +1,6 @@
 import { useClerk } from "@clerk/clerk-react";
 import { useEffect, useState } from "react";
 import { TicketService } from "@/services/ticketService";
-import { Ticket } from "@/models/Ticket";
 export default function OpenTickets() {
   const [result, setResult] = useState();
   const clerk = useClerk();
