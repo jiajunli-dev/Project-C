@@ -31,7 +31,7 @@ const TicketPage = () => {
     const [newTicketStatus, setNewTicketStatus] = useState<number>(ticket?.status || 1);
     const [newAdditionalNotes, setNewAdditionalNotes] = useState<string>("")
     const [isUpdating, setIsUpdating] = useState<boolean>(false);
-    const {user} = useUser();
+    const user = useUser();
 
     useEffect(() => {
         async function fetchDataAsync() {
@@ -72,9 +72,8 @@ const TicketPage = () => {
           if (token) {
             // Create a new ticket object
             const finalTicket = new Ticket();
-            finalTicket.createdBy = "User";
-            finalTicket.updatedBy = "Admin";
-            finalTicket.id = ticket?.id;
+            finalTicket.createdBy = ticket?.createdBy;
+            finalTicket.updatedBy = user?.user?.username ?? "Unknown";
             finalTicket.createdAt = ticket?.createdAt;
             const currentDatetime = new Date();
             finalTicket.updatedAt = currentDatetime;
@@ -83,14 +82,7 @@ const TicketPage = () => {
             finalTicket.additionalNotes = newAdditionalNotes;
             finalTicket.priority = ticket?.priority || 1;
             finalTicket.status = newTicketStatus;
-    
-            // Validate the ticket object
-            const errors = finalTicket.validate();
-            console.log(errors);
-            if (errors.length > 0) {
-              console.log("Validation errors");
-              return;
-            }
+  
     
             // Call the create function from the TicketService
             try {
@@ -213,7 +205,7 @@ const TicketPage = () => {
                 )}
               </div>
             </div>
-            {user?.publicMetadata.role === "admin" && 
+            {user?.user?.publicMetadata.role === "admin" && 
             (isUpdating ? 
                 (
                     <div className="flex w-full justify-between">

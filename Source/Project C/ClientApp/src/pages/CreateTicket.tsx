@@ -11,8 +11,7 @@ enum Status {
   Closed,
 }
 
-import { SignedIn, SignedOut } from "@clerk/clerk-react";
-import { SignedIn, useUser } from "@clerk/clerk-react";
+import { SignedIn, SignedOut, useUser } from "@clerk/clerk-react";
 import { useClerk } from "@clerk/clerk-react";
 import { TicketService } from "@/services/ticketService";
 import { Priority } from "@/models/Priority";
