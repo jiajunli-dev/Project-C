@@ -33,7 +33,7 @@ export function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="">
-          <SignOutButton signOutCallback={() => navigate("/")} className="w-[100%] text-left cursor-pointer" />
+          <SignOutButton signOutCallback={() => navigate("/")} className="w-[100%] dark:text-white text-left cursor-pointer" />
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

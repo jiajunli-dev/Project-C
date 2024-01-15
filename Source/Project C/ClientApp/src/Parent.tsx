@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 
 const Parent = () => {
   return (
-    <section className="flex flex-col h-screen bg-gray-50 dark:bg-background">
+    <section className="flex flex-col min-h-screen bg-gray-50 dark:bg-background">
       <SignedIn>
         <Header />
       </SignedIn>
