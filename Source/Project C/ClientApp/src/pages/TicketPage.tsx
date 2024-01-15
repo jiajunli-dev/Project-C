@@ -23,31 +23,83 @@ enum Status {
 }
 
 const TicketPage = () => {
-  const tokenType = 'api_token';
-  const clerk = useClerk();
-  const { id } = useParams()
-  const navigate = useNavigate();
-  const [ticket, setTicket] = useState<Ticket | undefined>(undefined);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [newTicketStatus, setNewTicketStatus] = useState<number>(ticket?.status || 1);
-  const [newAdditionalNotes, setNewAdditionalNotes] = useState<string>("")
-  const [isUpdating, setIsUpdating] = useState<boolean>(false);
-  const user = useUser();
+    const tokenType = 'api_token';
+    const clerk = useClerk();
+    const { id } = useParams()
+    const navigate = useNavigate();
+    const [ticket, setTicket] = useState<Ticket | undefined>(undefined);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [newTicketStatus, setNewTicketStatus] = useState<number>(ticket?.status || 1);
+    const [newAdditionalNotes, setNewAdditionalNotes] = useState<string>("")
+    const [ticketImages, setTicketImages] = useState<string[]>([]); // TODO load with data from ticket/backend to replace tempImages thats being used now
+    const [isUpdating, setIsUpdating] = useState<boolean>(false);
+    const user = useUser();
 
-  useEffect(() => {
-    async function fetchDataAsync() {
-      try {
-        const token = await clerk.session?.getToken({ template: tokenType });
-        const service = new TicketService();
 
-        if (token && id) {
-          const result = await service.getById(token, parseInt(id));
-          if (result) console.log(result);
-          setLoading(false);
-          if (result) {
-            setTicket(result);
-            setNewTicketStatus(result?.status || 1);
-            setNewAdditionalNotes(result?.additionalNotes || "");
+    useEffect(() => {
+        async function fetchDataAsync() {
+            try {
+                const token = await clerk.session?.getToken({ template: tokenType });
+                const service = new TicketService();
+
+                if (token && id) {
+                    const result = await service.getById(token, parseInt(id));
+                    if(result) console.log(result);
+                    setLoading(false);
+                    if (result) {
+                        setTicket(result);
+                        setNewTicketStatus(result?.status || 1);
+                        setNewAdditionalNotes(result?.additionalNotes || "");
+                    }
+                }
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchDataAsync();
+
+    }, [clerk.session]);
+
+    const handleUpdate = async () => {
+        try {
+          // Get the authentication token
+          const token = await clerk.session?.getToken({ template: tokenType });
+    
+          // Create an instance of the TicketService
+          const service = new TicketService();
+    
+          if (token) {
+            // Create a new ticket object
+            const finalTicket = new Ticket();
+            finalTicket.createdBy = ticket?.createdBy;
+            finalTicket.updatedBy = user?.user?.username ?? "Unknown";
+            finalTicket.createdAt = ticket?.createdAt;
+            const currentDatetime = new Date();
+            finalTicket.updatedAt = currentDatetime;
+            finalTicket.description = ticket?.description;
+            finalTicket.triedSolutions = ticket?.triedSolutions;
+            finalTicket.additionalNotes = newAdditionalNotes;
+            finalTicket.priority = ticket?.priority || 1;
+            finalTicket.status = newTicketStatus;
+  
+    
+            // Call the create function from the TicketService
+            try {
+              const data = await service.update(token, finalTicket);
+              // If creation is successful, perform additional actions
+              if (data && data.id) {
+                // Get the ticket by its ID (just an example, adjust as needed)
+                const result = await service.getById(token, data.id);
+                console.log(result);
+                if (!result) return;
+                
+
+              }
+            } catch (createError) {
+              console.error("Error creating ticket:", createError);
+            }
           }
         }
 
