@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import { useClerk } from "@clerk/clerk-react";
 
@@ -14,7 +14,7 @@ const MachineInfoForm = () => {
 
         axios.get(`http://localhost:5069/Machine/${machineId}`, { headers: { Authorization: `Bearer ${token}` } })
             .then((response) => {
-                // setMachineInfo(response.data);
+                setMachineInfo(response.data);
                 console.log(response);
             })
             .catch((error) => {
@@ -45,10 +45,13 @@ const MachineInfoForm = () => {
             </form>
             {machineInfo && (
                 <div className="card mt-3">
-                    <div className="card-header">{machineInfo.Name}</div>
+                    <div className="card-header">Machine: {machineInfo.name}</div>
                     <div className="card-body">
                         <ul className="list-group">
-                            <li className="list-group-item">Machine ID: {machineInfo.Description}</li>
+                            <li className="list-group-item">Machine ID: {machineInfo.id}</li>
+                            <li className="list-group-item">Machine Description: {machineInfo.description}</li>
+                            <li className="list-group-item">Date of creation: {machineInfo.createdAt}</li>
+                            <li className="list-group-item">Created by: {machineInfo.createdBy}</li>
                         </ul>
                     </div>
                 </div>
