@@ -10,11 +10,14 @@ enum Status {
   Open,
   Closed,
 }
+
+import { SignedIn, SignedOut } from "@clerk/clerk-react";
 import { SignedIn, useUser } from "@clerk/clerk-react";
 import { useClerk } from "@clerk/clerk-react";
 import { TicketService } from "@/services/ticketService";
 import { Priority } from "@/models/Priority";
 import { CreateTicket as ticketCreationType } from "@/models/CreateTicket";
+import LoginPage from "./LoginPage";
 
 const CreateTicket = () => {
   const navigate = useNavigate();
@@ -31,13 +34,13 @@ const CreateTicket = () => {
   );
   const [ticketImages, setTicketImages] = useState<string[]>([]); // TODO: Add images to ticket object ad send to back end
 
-  const [ticketAdditionalNotes, setTicketAdditionalNotes] =
-    useState<string>("");
+  const [ticketAdditionalNotes, setTicketAdditionalNotes] = useState<string>("");
   const [ticketPriority, setTicketPriority] = useState<Priority>(1);
   const [formOneError, setFormOneError] = useState<boolean>(false);
   const [formTwoError, setFormTwoError] = useState<boolean>(false);
   const [formThreeError, setFormThreeError] = useState<boolean>(false);
   const [formFourError, setFormFourError] = useState<boolean>(false);
+  const [checkedChecklist, setCheckedChecklist] = useState<boolean>(false);
 
   const checkInput = () => {
     if (currForm === 0 && ticketDescription === "") {
@@ -117,8 +120,68 @@ const CreateTicket = () => {
   }, [currForm]);
 
   return (
-      <div className="mt-4 ">
-        <div className=" h-full flex flex-col justify-center items-center ">
+    <>
+    <SignedIn>
+      <div className="mt-4">
+
+        { !checkedChecklist ? 
+        (
+        <div className="w-full justify-center items-center flex">
+          <div className="w-3/5 border-2 p-4  dark:bg-[#121212] ">
+
+            <h1 className="text-black text-lg font-bold mb-8 dark:text-white underline ">
+                Make sure to have checked the following before creating a ticket:
+            </h1>
+
+            <ul className="mb-8">
+              <li>
+                <p className="text-black dark:text-white ">
+                  Have you tried to restart the device?
+                </p>
+              </li>
+              <br />
+              <li>
+                <p className="text-black dark:text-white ">
+                  Have you tried to restart the software?
+                </p>
+              </li>
+              <br />
+              <li>
+                <p className="text-black dark:text-white ">
+                  Have you checked for debris?
+                </p>
+              </li>
+              <br />
+              <li>
+                <p className="text-black dark:text-white ">
+                  Have you checked if everthing is plugged in properly?
+                </p>
+              </li>
+              <br />
+              <li>
+                <p className="text-black dark:text-white ">
+                  Have you applied solutions to prior malfunctions?
+                </p>
+              </li>
+            </ul>
+
+            <div className="relative z-0 w-full mb-6 group flex items-center">
+                <label className="text-black dark:text-white">
+                   Click here if u have checked all of the above:
+                </label>
+                <input
+                    type="checkbox"
+                    className="w-4 h-4 ml-6 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    onChange={(e) => setCheckedChecklist(e.target.checked)}
+                />
+            </div>
+          </div>
+        </div>
+        )
+
+        :
+        
+        (<div className=" h-full flex flex-col justify-center items-center ">
           {currForm <= maxForm && (
             <div className=" flex w-3/5 justify-between border-x-2 border-t-2  rounded-t-lg p-1 items-center  ">
               <h1 className="text-lg  ml-3 font-semibold dark:text-white">
@@ -239,7 +302,7 @@ const CreateTicket = () => {
               </div>
             ) : (
               <div className="flex border-2 w-full justify-end">
-                <button
+                {currForm != 0 && <button
                   onClick={() => currForm > 0 && setCurrForm(currForm - 1)}
                   type="button"
                   className="min-w-[10%] flex justify-center rounded-none text-white  border-x-2  hover:bg-white hover:border-2 focus:outline-none focus:ring-black font-medium text-sm sm:w-auto p-2 text-center dark:bg-slate-200 "
@@ -258,7 +321,7 @@ const CreateTicket = () => {
                       d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18"
                     />
                   </svg>
-                </button>
+                </button>}
 
                 <button
                   onClick={() => {
@@ -289,8 +352,14 @@ const CreateTicket = () => {
               </div>
             )}
           </div>
-        </div>
+        </div>)}
       </div>
+    </SignedIn>
+    <SignedOut>
+      <LoginPage />
+    </SignedOut>
+    </>
+
   );
 };
 
