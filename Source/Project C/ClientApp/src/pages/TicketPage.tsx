@@ -62,56 +62,6 @@ const TicketPage = () => {
 
     }, [clerk.session]);
 
-    const handleUpdate = async () => {
-        try {
-          // Get the authentication token
-          const token = await clerk.session?.getToken({ template: tokenType });
-    
-          // Create an instance of the TicketService
-          const service = new TicketService();
-    
-          if (token) {
-            // Create a new ticket object
-            const finalTicket = new Ticket();
-            finalTicket.createdBy = ticket?.createdBy;
-            finalTicket.updatedBy = user?.user?.username ?? "Unknown";
-            finalTicket.createdAt = ticket?.createdAt;
-            const currentDatetime = new Date();
-            finalTicket.updatedAt = currentDatetime;
-            finalTicket.description = ticket?.description;
-            finalTicket.triedSolutions = ticket?.triedSolutions;
-            finalTicket.additionalNotes = newAdditionalNotes;
-            finalTicket.priority = ticket?.priority || 1;
-            finalTicket.status = newTicketStatus;
-  
-    
-            // Call the create function from the TicketService
-            try {
-              const data = await service.update(token, finalTicket);
-              // If creation is successful, perform additional actions
-              if (data && data.id) {
-                // Get the ticket by its ID (just an example, adjust as needed)
-                const result = await service.getById(token, data.id);
-                console.log(result);
-                if (!result) return;
-                
-
-              }
-            } catch (createError) {
-              console.error("Error creating ticket:", createError);
-            }
-          }
-        }
-
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    fetchDataAsync();
-
-  }, [clerk.session]);
-
   const handleUpdate = async () => {
     try {
       // Get the authentication token
