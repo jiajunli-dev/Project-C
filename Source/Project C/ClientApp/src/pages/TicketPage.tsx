@@ -153,7 +153,7 @@ const TicketPage = () => {
             <Card className="w-4/5">
               <CardHeader>
                 <div className="flex w-full justify-between">
-                  <CardTitle>Malfunction ticket:  </CardTitle>
+                  <CardTitle>Malfunction ticket: </CardTitle>
                   {!isUpdating && (<>
                     {newTicketStatus == 2 ? (<p className="text-sm text-red-500"> {Status[2]}</p>)
                       : (<p className="text-sm text-green-500"> {Status[1]}</p>)}
