@@ -11,6 +11,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import { Ticket } from "@/models/Ticket";
 
 interface DataTableViewOptionsProps<TData> {
   table: Table<TData>;
@@ -18,7 +19,10 @@ interface DataTableViewOptionsProps<TData> {
 
 export default function DataTableViewOptions<TData>({
   table,
-}: DataTableViewOptionsProps<TData>) {
+  deleteTicket,
+}: DataTableViewOptionsProps<TData> & {
+  deleteTicket: (ticket: Ticket) => Promise<void>;
+}) {
   const isDarkMode = IsDarkModeChecker();
 
   return (

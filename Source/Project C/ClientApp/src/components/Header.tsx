@@ -12,7 +12,7 @@ const Header = () => {
   const { user } = useUser();
   return (
     <>
-      <header className="flex items-center justify-between p-5  border-b-[1px] border-gray-200  dark:border-gray-800 dark:bg-[#121212] ">
+      <header className="bg-white flex items-center justify-between p-5  border-b-[1px] border-gray-200  dark:border-gray-800 dark:bg-[#121212] ">
         <div>
           <img
             src={logo}
@@ -40,6 +40,12 @@ const Header = () => {
               className="cursor-pointer hover:text-orange-600 ease-linear duration-150 dark:text-white"
             >
               FAQ
+            </li>
+            <li
+              onClick={() => navigate("/view-tickets")}
+              className={`${user?.publicMetadata.role == "customer" ? "hidden" : ""} cursor-pointer hover:text-orange-600 ease-linear duration-150 dark:text-white`}
+            >
+              View Tickets
             </li>
             <li
               onClick={() => navigate("/view-users")}

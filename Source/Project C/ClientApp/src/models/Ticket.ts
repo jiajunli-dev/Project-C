@@ -41,7 +41,7 @@ export class Ticket {
         return model;
     }
 
-    toJSON(): string {
+    static toJSON(): string {
         const entries = Object.entries(this);
         const filteredEntries = entries.filter(([_, value]) => value !== undefined && value !== null);
         const obj = Object.fromEntries(filteredEntries);
@@ -64,7 +64,7 @@ export class Ticket {
         return JSON.stringify(obj);
     }
 
-    validate(): string[] {
+    static validate(): string[] {
         const errors: string[] = [];
 
         Object.entries(this).forEach(([key, value]) => {

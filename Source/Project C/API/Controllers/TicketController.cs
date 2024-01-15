@@ -27,7 +27,7 @@ public class TicketController : ControllerBase
     }
 
     [HttpGet] // GET Ticket
-    [Authorize(Roles = $"{Roles.ADMIN}, {Roles.EMPLOYEE}")]
+    [Authorize(Roles = $"{Roles.ADMIN}, {Roles.EMPLOYEE}, {Roles.CUSTOMER}")]
     public async Task<IActionResult> GetAll()
     {
         _logger.LogInformation("Fetching all tickets");

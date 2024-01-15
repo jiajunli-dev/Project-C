@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { SignedIn, SignedOut, useClerk, useUser } from "@clerk/clerk-react"
@@ -5,21 +6,20 @@ import { TicketService } from '../services/ticketService';
 import { Ticket } from '../models/Ticket';
 import {format} from 'date-fns';
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-  } from "@/components/ui/card"
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 // import 'moment/locale/nl';
 import { Priority } from "@/models/Priority";
 import LoginPage from "./LoginPage";
 import { time } from "console";
 enum Status {
-    Open = 1,
-    Closed = 2
+  Open = 1,
+  Closed = 2,
 }
-
 
 const TicketPage = () => {
     const tokenType = 'api_token';
@@ -138,9 +138,13 @@ const TicketPage = () => {
         }
       }
 
-    if(!loading && !ticket) {
-        return <div className="-mt-32 flex w-full h-screen justify-center items-center">Ticket not found</div>
-    }
+  if (!loading && !ticket) {
+    return (
+      <div className="-mt-32 flex w-full h-screen justify-center items-center">
+        Ticket not found
+      </div>
+    );
+  }
 
   return (
     <>
@@ -163,13 +167,16 @@ const TicketPage = () => {
                     </select>
                 )}
             </div>
-            <CardDescription>     
-                { ticket.createdAt &&
-                <p className="text-xs text-gray-500">Created on {format(new Date(ticket.createdAt),'MMM d yyyy, h:mm:ss ')}</p>
-                }       
+            <CardDescription>
+              {ticket.createdAt && (
+                <p className="text-xs text-gray-500 dark:text-white">
+                  Created on{" "}
+                  {format(new Date(ticket.createdAt), "MMM d yyyy, h:mm:ss ")}
+                </p>
+              )}
             </CardDescription>
-        </CardHeader>
-        <CardContent>
+          </CardHeader>
+          <CardContent className="dark:[&>p]:text-gray-100">
             <p className="text-sm font-semibold">Description:</p>
             <p className="text-sm">{ticket.description}</p>
             <br/>
@@ -186,20 +193,26 @@ const TicketPage = () => {
 
             <br/>
             <p className="text-sm font-semibold">Tried solutions:</p>
-            {ticket.triedSolutions && 
-            ticket.triedSolutions.map((solution) => (
-            <p className="text-sm" key={solution}>{solution} <br /></p> 
-            ))}
-            <br/>
+            {ticket.triedSolutions &&
+              ticket.triedSolutions.map((solution) => (
+                <p className="text-sm" key={solution}>
+                  {solution} <br />
+                </p>
+              ))}
+            <br />
 
-            <div className="flex gap-16">
-                <div>
-                    <p className="text-sm font-semibold">Priority:</p>
-                    {ticket.priority == 1 ? (<p className="text-sm ">{Priority[1]}</p>)
-                    : (<p className="text-sm underline underline-offset-2">{Priority[2]}</p>)}
-                </div>
+            <div className="flex gap-16 ">
+              <div className="dark:[&>p]:text-gray-100">
+                <p className="text-sm font-semibold">Priority:</p>
+                {ticket.priority == 1 ? (
+                  <p className="text-sm ">{Priority[1]}</p>
+                ) : (
+                  <p className="text-sm ">
+                    {Priority[2]}
+                  </p>
+                )}
+              </div>
             </div>
-
             {user?.publicMetadata.role === "admin" && 
             (isUpdating ? 
                 (
@@ -233,6 +246,6 @@ const TicketPage = () => {
     </SignedOut>
     </>
   )
-}
+};
 
-export default TicketPage
+export default TicketPage;

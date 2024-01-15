@@ -10,7 +10,9 @@ enum Status {
   Open,
   Closed,
 }
+
 import { SignedIn, SignedOut } from "@clerk/clerk-react";
+import { SignedIn, useUser } from "@clerk/clerk-react";
 import { useClerk } from "@clerk/clerk-react";
 import { TicketService } from "@/services/ticketService";
 import { Priority } from "@/models/Priority";
@@ -21,6 +23,7 @@ const CreateTicket = () => {
   const navigate = useNavigate();
   const clerk = useClerk();
   const tokenType = "api_token";
+  const user = useUser();
 
   const maxForm = 5;
   const [currForm, setCurrForm] = useState<number>(0);
@@ -70,7 +73,7 @@ const CreateTicket = () => {
       if (token) {
         // Create a new ticket object
         const finalTicket = new ticketCreationType();
-        finalTicket.createdBy = "User";
+        finalTicket.createdBy = user.user?.username ?? "Unknown";
         finalTicket.description = ticketDescription;
         finalTicket.triedSolutions = ticketTriedSolutions;
         finalTicket.additionalNotes = ticketAdditionalNotes;
@@ -302,7 +305,7 @@ const CreateTicket = () => {
                 {currForm != 0 && <button
                   onClick={() => currForm > 0 && setCurrForm(currForm - 1)}
                   type="button"
-                  className="min-w-[10%] flex justify-center rounded-none text-white bg-gray-200 border-x-2 hover:text-black hover:bg-white hover:border-2 focus:outline-none focus:ring-black font-medium text-sm sm:w-auto p-2 text-center "
+                  className="min-w-[10%] flex justify-center rounded-none text-white  border-x-2  hover:bg-white hover:border-2 focus:outline-none focus:ring-black font-medium text-sm sm:w-auto p-2 text-center dark:bg-slate-200 "
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -328,7 +331,7 @@ const CreateTicket = () => {
                     }
                   }}
                   type="button"
-                  className="min-w-[10%] flex justify-center rounded-none text-white border-x-2  hover:text-black hover:bg-white hover:border-2 hover:border-black focus:outline-none focus:ring-black font-medium text-sm sm:w-auto p-2 text-center"
+                  className="dark:bg-slate-200 min-w-[10%] flex justify-center rounded-none text-white border-x-2  hover:text-black hover:bg-white hover:border-2 hover:border-black focus:outline-none focus:ring-black font-medium text-sm sm:w-auto p-2 text-center"
 
                 >
                   <svg
@@ -356,6 +359,7 @@ const CreateTicket = () => {
       <LoginPage />
     </SignedOut>
     </>
+
   );
 };
 

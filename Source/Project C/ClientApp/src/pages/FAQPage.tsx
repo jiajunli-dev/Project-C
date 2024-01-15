@@ -8,15 +8,18 @@ import { useNavigate } from "react-router-dom";
 export default function FAQPage() {
   const navigate = useNavigate();
   return (
-    <div className="flex flex-col items-center justify-center h-[87vh] ">
+    <div className="flex flex-col items-center justify-center h-[88vh] dark:bg-background">
       <div className="w-full max-w-3xl p-4 space-y-6">
         <h2 className="text-3xl font-bold text-center text-gray-900 dark:text-gray-100">
           Frequently Asked Questions
         </h2>
         <p className="text-gray-600 dark:text-gray-300 text-center">
           Find answers and solutions to common issues. If you can't find what
-          you're looking for, feel free to create a
-          <span onClick={() => navigate("/create-ticket")} className="cursor-pointer text-blue-800 ml-[0.4rem]" >
+          you're looking for, feel free to create a{" "}
+          <span
+            onClick={() => navigate("/create-ticket")}
+            className="cursor-pointer text-blue-800"
+          >
             ticket
           </span>
           .
