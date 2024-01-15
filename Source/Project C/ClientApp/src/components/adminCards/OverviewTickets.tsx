@@ -4,7 +4,7 @@ import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import OverviewTicketsData from "./GetData/OverviewTicketsData";
 
 export function Overview() {
-  const overviewData = OverviewTicketsData();
+  const overviewData: { [key: string]: number } = OverviewTicketsData();
   const data = [
     {
       name: "Jan",
