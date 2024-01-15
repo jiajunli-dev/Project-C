@@ -7,6 +7,7 @@ import ApiTest from "./pages/ApiTest";
 import { ThemeProvider } from "@/components/DarkMode";
 import AdminTickets from "@/components/tickets/page";
 import MachineInfoForm from "./pages/MachineInfoForm";
+import MachinePage from "./pages/MachinePage";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
               <Route path="/view-tickets" element={<AdminTickets />} />
               <Route path="/ApiTest" element={<ApiTest />} />
               <Route path="/MachineInfoForm" element={<MachineInfoForm />} />
+              <Route path="/MachinePage" element={<MachinePage />} />
             </Route>
           </Routes>
         </Router>
