@@ -14,6 +14,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       publishableKey={
         "pk_test_c3RpcnJpbmctbXVza294LTMuY2xlcmsuYWNjb3VudHMuZGV2JA"
       }
+      
     >
       <App />
     </ClerkProvider>

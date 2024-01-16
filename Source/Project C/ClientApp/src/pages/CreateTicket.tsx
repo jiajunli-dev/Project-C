@@ -5,35 +5,43 @@ import FormPageTwo from "../components/FormPages/FormPageTwo";
 import FormPageThree from "../components/FormPages/FormPageThree";
 import FormPageFour from "../components/FormPages/FormPageFour";
 import FormPageFive from "../components/FormPages/FormPageFive";
+import FormPagePictures from "../components/FormPages/FormPagePictures";
 enum Status {
   Open,
   Closed,
 }
-import { SignedIn } from "@clerk/clerk-react";
+
+import { SignedIn, SignedOut, useUser } from "@clerk/clerk-react";
 import { useClerk } from "@clerk/clerk-react";
 import { TicketService } from "@/services/ticketService";
 import { Priority } from "@/models/Priority";
 import { CreateTicket as ticketCreationType } from "@/models/CreateTicket";
+import LoginPage from "./LoginPage";
+import { PhotoService } from "@/services/photoService";
+import { CreatePhoto } from "@/models/Photo";
 
 const CreateTicket = () => {
   const navigate = useNavigate();
   const clerk = useClerk();
   const tokenType = "api_token";
+  const user = useUser();
 
-  const maxForm = 4;
+  const maxForm = 5;
   const [currForm, setCurrForm] = useState<number>(0);
 
   const [ticketDescription, setTicketDescription] = useState<string>("");
   const [ticketTriedSolutions, setTicketTriedSolutions] = useState<string[]>(
     []
   );
-  const [ticketAdditionalNotes, setTicketAdditionalNotes] =
-    useState<string>("");
+  const [ticketImages, setTicketImages] = useState<string[]>([]); // TODO: Add images to ticket object ad send to back end
+
+  const [ticketAdditionalNotes, setTicketAdditionalNotes] = useState<string>("");
   const [ticketPriority, setTicketPriority] = useState<Priority>(1);
   const [formOneError, setFormOneError] = useState<boolean>(false);
   const [formTwoError, setFormTwoError] = useState<boolean>(false);
   const [formThreeError, setFormThreeError] = useState<boolean>(false);
   const [formFourError, setFormFourError] = useState<boolean>(false);
+  const [checkedChecklist, setCheckedChecklist] = useState<boolean>(false);
 
   const checkInput = () => {
     if (currForm === 0 && ticketDescription === "") {
@@ -56,17 +64,19 @@ const CreateTicket = () => {
   };
 
   const handleSubmit = async () => {
+    console.log(ticketImages)
     try {
       // Get the authentication token
       const token = await clerk.session?.getToken({ template: tokenType });
 
       // Create an instance of the TicketService
       const service = new TicketService();
+      const photoService = new PhotoService();
 
       if (token) {
         // Create a new ticket object
         const finalTicket = new ticketCreationType();
-        finalTicket.createdBy = "User";
+        finalTicket.createdBy = user.user?.username ?? "Unknown";
         finalTicket.description = ticketDescription;
         finalTicket.triedSolutions = ticketTriedSolutions;
         finalTicket.additionalNotes = ticketAdditionalNotes;
@@ -75,6 +85,7 @@ const CreateTicket = () => {
 
         // Validate the ticket object
         const errors = finalTicket.validate();
+        
         console.log(errors);
         if (errors.length > 0) {
           console.log("Validation errors");
@@ -85,6 +96,14 @@ const CreateTicket = () => {
         try {
           const data = await service.create(token, finalTicket);
           // If creation is successful, perform additional actions
+          ticketImages.forEach(element => {
+            var model = new CreatePhoto();
+            model.ticketId = data?.id;
+            model.data = element;
+            model.name = "temp_name"
+            model.createdBy = user.user?.id ?? "Unknown";
+            photoService.create(token, model);
+          });
           if (data && data.id) {
             // Get the ticket by its ID (just an example, adjust as needed)
             const result = await service.getById(token, data.id);
@@ -113,9 +132,68 @@ const CreateTicket = () => {
   }, [currForm]);
 
   return (
+    <>
     <SignedIn>
-      <div className="mt-4 ">
-        <div className=" h-full flex flex-col justify-center items-center ">
+      <div className="mt-4">
+
+        { !checkedChecklist ? 
+        (
+        <div className="w-full justify-center items-center flex">
+          <div className="w-3/5 border-2 p-4  dark:bg-[#121212] ">
+
+            <h1 className="text-black text-lg font-bold mb-8 dark:text-white underline ">
+                Make sure to have checked the following before creating a ticket:
+            </h1>
+
+            <ul className="mb-8">
+              <li>
+                <p className="text-black dark:text-white ">
+                  Have you tried to restart the device?
+                </p>
+              </li>
+              <br />
+              <li>
+                <p className="text-black dark:text-white ">
+                  Have you tried to restart the software?
+                </p>
+              </li>
+              <br />
+              <li>
+                <p className="text-black dark:text-white ">
+                  Have you checked for debris?
+                </p>
+              </li>
+              <br />
+              <li>
+                <p className="text-black dark:text-white ">
+                  Have you checked if everthing is plugged in properly?
+                </p>
+              </li>
+              <br />
+              <li>
+                <p className="text-black dark:text-white ">
+                  Have you applied solutions to prior malfunctions?
+                </p>
+              </li>
+            </ul>
+
+            <div className="relative z-0 w-full mb-6 group flex items-center">
+                <label className="text-black dark:text-white">
+                   Click here if u have checked all of the above:
+                </label>
+                <input
+                    type="checkbox"
+                    className="w-4 h-4 ml-6 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    onChange={(e) => setCheckedChecklist(e.target.checked)}
+                />
+            </div>
+          </div>
+        </div>
+        )
+
+        :
+        
+        (<div className=" h-full flex flex-col justify-center items-center ">
           {currForm <= maxForm && (
             <div className=" flex w-3/5 justify-between border-x-2 border-t-2  rounded-t-lg p-1 items-center  ">
               <h1 className="text-lg  ml-3 font-semibold dark:text-white">
@@ -172,9 +250,20 @@ const CreateTicket = () => {
               formFourError={formFourError}
             />
           )}
-
           {/* Form 5  */}
           {currForm === 4 && (
+            <FormPagePictures
+              setCurrentShow={setCurrForm}
+              currentShow={currForm}
+              finishedImages={ticketImages}
+              setFinishedImages={setTicketImages}
+              maxForm={maxForm}
+              />
+        )}
+
+          {/* Form 6  */}
+          {currForm === 5 && (
+          
             <FormPageFive
               ticketAdditionalNotes={ticketAdditionalNotes}
               ticketDescription={ticketDescription}
@@ -183,16 +272,18 @@ const CreateTicket = () => {
               ticketStatus={Status.Open}
               setCurrForm={setCurrForm}
               currForm={currForm}
-              maxForm={maxForm}
-            />
+              maxForm={maxForm}/>
+          
           )}
+
           <div className="w-3/5 border-t-0">
             {currForm === maxForm ? (
-              <div className="flex ">
+              <div className="flex border-x-2 border-b-2 w-full justify-end">
                 <button
                   onClick={() => currForm > 0 && setCurrForm(currForm - 1)}
                   type="button"
-                  className="min-w-[50%] flex justify-center rounded-none text-white bg-white border-2 hover:text-black hover:bg-white hover:border-2 hover:border-black focus:outline-none focus:ring-black font-medium text-sm sm:w-auto p-2 text-center "
+                  className="min-w-[10%] flex border justify-center rounded-none text-white bg-gray-200  hover:text-black hover:bg-white  hover:border-black focus:outline-none focus:ring-black font-medium text-sm sm:w-auto p-2 text-center "
+
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -216,17 +307,17 @@ const CreateTicket = () => {
                     handleSubmit();
                   }}
                   type="button"
-                  className="min-w-[50%] font-semibold flex justify-center text-black  border-gray-300 rounded border-2 bg-white hover:text-black hover:bg-white hover:border-2 hover:border-black focus:outline-none focus:ring-black font-medium text-sm sm:w-auto p-2 text-center "
+                  className="min-w-[10%] flex justify-center text-white  border-black border-2 bg-blue-500 hover:opacity-80  focus:ring-black text-xs font-bold sm:w-auto p-2 text-center "
                 >
                   Submit
                 </button>
               </div>
             ) : (
-              <div className="flex">
-                <button
+              <div className="flex border-2 w-full justify-end">
+                {currForm != 0 && <button
                   onClick={() => currForm > 0 && setCurrForm(currForm - 1)}
                   type="button"
-                  className="min-w-[50%] flex justify-center rounded-none text-white bg-white border-2 hover:text-black hover:bg-white hover:border-2 hover:border-black focus:outline-none focus:ring-black font-medium text-sm sm:w-auto p-2 text-center "
+                  className="min-w-[10%] flex justify-center rounded-none text-white  border-x-2  hover:bg-white hover:border-2 focus:outline-none focus:ring-black font-medium text-sm sm:w-auto p-2 text-center dark:bg-slate-200 "
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -242,7 +333,7 @@ const CreateTicket = () => {
                       d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18"
                     />
                   </svg>
-                </button>
+                </button>}
 
                 <button
                   onClick={() => {
@@ -252,7 +343,8 @@ const CreateTicket = () => {
                     }
                   }}
                   type="button"
-                  className="min-w-[50%] flex justify-center rounded-none text-white border-2 bg-white hover:text-black hover:bg-white hover:border-2 hover:border-black focus:outline-none focus:ring-black font-medium text-sm sm:w-auto p-2 text-center"
+                  className="dark:bg-slate-200 min-w-[10%] flex justify-center rounded-none text-white border-x-2  hover:text-black hover:bg-white hover:border-2 hover:border-black focus:outline-none focus:ring-black font-medium text-sm sm:w-auto p-2 text-center"
+
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -272,9 +364,14 @@ const CreateTicket = () => {
               </div>
             )}
           </div>
-        </div>
+        </div>)}
       </div>
     </SignedIn>
+    <SignedOut>
+      <LoginPage />
+    </SignedOut>
+    </>
+
   );
 };
 

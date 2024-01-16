@@ -26,6 +26,8 @@ import { CreateCustomer } from "@/models/CreateCustomer";
 import { CreateEmployee } from "@/models/CreateEmployee";
 
 export default function CreateUserDialogue() {
+  const { user } = useUser();
+
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const clerk = useClerk();
@@ -183,10 +185,17 @@ export default function CreateUserDialogue() {
                     <SelectItem value="customer">
                       <span className="dark:text-white">Customer</span>
                     </SelectItem>
-                    <SelectItem value="employee">
+
+                    <SelectItem
+                      disabled={user?.publicMetadata.role !== "admin"}
+                      value="employee"
+                    >
                       <span className="dark:text-white">Employee</span>
                     </SelectItem>
-                    <SelectItem value="admin">
+                    <SelectItem
+                      disabled={user?.publicMetadata.role !== "admin"}
+                      value="admin"
+                    >
                       <span className="dark:text-white">Admin</span>
                     </SelectItem>
                   </SelectGroup>

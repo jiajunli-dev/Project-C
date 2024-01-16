@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../../ui/dropdown-menu";
-import useIsDarkMode from "../../tickets/components/IsDarkModeChecker";
+import useIsDarkMode from "../../IsDarkModeChecker";
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
 }

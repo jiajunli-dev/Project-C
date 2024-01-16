@@ -1,4 +1,4 @@
-import { useTheme } from "@/components/DarkMode";
+import { useTheme } from "@/components/DarkMode/DarkMode";
 import { createContext, useContext, useEffect, useState } from "react";
 
 type Theme = "dark" | "light" | "system";
@@ -70,6 +70,6 @@ const useIsDarkMode = (): boolean => {
   if (theme === undefined)
     throw new Error("useIsDarkMode must be used within a ThemeProvider");
 
-  return theme === 'dark';
+  return theme === "dark";
 };
 export default useIsDarkMode;

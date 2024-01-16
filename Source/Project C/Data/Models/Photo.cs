@@ -10,8 +10,7 @@ public class Photo : DbModel<int>
     [MaxLength(256)]
     public string Name { get; set; }
 
-    [MaxLength(20 * 1024 * 1024)]
-    public byte[] Data { get; set; }
+    public string Data { get; set; }
 
     // Navigation properties
     [ForeignKey(nameof(Ticket))]

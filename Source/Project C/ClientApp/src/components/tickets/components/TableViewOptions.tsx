@@ -2,7 +2,7 @@
 
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { Table } from "@tanstack/react-table";
-import IsDarkModeChecker from "./IsDarkModeChecker";
+import IsDarkModeChecker from "../../IsDarkModeChecker";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -11,6 +11,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import { Ticket } from "@/models/Ticket";
 
 interface DataTableViewOptionsProps<TData> {
   table: Table<TData>;
@@ -18,7 +19,9 @@ interface DataTableViewOptionsProps<TData> {
 
 export default function DataTableViewOptions<TData>({
   table,
-}: DataTableViewOptionsProps<TData>) {
+}: DataTableViewOptionsProps<TData> & {
+  deleteTicket: (ticket: Ticket) => Promise<void>;
+}) {
   const isDarkMode = IsDarkModeChecker();
 
   return (

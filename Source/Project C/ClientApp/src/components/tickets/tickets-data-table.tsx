@@ -25,7 +25,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 
 import DataTableViewOptions from "./components/TableViewOptions";
-
+import { Ticket } from "@/models/Ticket";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -34,7 +34,10 @@ interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({
   columns,
   data,
-}: DataTableProps<TData, TValue>) {
+  deleteTicket,
+}: DataTableProps<TData, TValue> & {
+  deleteTicket: (ticket: Ticket) => Promise<void>;
+}) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -59,6 +62,7 @@ export function DataTable<TData, TValue>({
       rowSelection,
     },
   });
+
   return (
     <div>
       <div className="flex items-center py-4">
@@ -70,18 +74,18 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm dark:text-white dark:bg-[#09090B]"
         />
-        <DataTableViewOptions table={table} />
+        <DataTableViewOptions table={table} deleteTicket={deleteTicket} />{" "}
       </div>
 
       <div className="rounded-md border ">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} >
+              <TableRow  key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id} >
-                      {header.isPlaceholder 
+                    <TableHead key={header.id}>
+                      {header.isPlaceholder
                         ? null
                         : flexRender(
                             header.column.columnDef.header,

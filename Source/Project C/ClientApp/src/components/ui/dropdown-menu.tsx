@@ -4,7 +4,7 @@ import * as React from "react";
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
 import { Circle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import IsDarkModeChecker from "../tickets/components/IsDarkModeChecker";
+import IsDarkModeChecker from "../IsDarkModeChecker";
 
 const DropdownMenu = DropdownMenuPrimitive.Root;
 

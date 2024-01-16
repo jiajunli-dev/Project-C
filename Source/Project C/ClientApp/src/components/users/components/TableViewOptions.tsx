@@ -2,7 +2,7 @@
 
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { Table } from "@tanstack/react-table";
-import useIsDarkMode from "../../tickets/components/IsDarkModeChecker";
+import useIsDarkMode from "../../IsDarkModeChecker";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,

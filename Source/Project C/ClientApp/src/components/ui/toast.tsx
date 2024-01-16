@@ -4,7 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { X } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import useIsDarkMode from "../tickets/components/IsDarkModeChecker";
+import useIsDarkMode from "../IsDarkModeChecker";
 
 const ToastProvider = ToastPrimitives.Provider;
 
@@ -108,7 +108,7 @@ const ToastTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <ToastPrimitives.Title
     ref={ref}
-    className={cn("text-sm font-semibold", className)}
+    className={cn("dark:text-white text-sm font-semibold", className)}
     {...props}
   />
 ));
