@@ -1,29 +1,28 @@
-import { Status } from "@/models/Status";
 import { TicketService } from "../../../../services/ticketService";
 import { useClerk } from "@clerk/clerk-react";
+import { Priority } from "@/models/Priority";
 
-const statusMapping: { [key: string]: Status } = {
-  Closed: Status.Closed,
-  Open: Status.Open,
-  Registered: Status.Registered,
-  Unresolved: Status.Unresolved,
+const priorityMapping: { [key: string]: Priority } = {
+  None: Priority.None,
+  Critical: Priority.Critical,
 };
 
-export const useUpdateTicketStatus = () => {
+export const useUpdateTicketPriority = () => {
   const clerk = useClerk();
   const tokenType = "api_token";
 
-  const updateTicketStatus = async (ticketID: number, status: string) => {
+  const updateTicketPriority = async (ticketID: number, priority: string) => {
     try {
       const token = await clerk.session?.getToken({ template: tokenType });
       const service = new TicketService();
       if (token) {
         const ticket = await service.getById(token, ticketID);
         if (ticket) {
-          ticket.status = statusMapping[status];
-          ticket.priority = ticket.status === Status.Closed ? 1 : 1;
+          ticket.priority = priorityMapping[priority];
           await service.update(token, ticket);
           window.location.reload();
+
+
         }
       }
     } catch (error) {
@@ -31,5 +30,5 @@ export const useUpdateTicketStatus = () => {
     }
   };
 
-  return updateTicketStatus;
+  return updateTicketPriority;
 };

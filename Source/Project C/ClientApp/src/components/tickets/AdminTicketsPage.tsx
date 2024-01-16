@@ -5,6 +5,7 @@ import { SignedIn, SignedOut, useClerk } from "@clerk/clerk-react";
 import { TicketService } from "@/services/ticketService";
 import { Ticket } from "../../models/Ticket";
 import LoginPage from "@/pages/LoginPage";
+import { useNavigate } from "react-router-dom";
 
 export default function AdminTicketsPage() {
   const tokenType = "api_token";
@@ -22,6 +23,7 @@ export default function AdminTicketsPage() {
         );
         setData(updatedData);
       }
+
     } catch (error) {
       console.error("Error deleting ticket:", error);
     }
@@ -46,15 +48,18 @@ export default function AdminTicketsPage() {
 
   return (
     <>
-    <SignedIn>
-    <div className="container mx-auto py-10">
-      <DataTable columns={columns(deleteTicket)} data={data} deleteTicket={deleteTicket} />
-    </div>
-    </SignedIn>
-    <SignedOut>
-      <LoginPage/>
-    </SignedOut>
+      <SignedIn>
+        <div className="container mx-auto py-10">
+          <DataTable
+            columns={columns(deleteTicket)}
+            data={data}
+            deleteTicket={deleteTicket}
+          />
+        </div>
+      </SignedIn>
+      <SignedOut>
+        <LoginPage />
+      </SignedOut>
     </>
-
   );
 }

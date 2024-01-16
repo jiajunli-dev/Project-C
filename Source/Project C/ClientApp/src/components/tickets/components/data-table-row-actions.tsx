@@ -1,8 +1,6 @@
 "use client";
 
-import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { Row } from "@tanstack/react-table";
-
 import { Button } from "../../ui/button";
 import {
   DropdownMenu,
@@ -16,11 +14,11 @@ import {
   DropdownMenuTrigger,
 } from "../../ui/dropdown-menu";
 import useIsDarkMode from "../../IsDarkModeChecker";
-import UpdateTicketStatus from "./TicketTableActions/UpdateTicketStatus";
 import { Ticket } from "@/models/Ticket";
-import { useClerk } from "@clerk/clerk-react";
 import { toast } from "@/components/ui/use-toast";
-
+import { useUpdateTicketPriority } from "./TicketTableActions/UpdateTicketPriority";
+import { useNavigate } from "react-router-dom";
+import { useUpdateTicketStatus } from "./TicketTableActions/UpdateTicketStatus";
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
 }
@@ -73,7 +71,16 @@ export function DataTableRowActions<TData>({
       });
     });
   }
+  const updateTicketPriority = useUpdateTicketPriority();
+  const updateTicketStatus = useUpdateTicketStatus();
 
+  const handlePriorityChange = (ticketID: number, priorityValue: string) => {
+    updateTicketPriority(ticketID, priorityValue);
+  };
+  const handleStatusChange = (ticketID: number, statusValue: string) => {
+    updateTicketStatus(ticketID, statusValue);
+  };
+  const navigate = useNavigate();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -102,6 +109,12 @@ export function DataTableRowActions<TData>({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
+        <DropdownMenuItem
+          className="dark:text-white"
+          onClick={() => navigate(`/ticket/${row.original.id}`)}
+        >
+          Go to Ticket
+        </DropdownMenuItem>
         <DropdownMenuSub>
           <DropdownMenuSubTrigger className="dark:text-white">
             Change Status
@@ -109,7 +122,7 @@ export function DataTableRowActions<TData>({
           <DropdownMenuSubContent>
             <DropdownMenuRadioGroup>
               {status.map((status) => (
-                <DropdownMenuRadioItem key={status.value} value={status.value}>
+                <DropdownMenuRadioItem onClick={() => handleStatusChange(row.original.id, status.label)} key={status.value} value={status.value}>
                   <span className="dark:text-white">{status.label}</span>
                 </DropdownMenuRadioItem>
               ))}
@@ -127,6 +140,9 @@ export function DataTableRowActions<TData>({
                 <DropdownMenuRadioItem
                   key={priority.value}
                   value={priority.value}
+                  onClick={() =>
+                    handlePriorityChange(row.original.id, priority.label)
+                  }
                 >
                   <span className="dark:text-white">{priority.label}</span>
                 </DropdownMenuRadioItem>
@@ -134,6 +150,7 @@ export function DataTableRowActions<TData>({
             </DropdownMenuRadioGroup>
           </DropdownMenuSubContent>
         </DropdownMenuSub>
+
         <DropdownMenuItem
           className="dark:text-white"
           onClick={() => DeleteTicket()}

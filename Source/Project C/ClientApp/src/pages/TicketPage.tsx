@@ -1,10 +1,9 @@
-
-import { useEffect, useState } from "react"
-import { useNavigate, useParams } from "react-router-dom"
-import { SignedIn, SignedOut, useClerk, useUser } from "@clerk/clerk-react"
-import { TicketService } from '../services/ticketService';
-import { Ticket } from '../models/Ticket';
-import { format } from 'date-fns';
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { SignedIn, SignedOut, useClerk, useUser } from "@clerk/clerk-react";
+import { TicketService } from "../services/ticketService";
+import { Ticket } from "../models/Ticket";
+import { format } from "date-fns";
 import {
   Card,
   CardContent,
@@ -25,64 +24,60 @@ enum Status {
 }
 
 const TicketPage = () => {
-    const tokenType = 'api_token';
-    const clerk = useClerk();
-    const { id } = useParams()
-    const navigate = useNavigate();
-    const [ticket, setTicket] = useState<Ticket | undefined>(undefined);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [newTicketStatus, setNewTicketStatus] = useState<number>(ticket?.status || 1);
-    const [newAdditionalNotes, setNewAdditionalNotes] = useState<string>("")
-    const [ticketImages, setTicketImages] = useState<Photo[]>([]); // TODO load with data from ticket/backend to replace tempImages thats being used now
-    const [isUpdating, setIsUpdating] = useState<boolean>(false);
-    const user = useUser();
+  const tokenType = "api_token";
+  const clerk = useClerk();
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [ticket, setTicket] = useState<Ticket | undefined>(undefined);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [newTicketStatus, setNewTicketStatus] = useState<number>(
+    ticket?.status || 1
+  );
+  const [newAdditionalNotes, setNewAdditionalNotes] = useState<string>("");
+  const [ticketImages, setTicketImages] = useState<Photo[]>([]); // TODO load with data from ticket/backend to replace tempImages thats being used now
+  const [isUpdating, setIsUpdating] = useState<boolean>(false);
+  const user = useUser();
 
+  useEffect(() => {
+    async function fetchDataAsync() {
+      try {
+        const token = await clerk.session?.getToken({ template: tokenType });
+        const service = new TicketService();
 
-    useEffect(() => {
-        async function fetchDataAsync() {
-            try {
-                const token = await clerk.session?.getToken({ template: tokenType });
-                const service = new TicketService();
+        if (token && id) {
+          const result = await service.getById(token, parseInt(id));
+          setLoading(false);
+          if (result) {
+            setTicket(result);
+            setNewTicketStatus(result?.status || 1);
+            setNewAdditionalNotes(result?.additionalNotes || "");
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
 
-                if (token && id) {
-                    const result = await service.getById(token, parseInt(id));
-                    if(result) console.log(result);
-                    setLoading(false);
-                    if (result) {
-                        setTicket(result);
-                        setNewTicketStatus(result?.status || 1);
-                        setNewAdditionalNotes(result?.additionalNotes || "");
-                    }
-                }
+    async function fetchImagesAsync() {
+      try {
+        const token = await clerk.session?.getToken({ template: tokenType });
+        const service = new TicketService();
 
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
+        if (token && id) {
+          const result = await service.getPhotosById(token, parseInt(id));
+          setLoading(false);
+          if (result) {
+            setTicketImages(result);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
 
-        async function fetchImagesAsync() {
-            try {
-                const token = await clerk.session?.getToken({ template: tokenType });
-                const service = new TicketService();
-
-                if (token && id) {
-                    const result = await service.getPhotosById(token, parseInt(id));
-                    if(result) console.log(result);
-                    setLoading(false);
-                    if (result) {
-                        setTicketImages(result);
-                    }
-                }
-
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
-
-        fetchDataAsync();
-        fetchImagesAsync();
-
-    }, [clerk.session]);
+    fetchDataAsync();
+    fetchImagesAsync();
+  }, [clerk.session, id, isUpdating]);
 
   const handleUpdate = async () => {
     try {
@@ -107,7 +102,6 @@ const TicketPage = () => {
         finalTicket.priority = ticket?.priority || 1;
         finalTicket.status = newTicketStatus;
 
-
         // Call the create function from the TicketService
         try {
           const data = await service.update(token, finalTicket);
@@ -115,10 +109,8 @@ const TicketPage = () => {
           if (data && data.id) {
             // Get the ticket by its ID (just an example, adjust as needed)
             const result = await service.getById(token, data.id);
-            console.log(result);
             if (!result) return;
             window.location.reload();
-
           }
         } catch (createError) {
           console.error("Error creating ticket:", createError);
@@ -142,8 +134,7 @@ const TicketPage = () => {
         try {
           const data = await service.delete(token, ticket?.id || 0);
           // If creation is successful, perform additional actions
-          console.log(data);
-          navigate('/view-tickets');
+          navigate("/view-tickets");
         } catch (createError) {
           console.error("Error creating ticket:", createError);
         }
@@ -151,18 +142,21 @@ const TicketPage = () => {
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-  }
+  };
   //temporary imge links for testing dit moet vervangen worden door de images van de ticket
-  const tempImages =
-    [
-      "https://res.cloudinary.com/ddpwhqyyq/image/upload/v1684019583/owljm2bfllhto8cbsbcq.png",
-      "https://res.cloudinary.com/ddpwhqyyq/image/upload/v1680638328/efw8qag93xzmln6orpn6.png"
-    ]
+  const tempImages = [
+    "https://res.cloudinary.com/ddpwhqyyq/image/upload/v1684019583/owljm2bfllhto8cbsbcq.png",
+    "https://res.cloudinary.com/ddpwhqyyq/image/upload/v1680638328/efw8qag93xzmln6orpn6.png",
+  ];
 
   if (!loading && !ticket) {
     return (
-      <div className="-mt-32 flex w-full h-screen justify-center items-center">
-        Ticket not found
+      <div className="-mt-32 flex w-full h-screen justify-center items-center dark:text-white">
+        Ticket not found, click&nbsp;
+        <a href="/view-tickets" className="text-blue-500">
+          here
+        </a>
+        &nbsp;to go back to the ticket overview
       </div>
     );
   }
@@ -175,13 +169,28 @@ const TicketPage = () => {
             <Card className="w-4/5">
               <CardHeader>
                 <div className="flex w-full justify-between">
-                  <CardTitle className="dark:text-white">Malfunction ticket: </CardTitle>
-                  {!isUpdating && (<>
-                    {newTicketStatus == 2 ? (<p className="text-sm text-red-500"> {Status[2]}</p>)
-                      : (<p className="text-sm text-green-500"> {Status[1]}</p>)}
-                  </>)}
+                  <CardTitle className="dark:text-white">
+                    Malfunction ticket:{" "}
+                  </CardTitle>
+                  {!isUpdating && (
+                    <>
+                      {newTicketStatus == 2 ? (
+                        <p className="text-sm text-red-500"> {Status[2]}</p>
+                      ) : (
+                        <p className="text-sm text-green-500"> {Status[1]}</p>
+                      )}
+                    </>
+                  )}
                   {isUpdating && (
-                    <select value={newTicketStatus} onChange={(e) => setNewTicketStatus(parseInt(e.target.value))} className="block py-2.5 px-0 w-fit text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-white focus:outline-none focus:ring-0 focus:border-black peer" name="ticket_status" id="ticket_status">
+                    <select
+                      value={newTicketStatus}
+                      onChange={(e) =>
+                        setNewTicketStatus(parseInt(e.target.value))
+                      }
+                      className="block py-2.5 px-0 w-fit text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-white focus:outline-none focus:ring-0 focus:border-black peer"
+                      name="ticket_status"
+                      id="ticket_status"
+                    >
                       <option value={1}>{Status[1]}</option>
                       <option value={2}>{Status[2]}</option>
                     </select>
@@ -191,7 +200,10 @@ const TicketPage = () => {
                   {ticket.createdAt && (
                     <p className="text-xs text-gray-500 dark:text-white">
                       Created on{" "}
-                      {format(new Date(ticket.createdAt), "MMM d yyyy, h:mm:ss ")}
+                      {format(
+                        new Date(ticket.createdAt),
+                        "MMM d yyyy, h:mm:ss "
+                      )}
                     </p>
                   )}
                 </CardDescription>
@@ -201,15 +213,26 @@ const TicketPage = () => {
                 <p className="text-sm">{ticket.description}</p>
                 <br />
 
-                {isUpdating ?
-                  (<div className="w-full ">
-                    <textarea value={newAdditionalNotes} maxLength={2048} rows={4} onChange={(e) => setNewAdditionalNotes(e.target.value)} name="ticket_triedsolutions" id="ticket_triedsolutions" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-white focus:outline-none focus:ring-0 focus:border-black peer" placeholder=" " required />
-                  </div>)
-                  :
-                  (<>
+                {isUpdating ? (
+                  <div className="w-full ">
+                    <textarea
+                      value={newAdditionalNotes}
+                      maxLength={2048}
+                      rows={4}
+                      onChange={(e) => setNewAdditionalNotes(e.target.value)}
+                      name="ticket_triedsolutions"
+                      id="ticket_triedsolutions"
+                      className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-white focus:outline-none focus:ring-0 focus:border-black peer"
+                      placeholder=" "
+                      required
+                    />
+                  </div>
+                ) : (
+                  <>
                     <p className="text-sm font-semibold">Additional notes:</p>
                     <p className="text-sm">{ticket.additionalNotes}</p>
-                  </>)}
+                  </>
+                )}
 
                 <br />
                 <p className="text-sm font-semibold">Tried solutions:</p>
@@ -224,52 +247,61 @@ const TicketPage = () => {
                 <div className="flex gap-16 ">
                   <div className="dark:[&>p]:text-gray-100">
                     <p className="text-sm font-semibold">Priority:</p>
-                    {ticket.priority == 1 ? (
-                      <p className="text-sm ">{Priority[1]}</p>
-                    ) : (
-                      <p className="text-sm ">
-                        {Priority[2]}
-                      </p>
-                    )}
+                    <p className="text-sm ">{ticket.priority}</p>
                   </div>
                 </div>
 
                 <br />
 
-                {ticketImages.length > 0 && <div className="w-full flex justify-center">
-                  <div className='max-w-[400px] flex justify-center items-center rounded-xl shadow-md'
-                  >
-                    <Carousel>
-                      {ticketImages.map((image, i) => (
-                        <img src={image.data} alt="" key={i} className='min-w-full max-h-[300px] W-[400px] object-contain' />
-                      ))}
-                    </Carousel>
-
+                {ticketImages.length > 0 && (
+                  <div className="w-full flex justify-center">
+                    <div className="max-w-[400px] flex justify-center items-center rounded-xl shadow-md">
+                      <Carousel>
+                        {ticketImages.map((image, i) => (
+                          <img
+                            src={image.data}
+                            alt=""
+                            key={i}
+                            className="min-w-full max-h-[300px] W-[400px] object-contain"
+                          />
+                        ))}
+                      </Carousel>
+                    </div>
                   </div>
-                </div>}
-
+                )}
 
                 {user?.user?.publicMetadata.role === "admin" &&
-                  (isUpdating ?
-                    (
-                      <div className="flex w-full justify-between">
-                        <button onClick={() => setIsUpdating(false)} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 mt-4 rounded">
-                          Cancel
-                        </button>
-                        <button onClick={() => handleUpdate()} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 mt-4 rounded">
-                          Save
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="flex w-full justify-end gap-2">
-                        <button onClick={() => setIsUpdating(true)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mt-4 rounded">
-                          Edit
-                        </button>
-                        <button onClick={() => deleteTicket()} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 mt-4 rounded">
-                          Delete ticket
-                        </button>
-                      </div>)
-                  )}
+                  (isUpdating ? (
+                    <div className="flex w-full justify-between">
+                      <button
+                        onClick={() => setIsUpdating(false)}
+                        className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 mt-4 rounded"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={() => handleUpdate()}
+                        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 mt-4 rounded"
+                      >
+                        Save
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex w-full justify-end gap-2">
+                      <button
+                        onClick={() => setIsUpdating(true)}
+                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mt-4 rounded"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => deleteTicket()}
+                        className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 mt-4 rounded"
+                      >
+                        Delete ticket
+                      </button>
+                    </div>
+                  ))}
 
                 <br />
               </CardContent>
@@ -281,7 +313,7 @@ const TicketPage = () => {
         <LoginPage />
       </SignedOut>
     </>
-  )
+  );
 };
 
 export default TicketPage;

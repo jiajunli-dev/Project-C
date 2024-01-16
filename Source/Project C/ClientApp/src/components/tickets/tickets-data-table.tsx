@@ -26,7 +26,6 @@ import { Input } from "@/components/ui/input";
 
 import DataTableViewOptions from "./components/TableViewOptions";
 import { Ticket } from "@/models/Ticket";
-
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -63,6 +62,7 @@ export function DataTable<TData, TValue>({
       rowSelection,
     },
   });
+
   return (
     <div>
       <div className="flex items-center py-4">
@@ -101,9 +101,7 @@ export function DataTable<TData, TValue>({
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
-                onClick={() => console.log("test")}
                   key={row.id}
-                  className="cursor-pointer"
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
