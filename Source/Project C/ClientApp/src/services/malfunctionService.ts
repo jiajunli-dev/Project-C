@@ -3,7 +3,7 @@ import { Malfunction } from "../models/Malfunction";
 import { baseService } from "./baseService";
 
 export class malfunctionService extends baseService{
-    constructor(baseUrl: string = "https://localhost:7004") { super(baseUrl); }
+    constructor(baseUrl: string = "http://api.platiumx.com") { super(baseUrl); }
 
     async getAll(token: string): Promise<Malfunction[] | undefined> {
         const request = this.createRequest("GET", token, "Malfunction");

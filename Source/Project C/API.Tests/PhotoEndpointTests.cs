@@ -56,7 +56,7 @@ public class PhotoEndpointTests : TestBase
         Assert.AreEqual(expectedPhoto.UpdatedAt, resultPhoto.UpdatedAt);
         Assert.AreEqual(expectedPhoto.UpdatedBy, resultPhoto.UpdatedBy);
         Assert.AreEqual(expectedPhoto.Name, resultPhoto.Name);
-        CollectionAssert.AreEqual(expectedPhoto.Data, resultPhoto.Data);
+        Assert.AreEqual(expectedPhoto.Data, resultPhoto.Data);
     }
 
     [TestMethod]
@@ -96,7 +96,7 @@ public class PhotoEndpointTests : TestBase
         Assert.AreEqual(expectedPhoto.CreatedBy, resultPhoto.CreatedBy);
         Assert.AreEqual(expectedPhoto.CreatedBy, resultPhoto.UpdatedBy);
         Assert.AreEqual(expectedPhoto.Name, resultPhoto.Name);
-        CollectionAssert.AreEqual(Convert.FromBase64String(expectedPhoto.Data), resultPhoto.Data);
+        Assert.AreEqual(expectedPhoto.Data, resultPhoto.Data);
     }
 
     [TestMethod]

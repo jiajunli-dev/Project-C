@@ -3,7 +3,7 @@ import { baseService } from "./baseService";
 
 export class PhotoService extends baseService {
     // TODO: Move api url to config
-    constructor(baseUrl: string = "https://localhost:7004") { super(baseUrl); }
+    constructor(baseUrl: string = "http://api.platiumx.com") { super(baseUrl); }
 
     async getById(token: string, photoId: number): Promise<Photo | undefined> {
         if (!token) throw new Error('Token is required.');

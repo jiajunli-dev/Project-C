@@ -25,6 +25,8 @@ import { customerService } from "@/services/customerService";
 import { CreateCustomer } from "@/models/CreateCustomer";
 import { CreateEmployee } from "@/models/CreateEmployee";
 
+import { useUser } from "@clerk/clerk-react";
+
 export default function CreateUserDialogue() {
   const { user } = useUser();
 
