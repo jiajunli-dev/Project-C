@@ -2,13 +2,13 @@ import { CreateCustomer } from "../models/CreateCustomer";
 import { Customer } from "../models/Customer";
 import { baseService } from "./baseService";
 
-export class employeeService extends baseService{
+export class customerService extends baseService {
     constructor(baseUrl: string = "https://localhost:7004") { super(baseUrl); }
 
     async getAll(token: string): Promise<Customer[] | undefined> {
         const request = this.createRequest("GET", token, "Customer");
         const response = await fetch(request);
-        
+
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -40,13 +40,14 @@ export class employeeService extends baseService{
     }
 
     async create(token: string, model: CreateCustomer): Promise<Customer | undefined> {
-        const request = this.createRequest("POST", token, "Customer", model.toJSON()); 
+        console.log(model);
+        const request = this.createRequest("POST", token, "Customer", model.toJSON());
         const response = await fetch(request);
 
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        
+
         const data = await response.json();
 
         return Customer.fromJson(data);

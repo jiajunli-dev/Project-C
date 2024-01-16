@@ -122,8 +122,6 @@ public class CustomerEndpointTests : TestBase
         // Assert
         Assert.AreEqual(HttpStatusCode.Created, result.StatusCode);
         Assert.IsNotNull(resultModel);
-        Assert.AreEqual(expectedModel.Id, resultModel.Id);
-        Assert.AreEqual(expectedModel.CreatedBy, resultModel.CreatedBy);
         Assert.AreEqual(expectedModel.Username, resultModel.Username);
         Assert.AreEqual(expectedModel.FirstName, resultModel.FirstName);
         Assert.AreEqual(expectedModel.LastName, resultModel.LastName);
@@ -177,7 +175,7 @@ public class CustomerEndpointTests : TestBase
         // Act
         var response = await client.PutAsJsonAsync(_endpoint, new object { });
         var response2 = await client.PutAsJsonAsync(_endpoint, new Customer { });
-        var response3 = await client.PutAsJsonAsync(_endpoint, new Customer { Id = "-1" });
+        var response3 = await client.PutAsJsonAsync(_endpoint, new Customer { Id = -1 });
 
         // Assert
         Assert.ThrowsException<HttpRequestException>(response.EnsureSuccessStatusCode);
@@ -221,8 +219,6 @@ public class CustomerEndpointTests : TestBase
 
     private static CreateCustomerDto CreateDto(int i = 1) => new()
     {
-        Id = $"Test_{i}",
-        CreatedBy = $"Test{i}",
         Username = $"Test{i}",
         FirstName = $"Test{i}",
         LastName = $"Test{i}",

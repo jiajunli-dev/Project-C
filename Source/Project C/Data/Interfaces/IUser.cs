@@ -1,6 +1,6 @@
 ﻿namespace Data.Interfaces;
 
-public interface IUser : IDbModel<string>
+public interface IUser : IDbModel<int>
 {
     string Email { get; set; }
     string FirstName { get; set; }

@@ -7,23 +7,22 @@ namespace Data.Dtos;
 public class EmployeeDto
 {
     public EmployeeDto() { }
-    public EmployeeDto(Employee malfunction)
+    public EmployeeDto(Employee employee)
     {
-        Id = malfunction.Id;
-        CreatedAt = malfunction.CreatedAt;
-        CreatedBy = malfunction.CreatedBy;
-        UpdatedAt = malfunction.UpdatedAt;
-        UpdatedBy = malfunction.UpdatedBy;
-        Username = malfunction.Username;
-        FirstName = malfunction.FirstName;
-        LastName = malfunction.LastName;
-        Email = malfunction.Email;
-        PhoneNumber = malfunction.PhoneNumber;
-        DepartmentId = malfunction.DepartmentId;
+        CreatedAt = employee.CreatedAt;
+        CreatedBy = employee.CreatedBy;
+        UpdatedAt = employee.UpdatedAt;
+        UpdatedBy = employee.UpdatedBy;
+        Username = employee.Username;
+        FirstName = employee.FirstName;
+        LastName = employee.LastName;
+        Email = employee.Email;
+        PhoneNumber = employee.PhoneNumber;
+        DepartmentId = employee.DepartmentId;
     }
 
     [MaxLength(40)]
-    public string Id { get; set; }
+    public int Id { get; set; }
 
     [DataType(DataType.DateTime)]
     public DateTime CreatedAt { get; set; }

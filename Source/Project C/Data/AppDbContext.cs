@@ -20,7 +20,7 @@ public class AppDbContext : DbContext
     /// <param name="options"></param>
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-    public AppDbContext() { }
+   
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

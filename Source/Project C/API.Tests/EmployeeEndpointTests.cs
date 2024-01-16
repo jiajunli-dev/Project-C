@@ -119,7 +119,6 @@ public class EmployeeEndpointTests : TestBase
         // Assert
         Assert.AreEqual(HttpStatusCode.Created, result.StatusCode);
         Assert.IsNotNull(resultModel);
-        Assert.AreEqual(expectedModel.Id, resultModel.Id);
         Assert.AreEqual(expectedModel.CreatedBy, resultModel.CreatedBy);
         Assert.AreEqual(expectedModel.Username, resultModel.Username);
         Assert.AreEqual(expectedModel.FirstName, resultModel.FirstName);
@@ -172,7 +171,7 @@ public class EmployeeEndpointTests : TestBase
         // Act
         var response = await client.PutAsJsonAsync(_endpoint, new object { });
         var response2 = await client.PutAsJsonAsync(_endpoint, new Employee { });
-        var response3 = await client.PutAsJsonAsync(_endpoint, new Employee { Id = "-1" });
+        var response3 = await client.PutAsJsonAsync(_endpoint, new Employee { Id =-1 });
 
         // Assert
         Assert.ThrowsException<HttpRequestException>(response.EnsureSuccessStatusCode);
@@ -217,7 +216,6 @@ public class EmployeeEndpointTests : TestBase
 
     private static CreateEmployeeDto CreateDto(int i = 1) => new()
     {
-        Id = $"Test_{i}",
         CreatedBy = $"Test{i}",
         Username = $"Test{i}",
         FirstName = $"Test{i}",
