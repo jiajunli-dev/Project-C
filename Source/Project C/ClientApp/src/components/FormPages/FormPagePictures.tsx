@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import ImageDisplay from './ImageDisplay'
 import StepCount from './StepCount'
+import { finished } from 'stream'
 
 interface Props {
     setCurrentShow: React.Dispatch<React.SetStateAction<number>>
@@ -11,21 +12,15 @@ interface Props {
 }
 
 const UploadImages = ({ setCurrentShow, setFinishedImages, currentShow, finishedImages, maxForm }: Props) => {
-    const [images, setImages] = useState<string[]>([])
     const [addImages, setAddImages] = useState<boolean>(false)
 
-    useEffect(() => {
-        if(finishedImages.length > 0) setImages(finishedImages)
-    }, [])
 
     const handleNewImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (images.length > 6) return
+        if (finishedImages.length > 6) return
         e.preventDefault()
         const file = e.target.files![0]
-        
         const base64 = await convertToBase64(file)
-        setImages([...images, base64 as string])
-        console.log(images) 
+        setFinishedImages([...finishedImages, base64 as string])
         e.target.value = '';
     }
     
@@ -47,22 +42,22 @@ const UploadImages = ({ setCurrentShow, setFinishedImages, currentShow, finished
                         Upload
                         <input type="file" name='image' id='file-upload'
                             accept='.jpeg, .png, .jpg'
-                            onChange={(e) =>handleNewImage(e)}
+                            onChange={(e) => handleNewImage(e)}
                             className='hidden w-full'
                         />
                     </label>
 
                 </button>
                 <button  className='bg-red-500 text-white font-bold md:p-2 p-1 mt-4 rounded'
-                    onClick={() => setImages([])}
+                    onClick={() => setFinishedImages([])}
                 >
                     Delete
                 </button>
             </div>
 
 
-            <p className='text-gray-500'>{images.length} / 7</p>
-            <ImageDisplay images={images} />
+            <p className='text-gray-500'>{finishedImages.length} / 7</p>
+            <ImageDisplay images={finishedImages} />
 
         </div>) : 
         (

@@ -23,6 +23,6 @@ public class CreatePhotoDto
         UpdatedBy = CreatedBy,
         TicketId = TicketId,
         Name = Name,
-        Data = Convert.FromBase64String(Data),
+        Data = Data
     };
 }

@@ -17,6 +17,8 @@ import { Priority } from "@/models/Priority";
 import LoginPage from "./LoginPage";
 import { time } from "console";
 import Carousel from "@/components/ticketPage/Carousel";
+import { PhotoService } from "@/services/photoService";
+import { Photo } from "@/models/Photo";
 enum Status {
   Open = 1,
   Closed = 2,
@@ -31,7 +33,7 @@ const TicketPage = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [newTicketStatus, setNewTicketStatus] = useState<number>(ticket?.status || 1);
     const [newAdditionalNotes, setNewAdditionalNotes] = useState<string>("")
-    const [ticketImages, setTicketImages] = useState<string[]>([]); // TODO load with data from ticket/backend to replace tempImages thats being used now
+    const [ticketImages, setTicketImages] = useState<Photo[]>([]); // TODO load with data from ticket/backend to replace tempImages thats being used now
     const [isUpdating, setIsUpdating] = useState<boolean>(false);
     const user = useUser();
 
@@ -58,7 +60,27 @@ const TicketPage = () => {
             }
         };
 
+        async function fetchImagesAsync() {
+            try {
+                const token = await clerk.session?.getToken({ template: tokenType });
+                const service = new TicketService();
+
+                if (token && id) {
+                    const result = await service.getPhotosById(token, parseInt(id));
+                    if(result) console.log(result);
+                    setLoading(false);
+                    if (result) {
+                        setTicketImages(result);
+                    }
+                }
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
         fetchDataAsync();
+        fetchImagesAsync();
 
     }, [clerk.session]);
 
@@ -214,17 +236,17 @@ const TicketPage = () => {
 
                 <br />
 
-                <div className="w-full flex justify-center">
+                {ticketImages.length > 0 && <div className="w-full flex justify-center">
                   <div className='max-w-[400px] flex justify-center items-center rounded-xl shadow-md'
                   >
                     <Carousel>
-                      {tempImages.map((image, i) => (
-                        <img src={image} alt="" key={i} className='min-w-full max-h-[300px] W-[400px] object-contain' />
+                      {ticketImages.map((image, i) => (
+                        <img src={image.data} alt="" key={i} className='min-w-full max-h-[300px] W-[400px] object-contain' />
                       ))}
                     </Carousel>
 
                   </div>
-                </div>
+                </div>}
 
 
                 {user?.user?.publicMetadata.role === "admin" &&
