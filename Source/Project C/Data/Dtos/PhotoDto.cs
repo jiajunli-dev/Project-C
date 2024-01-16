@@ -15,7 +15,7 @@ public class PhotoDto
         UpdatedAt = photo.UpdatedAt;
         UpdatedBy = photo.UpdatedBy;
         Name = photo.Name;
-        Data = Convert.ToBase64String(photo.Data);
+        Data = photo.Data;
         TicketId = photo.TicketId;
     }
 
@@ -49,7 +49,7 @@ public class PhotoDto
         UpdatedAt = UpdatedAt,
         UpdatedBy = UpdatedBy,
         Name = Name,
-        Data = Convert.FromBase64String(Data),
+        Data = Data,
         TicketId = TicketId,
     };
 }

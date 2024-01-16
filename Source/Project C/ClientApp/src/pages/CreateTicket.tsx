@@ -17,6 +17,8 @@ import { TicketService } from "@/services/ticketService";
 import { Priority } from "@/models/Priority";
 import { CreateTicket as ticketCreationType } from "@/models/CreateTicket";
 import LoginPage from "./LoginPage";
+import { PhotoService } from "@/services/photoService";
+import { CreatePhoto } from "@/models/Photo";
 
 const CreateTicket = () => {
   const navigate = useNavigate();
@@ -62,12 +64,14 @@ const CreateTicket = () => {
   };
 
   const handleSubmit = async () => {
+    console.log(ticketImages)
     try {
       // Get the authentication token
       const token = await clerk.session?.getToken({ template: tokenType });
 
       // Create an instance of the TicketService
       const service = new TicketService();
+      const photoService = new PhotoService();
 
       if (token) {
         // Create a new ticket object
@@ -81,6 +85,7 @@ const CreateTicket = () => {
 
         // Validate the ticket object
         const errors = finalTicket.validate();
+        
         console.log(errors);
         if (errors.length > 0) {
           console.log("Validation errors");
@@ -91,6 +96,14 @@ const CreateTicket = () => {
         try {
           const data = await service.create(token, finalTicket);
           // If creation is successful, perform additional actions
+          ticketImages.forEach(element => {
+            var model = new CreatePhoto();
+            model.ticketId = data?.id;
+            model.data = element;
+            model.name = "temp_name"
+            model.createdBy = user.user?.id ?? "Unknown";
+            photoService.create(token, model);
+          });
           if (data && data.id) {
             // Get the ticket by its ID (just an example, adjust as needed)
             const result = await service.getById(token, data.id);
