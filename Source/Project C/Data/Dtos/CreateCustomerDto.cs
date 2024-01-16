@@ -6,12 +6,6 @@ namespace Data.Dtos;
 
 public class CreateCustomerDto
 {
-    [MaxLength(40)]
-    public string Id { get; set; }
-
-    [MaxLength(40)]
-    public string CreatedBy { get; set; }
-
     [MaxLength(32)]
     public string Username { get; set; }
 
@@ -38,9 +32,6 @@ public class CreateCustomerDto
 
     public Customer ToModel() => new()
     {
-        Id = Id,
-        CreatedBy = CreatedBy,
-        UpdatedBy = CreatedBy,
         Username = Username,
         FirstName = FirstName,
         LastName = LastName,

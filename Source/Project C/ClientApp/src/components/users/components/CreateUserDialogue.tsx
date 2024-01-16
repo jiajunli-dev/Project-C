@@ -19,28 +19,93 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useUser } from "@clerk/clerk-react";
+import { useSignUp, useClerk } from '@clerk/clerk-react';
+import { employeeService } from "@/services/employeeService";
+import { customerService } from "@/services/customerService";
+import { CreateCustomer } from "@/models/CreateCustomer";
+import { CreateEmployee } from "@/models/CreateEmployee";
 
 export default function CreateUserDialogue() {
   const { user } = useUser();
 
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
+  const clerk = useClerk();
+  const employeeRepository = new employeeService();
+  const customerRepository = new customerService();
+  const tokenType = 'api_token';
   const wait = () => new Promise((resolve) => setTimeout(resolve, 100));
-  const [name, setName] = useState("");
-  const [username, setUsername] = useState("");
-  const [selectedRole, setSelectedRole] = useState("");
 
-  const handleUserCreation = (event: any) => {
+  const [username, setUsername] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [selectedRole, setSelectedRole] = useState("customer");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  const [departmentName, setDepartmentName] = useState("");
+  const [companyPhoneNumber, setCompanyPhoneNumber] = useState("");
+
+  const { isLoaded, signUp } = useSignUp();
+
+  // todo handle loading state
+  if (!isLoaded)
+    return null;
+
+  const handleUserCreation = async (event: any) => {
     event.preventDefault();
-    // TODO backend handle the object userToBeAdded
-    const userToBeAdded = { name, username, selectedRole };
-    console.log(userToBeAdded);
-    wait().then(() => setOpen(false));
-    toast({
-      description: "User successfully added.",
-      duration: 3500,
-    });
+
+    try {
+      const token = await clerk.session?.getToken({ template: tokenType });
+      if (token) {
+        var result;
+
+        switch (selectedRole) {
+          case "customer":
+            const model = new CreateCustomer();
+            model.username = username;
+            model.firstName = firstName;
+            model.lastName = lastName;
+            model.email = email;
+            model.phoneNumber = phoneNumber;
+            model.companyName = companyName;
+            model.companyPhoneNumber = companyPhoneNumber;
+            model.departmentName = departmentName;
+
+            result = await customerRepository.create(token, model);
+            break;
+          case "employee":
+            result = await employeeRepository.create(token, {
+              username, firstName, lastName,
+              email, phoneNumber, role: selectedRole,
+            } as CreateEmployee);
+            break;
+          case "admin":
+            result = await employeeRepository.create(token, {
+              username, firstName, lastName,
+              email, phoneNumber, role: selectedRole,
+            } as CreateEmployee);
+            break;
+        }
+
+        if (result) {
+          wait().then(() => setOpen(false));
+          toast({
+            description: "User successfully added with ID: " + result.id,
+            duration: 3500,
+          });
+        }
+        else {
+          toast({
+            description: "User creation failed",
+            duration: 3500,
+          });
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
     event.preventDefault();
   };
 
@@ -58,16 +123,6 @@ export default function CreateUserDialogue() {
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right dark:text-white">
-                Name
-              </Label>
-              <Input
-                id="name"
-                className="col-span-3 dark:bg-inherit dark:border-slate-700 dark:text-white"
-                onChange={(e) => setName(e.target.value)}
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="username" className="text-right dark:text-white">
                 Username
               </Label>
@@ -75,6 +130,46 @@ export default function CreateUserDialogue() {
                 id="username"
                 className="col-span-3  dark:bg-inherit dark:border-slate-700 dark:text-white"
                 onChange={(e) => setUsername(e.target.value)}
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="email" className="text-right dark:text-white">
+                Email
+              </Label>
+              <Input
+                id="email"
+                className="col-span-3  dark:bg-inherit dark:border-slate-700 dark:text-white"
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="firstName" className="text-right dark:text-white">
+                First Name
+              </Label>
+              <Input
+                id="firstName"
+                className="col-span-3 dark:bg-inherit dark:border-slate-700 dark:text-white"
+                onChange={(e) => setFirstName(e.target.value)}
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="lastName" className="text-right dark:text-white">
+                Last Name
+              </Label>
+              <Input
+                id="lastName"
+                className="col-span-3 dark:bg-inherit dark:border-slate-700 dark:text-white"
+                onChange={(e) => setLastName(e.target.value)}
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="phoneNumber" className="text-right dark:text-white">
+                Phone Number
+              </Label>
+              <Input
+                id="phoneNumber"
+                className="col-span-3 dark:bg-inherit dark:border-slate-700 dark:text-white"
+                onChange={(e) => setPhoneNumber(e.target.value)}
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
@@ -107,6 +202,44 @@ export default function CreateUserDialogue() {
                 </SelectContent>
               </Select>
             </div>
+
+            {selectedRole === "customer" && (
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="departmentName" className="text-right dark:text-white">
+                    Department Name
+                  </Label>
+                  <Input
+                    id="departmentName"
+                    className="col-span-3  dark:bg-inherit dark:border-slate-700 dark:text-white"
+                    onChange={(e) => setDepartmentName(e.target.value)}
+                  />
+                </div>
+
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="companyName" className="text-right dark:text-white">
+                    Company Name
+                  </Label>
+                  <Input
+                    id="companyName"
+                    className="col-span-3  dark:bg-inherit dark:border-slate-700 dark:text-white"
+                    onChange={(e) => setCompanyName(e.target.value)}
+                  />
+                </div>
+
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="companyPhoneNumber" className="text-right dark:text-white">
+                    Company Phone Number
+                  </Label>
+                  <Input
+                    id="companyPhoneNumber"
+                    className="col-span-3  dark:bg-inherit dark:border-slate-700 dark:text-white"
+                    onChange={(e) => setCompanyPhoneNumber(e.target.value)}
+                  />
+                </div>
+              </div>
+            )}
+
           </div>
           <DialogFooter>
             <form

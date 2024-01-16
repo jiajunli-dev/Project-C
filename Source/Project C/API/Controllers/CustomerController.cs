@@ -17,11 +17,15 @@ public class CustomerController : ControllerBase
 {
     private readonly ILogger<CustomerController> _logger;
     private readonly ICustomerRepository _customerRepository;
+    private readonly IClerkClient _clerk;
 
-    public CustomerController(ILogger<CustomerController> logger, ICustomerRepository repository)
+    public CustomerController(ILogger<CustomerController> logger,
+                              ICustomerRepository repository,
+                              IClerkClient clerk)
     {
         _logger = logger;
         _customerRepository = repository;
+        _clerk = clerk;
     }
 
     [HttpGet]
@@ -44,7 +48,7 @@ public class CustomerController : ControllerBase
     }
 
     [HttpGet("{customerId}")]
-    public async Task<IActionResult> GetById(string customerId)
+    public async Task<IActionResult> GetById(int customerId)
     {
         _logger.LogInformation($"Fetching customer with ID {customerId}");
 
@@ -77,20 +81,45 @@ public class CustomerController : ControllerBase
 
         _logger.LogInformation("Creating customer.");
 
+        string? clerkId = null;
         try
         {
-            var model = await _customerRepository.Create(dto.ToModel());
+            clerkId = await _clerk.CreateInvitation(dto.Email, Roles.CUSTOMER);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while creating the customer in Clerk.");
+            return BadRequest($"Customer not created.");
+        }
 
-            return Created($"Customer/{model.Id}", model);
+        var model = dto.ToModel();
+        var userId = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value ?? string.Empty;
+        model.CreatedBy = userId;
+        model.UpdatedBy = userId;
+
+        try
+        {
+            var dbModel = await _customerRepository.Create(model);
+            return Created($"Customer/{dbModel.Id}", dbModel);
         }
         catch (DbUpdateException ex)
         {
             _logger.LogError(ex, "An error occurred while creating the customer in the database.");
+
+            if (clerkId is not null)
+                await _clerk.RevokeInvitation(clerkId);
+            await _clerk.DeleteUserByEmail(dto.Email);
+
             return BadRequest($"Customer not created.");
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "An unexpected error occurred while creating a customer.");
+
+            if (clerkId is not null)
+                await _clerk.RevokeInvitation(clerkId);
+            await _clerk.DeleteUserByEmail(dto.Email);
+
             return StatusCode(500, "An unexpected error occurred while processing your request.");
         }
     }
@@ -130,12 +159,27 @@ public class CustomerController : ControllerBase
 
     [HttpDelete("{customerId}")]
     [Authorize(Roles = $"{Roles.ADMIN}")]
-    public async Task<IActionResult> Delete(string customerId)
+    public async Task<IActionResult> Delete(int customerId)
     {
-        if (string.IsNullOrEmpty(customerId))
+        if (customerId <= 0)
             return BadRequest("Invalid ID provided");
 
         _logger.LogInformation("Deleting customer with ID: {customerId}", customerId);
+
+        var customer = await _customerRepository.GetById(customerId);
+        if (customer is null)
+            return NoContent();
+
+        try
+        {
+            await _clerk.DeleteUserByEmail(customer.Email);
+            await _clerk.RevokeInvitationByEmail(customer.Email);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred while deleting the customer from clerk.");
+            return StatusCode(500, "An unexpected error occurred while processing your request.");
+        }
 
         try
         {

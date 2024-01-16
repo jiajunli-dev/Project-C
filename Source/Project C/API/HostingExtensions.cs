@@ -1,5 +1,8 @@
 ﻿using System.Text;
 
+using API.Utility;
+
+using Data.Exceptions;
 using Data.Interfaces;
 using Data.Models;
 using Data.Repositories;
@@ -8,6 +11,7 @@ using Destructurama;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -48,13 +52,18 @@ namespace API
 
         public static WebApplicationBuilder ConfigureServices(this WebApplicationBuilder app)
         {
+            app.Services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });
+            app.Services.AddHttpClient();
+            app.Services.AddScoped<IClerkClient, ClerkClient>();
             app.Services.AddScoped<ITicketRepository, TicketRepository>();
             app.Services.AddScoped<IPhotoRepository, PhotoRepository>();
             app.Services.AddScoped<IMalfunctionRepository, MalfunctionRepository>();
             app.Services.AddScoped<ICustomerRepository, CustomerRepository>();
             app.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             app.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
-
             app.Services.AddControllers(configure =>
             {
                 configure.RespectBrowserAcceptHeader = true;
@@ -87,22 +96,26 @@ namespace API
 
         public static WebApplicationBuilder ConfigureDatabase(this WebApplicationBuilder app)
         {
-            if (app.Environment.IsDevelopment())
-            {
-                const string name = "ProjectCDb";
-                app.Services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase(name));
-                using var context = new AppDbContext(new DbContextOptionsBuilder<AppDbContext>().UseInMemoryDatabase(name).Options);
-                context.Database.EnsureCreated();
-            }
-            else
-            {
-                string connectionString = app.Configuration["ConnectionStrings:Default"] ?? throw new NullReferenceException("Connection string is not provided in appsettings.json");
-                app.Services.AddDbContext<AppDbContext>(options => options.UseSqlite(connectionString));
-                using var context = new AppDbContext(new DbContextOptionsBuilder<AppDbContext>().UseSqlite(connectionString).Options);
-                context.Database.Migrate();
-                context.Database.EnsureCreated();
-            }
-
+            //if (app.Environment.IsDevelopment())
+            //{
+            //    const string name = "ProjectCDb";
+            //    app.Services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase(name));
+            //    using var context = new AppDbContext(new DbContextOptionsBuilder<AppDbContext>().UseInMemoryDatabase(name).Options);
+            //    context.Database.EnsureCreated();
+            //}
+            //else
+            //{
+            //    string connectionString = app.Configuration["ConnectionStrings:Default"] ?? throw new NullReferenceException("Connection string is not provided in appsettings.json");
+            //    app.Services.AddDbContext<AppDbContext>(options => options.UseSqlite(connectionString));
+            //    using var context = new AppDbContext(new DbContextOptionsBuilder<AppDbContext>().UseSqlite(connectionString).Options);
+            //    context.Database.Migrate();
+            //    context.Database.EnsureCreated();
+            //}
+            string connectionString = app.Configuration["ConnectionStrings:Default"] ?? throw new MissingValueException("Connection string is not provided in appsettings.json");
+            app.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
+            using var context = new AppDbContext(new DbContextOptionsBuilder<AppDbContext>().UseNpgsql(connectionString).Options);
+            context.Database.Migrate();
+            context.Database.EnsureCreated();
             return app;
         }
 
@@ -146,7 +159,7 @@ namespace API
                 options.AddPolicy("AllowReactApp", builder =>
                 {
                     builder
-                        .WithOrigins("http://localhost:5173") 
+                        .WithOrigins("http://localhost:5173")
                         .AllowAnyMethod()
                         .AllowAnyHeader();
                 });

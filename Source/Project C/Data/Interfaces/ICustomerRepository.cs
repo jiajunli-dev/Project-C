@@ -2,4 +2,7 @@
 
 namespace Data.Interfaces;
 
-public interface ICustomerRepository : IGenericRepository<Customer, string> { }
+public interface ICustomerRepository : IGenericRepository<Customer, int>
+{
+    Task<Customer?> GetByEmail(string email);
+}

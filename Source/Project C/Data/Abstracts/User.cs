@@ -4,10 +4,13 @@ using Data.Interfaces;
 
 namespace Data.Abstracts;
 
-public class User : DbModel<string>, IUser
+public class User : DbModel<int>, IUser
 {
-    [Key, MaxLength(40)]
-    public override string Id { get; set; }
+    [Key]
+    public override int Id { get; set; }
+
+    [MaxLength(32)]
+    public string ClerkId { get; set; }
 
     [MaxLength(32)]
     public string Username { get; set; }

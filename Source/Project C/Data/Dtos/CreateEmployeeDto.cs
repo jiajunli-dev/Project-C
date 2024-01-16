@@ -6,8 +6,6 @@ namespace Data.Dtos;
 
 public class CreateEmployeeDto
 {
-    [MaxLength(40)]
-    public string Id { get; set; }
 
     [MaxLength(40)]
     public string CreatedBy { get; set; }
@@ -27,11 +25,12 @@ public class CreateEmployeeDto
     [MaxLength(16)]
     public string PhoneNumber { get; set; }
 
+    public string Role { get; set; }
+
     public int DepartmentId { get; set; }
 
     public Employee ToModel() => new()
     {
-        Id = Id,
         CreatedBy = CreatedBy,
         UpdatedBy = CreatedBy,
         Username = Username,
@@ -40,5 +39,6 @@ public class CreateEmployeeDto
         Email = Email,
         PhoneNumber = PhoneNumber,
         DepartmentId = DepartmentId,
+        Role = Role,
     };
 }

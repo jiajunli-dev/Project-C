@@ -7,7 +7,7 @@ import { ClerkProvider } from "@clerk/clerk-react";
 import App from "./App";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  
+
   <React.StrictMode>
     <ClerkProvider
       // TODO move to config

@@ -7,6 +7,7 @@ export class CreateEmployee {
     public lastName?: string;
     public email?: string;
     public phoneNumber?: string;
+    public role?: string;
 
     public departmentId?: number;
 

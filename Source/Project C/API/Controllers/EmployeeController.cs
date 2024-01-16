@@ -3,6 +3,8 @@
 using Data.Dtos;
 using Data.Exceptions;
 using Data.Interfaces;
+using Data.Models;
+using Data.Repositories;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,11 +18,15 @@ public class EmployeeController : ControllerBase
 {
     private readonly ILogger<EmployeeController> _logger;
     private readonly IEmployeeRepository _employeeRepository;
+    private readonly IClerkClient _clerk;
 
-    public EmployeeController(ILogger<EmployeeController> logger, IEmployeeRepository repository)
+    public EmployeeController(ILogger<EmployeeController> logger,
+                              IEmployeeRepository repository,
+                              IClerkClient clerk)
     {
         _logger = logger;
         _employeeRepository = repository;
+        _clerk = clerk;
     }
 
     [HttpGet]
@@ -43,7 +49,7 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpGet("{employeeId}")]
-    public async Task<IActionResult> GetById(string employeeId)
+    public async Task<IActionResult> GetById(int employeeId)
     {
         try
         {
@@ -74,6 +80,17 @@ public class EmployeeController : ControllerBase
 
         _logger.LogInformation("Creating employee.");
 
+        string? clerkId = null;
+        try
+        {
+            clerkId = await _clerk.CreateInvitation(dto.Email, dto.Role);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while creating the employee in Clerk.");
+            return BadRequest($"Employee not created.");
+        }
+
         try
         {
             var model = await _employeeRepository.Create(dto.ToModel());
@@ -83,11 +100,21 @@ public class EmployeeController : ControllerBase
         catch (DbUpdateException ex)
         {
             _logger.LogError(ex, "An error occurred while creating a employee");
+
+            if (clerkId is not null)
+                await _clerk.RevokeInvitation(clerkId);
+            await _clerk.DeleteUserByEmail(dto.Email);
+
             return StatusCode(500, "An error occurred while processing your request");
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "An unexpected error occurred while creating a employee");
+
+            if (clerkId is not null)
+                await _clerk.RevokeInvitation(clerkId);
+            await _clerk.DeleteUserByEmail(dto.Email);
+
             return StatusCode(500, "An unexpected error occurred while processing your request");
         }
     }
@@ -128,12 +155,26 @@ public class EmployeeController : ControllerBase
 
     [HttpDelete("{employeeId}")]
     [Authorize(Roles = $"{Roles.ADMIN}")]
-    public async Task<IActionResult> Delete(string employeeId)
+    public async Task<IActionResult> Delete(int employeeId)
     {
-        if (string.IsNullOrEmpty(employeeId))
+        if (employeeId <= 0)
             return BadRequest("Invalid ID provided");
 
         _logger.LogInformation("Deleting customer with ID: {employeeId}", employeeId);
+
+        var employee = await _employeeRepository.GetById(employeeId);
+        if (employee is null)
+            return NoContent();
+
+        try
+        {
+            await _clerk.DeleteUserByEmail(employee.Email);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An unexpected error occurred while deleting the employee from clerk.");
+            return StatusCode(500, "An unexpected error occurred while processing your request.");
+        }
 
         try
         {

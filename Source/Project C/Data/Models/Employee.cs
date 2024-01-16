@@ -10,4 +10,6 @@ public class Employee : User
     public int DepartmentId { get; set; }
     
     public Department Department { get; set; }
+
+    public string Role { get; set; }
 }
