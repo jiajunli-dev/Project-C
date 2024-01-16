@@ -96,6 +96,7 @@ public class CustomerController : ControllerBase
         var userId = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value ?? string.Empty;
         model.CreatedBy = userId;
         model.UpdatedBy = userId;
+        model.ClerkId = "";
 
         try
         {

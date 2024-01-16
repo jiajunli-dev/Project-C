@@ -1,4 +1,6 @@
-﻿using API.Utility;
+﻿using System.Security.Claims;
+
+using API.Utility;
 
 using Data.Dtos;
 using Data.Exceptions;
@@ -18,14 +20,17 @@ public class EmployeeController : ControllerBase
 {
     private readonly ILogger<EmployeeController> _logger;
     private readonly IEmployeeRepository _employeeRepository;
+    private readonly IDepartmentRepository _departmentRepository;
     private readonly IClerkClient _clerk;
 
     public EmployeeController(ILogger<EmployeeController> logger,
                               IEmployeeRepository repository,
+                              IDepartmentRepository departmentRepository,
                               IClerkClient clerk)
     {
         _logger = logger;
         _employeeRepository = repository;
+        _departmentRepository = departmentRepository;
         _clerk = clerk;
     }
 
@@ -81,6 +86,8 @@ public class EmployeeController : ControllerBase
         _logger.LogInformation("Creating employee.");
 
         string? clerkId = null;
+        string userId = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+        dto.CreatedBy = userId;
         try
         {
             clerkId = await _clerk.CreateInvitation(dto.Email, dto.Role);
@@ -91,9 +98,15 @@ public class EmployeeController : ControllerBase
             return BadRequest($"Employee not created.");
         }
 
+        var dep = await _departmentRepository.Create(new Department { Name = "test", CreatedBy = userId, UpdatedBy = userId, Description = "test" });
+        _logger.LogInformation($"Created department {dep.Id}");
+
         try
         {
-            var model = await _employeeRepository.Create(dto.ToModel());
+            var request = dto.ToModel();
+            request.ClerkId = "";
+            request.DepartmentId = dep.Id;
+            var model = await _employeeRepository.Create(request);
 
             return Created($"Employee/{model.Id}", new EmployeeDto(model));
         }

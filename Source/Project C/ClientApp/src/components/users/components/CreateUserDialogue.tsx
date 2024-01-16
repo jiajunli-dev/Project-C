@@ -77,16 +77,24 @@ export default function CreateUserDialogue() {
             result = await customerRepository.create(token, model);
             break;
           case "employee":
-            result = await employeeRepository.create(token, {
-              username, firstName, lastName,
-              email, phoneNumber, role: selectedRole,
-            } as CreateEmployee);
+            const model2 = new CreateEmployee();
+            model2.username = username;
+            model2.firstName = firstName;
+            model2.lastName = lastName;
+            model2.email = email;
+            model2.phoneNumber = phoneNumber;
+            model2.role = selectedRole;
+            result = await employeeRepository.create(token, model2);
             break;
           case "admin":
-            result = await employeeRepository.create(token, {
-              username, firstName, lastName,
-              email, phoneNumber, role: selectedRole,
-            } as CreateEmployee);
+            const model3 = new CreateEmployee();
+            model3.username = username;
+            model3.firstName = firstName;
+            model3.lastName = lastName;
+            model3.email = email;
+            model3.phoneNumber = phoneNumber;
+            model3.role = selectedRole;
+            result = await employeeRepository.create(token, model3);
             break;
         }
 
