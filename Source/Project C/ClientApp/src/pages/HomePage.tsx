@@ -2,8 +2,8 @@ import AdminDashboard from "@/components/adminCards/AdminDashboard";
 import { SignedIn, SignedOut } from "@clerk/clerk-react";
 import LoginPage from "@/pages/LoginPage";
 import { useUser } from "@clerk/clerk-react";
-import Employee from "./Employee";
 import CustomerPage from "./CustomerPage";
+import AdminTicketsPage from "@/components/tickets/AdminTicketsPage";
 
 
 
@@ -17,7 +17,7 @@ const HomePage = () => {
           <AdminDashboard />
 
         ) : user?.publicMetadata.role === "employee" ? (
-          <Employee />
+          <AdminTicketsPage />
         ) : user?.publicMetadata.role === "customer" ? (
           <CustomerPage />
         ) : (
