@@ -171,11 +171,11 @@ const TicketPage = () => {
     <>
       <SignedIn>
         {ticket && (
-          <div className="flex flex-col justify-center items-center bg-gray-50 h-full mt-4">
+          <div className="flex flex-col justify-center items-center bg-gray-50 h-full mt-4 dark:bg-background">
             <Card className="w-4/5">
               <CardHeader>
                 <div className="flex w-full justify-between">
-                  <CardTitle>Malfunction ticket: </CardTitle>
+                  <CardTitle className="dark:text-white">Malfunction ticket: </CardTitle>
                   {!isUpdating && (<>
                     {newTicketStatus == 2 ? (<p className="text-sm text-red-500"> {Status[2]}</p>)
                       : (<p className="text-sm text-green-500"> {Status[1]}</p>)}
