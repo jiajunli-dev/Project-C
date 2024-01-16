@@ -52,10 +52,6 @@ namespace API
 
         public static WebApplicationBuilder ConfigureServices(this WebApplicationBuilder app)
         {
-            app.Services.Configure<ApiBehaviorOptions>(options =>
-            {
-                options.SuppressModelStateInvalidFilter = true;
-            });
             app.Services.AddHttpClient();
             app.Services.AddScoped<IClerkClient, ClerkClient>();
             app.Services.AddScoped<ITicketRepository, TicketRepository>();
@@ -96,26 +92,22 @@ namespace API
 
         public static WebApplicationBuilder ConfigureDatabase(this WebApplicationBuilder app)
         {
-            //if (app.Environment.IsDevelopment())
-            //{
-            //    const string name = "ProjectCDb";
-            //    app.Services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase(name));
-            //    using var context = new AppDbContext(new DbContextOptionsBuilder<AppDbContext>().UseInMemoryDatabase(name).Options);
-            //    context.Database.EnsureCreated();
-            //}
-            //else
-            //{
-            //    string connectionString = app.Configuration["ConnectionStrings:Default"] ?? throw new NullReferenceException("Connection string is not provided in appsettings.json");
-            //    app.Services.AddDbContext<AppDbContext>(options => options.UseSqlite(connectionString));
-            //    using var context = new AppDbContext(new DbContextOptionsBuilder<AppDbContext>().UseSqlite(connectionString).Options);
-            //    context.Database.Migrate();
-            //    context.Database.EnsureCreated();
-            //}
-            string connectionString = app.Configuration["ConnectionStrings:Default"] ?? throw new MissingValueException("Connection string is not provided in appsettings.json");
-            app.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
-            using var context = new AppDbContext(new DbContextOptionsBuilder<AppDbContext>().UseNpgsql(connectionString).Options);
-            context.Database.Migrate();
-            context.Database.EnsureCreated();
+            if (app.Environment.IsDevelopment())
+            {
+                const string name = "ProjectCDb";
+                app.Services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase(name));
+                using var context = new AppDbContext(new DbContextOptionsBuilder<AppDbContext>().UseInMemoryDatabase(name).Options);
+                context.Database.EnsureCreated();
+            }
+            else
+            {
+                string connectionString = app.Configuration["ConnectionStrings:Default"] ?? throw new NullReferenceException("Connection string is not provided in appsettings.json");
+                app.Services.AddDbContext<AppDbContext>(options => options.UseSqlite(connectionString));
+                using var context = new AppDbContext(new DbContextOptionsBuilder<AppDbContext>().UseSqlite(connectionString).Options);
+                context.Database.Migrate();
+                context.Database.EnsureCreated();
+            }
+
             return app;
         }
 

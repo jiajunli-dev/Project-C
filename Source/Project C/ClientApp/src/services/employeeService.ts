@@ -3,7 +3,7 @@ import { Employee } from "../models/Employee";
 import { baseService } from "./baseService";
 
 export class employeeService extends baseService{
-    constructor(baseUrl: string = "http://api.platiumx.com") { super(baseUrl); }
+    constructor(baseUrl: string = "https://localhost:7004") { super(baseUrl); }
 
     async getAll(token: string): Promise<Employee[] | undefined> {
         const request = this.createRequest("GET", token, "Employee");

@@ -5,7 +5,7 @@ import { baseService } from "./baseService";
 
 export class TicketService extends baseService {
     // TODO: Move api url to config
-    constructor(baseUrl: string = "http://api.platiumx.com") { super(baseUrl); }
+    constructor(baseUrl: string ="https://localhost:7004") { super(baseUrl); }
 
     async getAll(token: string): Promise<Ticket[] | undefined> {
         if (!token) throw new Error('Token is required.');

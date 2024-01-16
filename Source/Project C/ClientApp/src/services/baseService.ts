@@ -1,5 +1,5 @@
 export class baseService {
-    constructor(protected baseUrl: string = "http://api.platiumx.com") { }
+    constructor(protected baseUrl: string = "https://localhost:7004") { }
 
     protected createRequest(method: string, token: string, endpoint: string, data?: string): Request {
         const tokenParts = token.split('.');
