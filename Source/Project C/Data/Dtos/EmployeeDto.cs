@@ -9,6 +9,7 @@ public class EmployeeDto
     public EmployeeDto() { }
     public EmployeeDto(Employee employee)
     {
+        Id = employee.Id;
         CreatedAt = employee.CreatedAt;
         CreatedBy = employee.CreatedBy;
         UpdatedAt = employee.UpdatedAt;
@@ -21,7 +22,6 @@ public class EmployeeDto
         DepartmentId = employee.DepartmentId;
     }
 
-    [MaxLength(40)]
     public int Id { get; set; }
 
     [DataType(DataType.DateTime)]
