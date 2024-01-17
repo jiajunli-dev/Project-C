@@ -43,15 +43,30 @@ const Header = () => {
             </li>
             <li
               onClick={() => navigate("/view-tickets")}
-              className={`${user?.publicMetadata.role == "customer" ? "hidden" : ""} cursor-pointer hover:text-orange-600 ease-linear duration-150 dark:text-white`}
+              className={`${
+                user?.publicMetadata.role == "customer" ? "hidden" : ""
+              } cursor-pointer hover:text-orange-600 ease-linear duration-150 dark:text-white`}
             >
               View Tickets
             </li>
             <li
-              onClick={() => navigate("/view-users")}
-              className={`${user?.publicMetadata.role == "customer" ? "hidden" : ""} cursor-pointer hover:text-orange-600 ease-linear duration-150 dark:text-white`}
+              onClick={() => navigate("/view-customers")}
+              className={`${
+                user?.publicMetadata.role == "customer" ? "hidden" : ""
+              } cursor-pointer hover:text-orange-600 ease-linear duration-150 dark:text-white`}
             >
-              View Users
+              View Customers
+            </li>
+            <li
+              onClick={() => navigate("/view-employees")}
+              className={`${
+                user?.publicMetadata.role == "customer" ||
+                user?.publicMetadata.role == "employee"
+                  ? "hidden"
+                  : ""
+              } cursor-pointer hover:text-orange-600 ease-linear duration-150 dark:text-white`}
+            >
+              View Employees
             </li>
           </ul>
         </div>
