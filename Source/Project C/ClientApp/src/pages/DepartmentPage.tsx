@@ -23,15 +23,11 @@ const DepartmentPage = () => {
     const [departments, setDepartments] = useState<Department[]>();
     const clerk = useClerk();
 
-    // ojecbt maken
-
     const renderTableHeader = () => {
         if (!departments || departments.length === 0) return null;
 
-        // Get the property names
         const header = Object.keys(departments[0]);
 
-        // Create table header cells
         return header.map((key) => <th key={key}>{key}</th>);
     };
 
