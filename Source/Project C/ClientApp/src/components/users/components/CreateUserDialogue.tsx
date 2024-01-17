@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useSignUp, useClerk } from '@clerk/clerk-react';
+import { useSignUp, useClerk } from "@clerk/clerk-react";
 import { employeeService } from "@/services/employeeService";
 import { customerService } from "@/services/customerService";
 import { CreateCustomer } from "@/models/CreateCustomer";
@@ -35,7 +35,7 @@ export default function CreateUserDialogue() {
   const clerk = useClerk();
   const employeeRepository = new employeeService();
   const customerRepository = new customerService();
-  const tokenType = 'api_token';
+  const tokenType = "api_token";
   const wait = () => new Promise((resolve) => setTimeout(resolve, 100));
 
   const [username, setUsername] = useState("");
@@ -51,8 +51,7 @@ export default function CreateUserDialogue() {
   const { isLoaded, signUp } = useSignUp();
 
   // todo handle loading state
-  if (!isLoaded)
-    return null;
+  if (!isLoaded) return null;
 
   const handleUserCreation = async (event: any) => {
     event.preventDefault();
@@ -104,8 +103,7 @@ export default function CreateUserDialogue() {
             description: "User successfully added with ID: " + result.id,
             duration: 3500,
           });
-        }
-        else {
+        } else {
           toast({
             description: "User creation failed",
             duration: 3500,
@@ -132,6 +130,36 @@ export default function CreateUserDialogue() {
             <DialogTitle className="dark:text-white">Add a user</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="employee" className="text-right dark:text-white ">
+                Roles
+              </Label>
+              <Select onValueChange={setSelectedRole}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select a role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="customer">
+                      <span className="dark:text-white">Customer</span>
+                    </SelectItem>
+
+                    <SelectItem
+                      disabled={user?.publicMetadata.role !== "admin"}
+                      value="employee"
+                    >
+                      <span className="dark:text-white">Employee</span>
+                    </SelectItem>
+                    <SelectItem
+                      disabled={user?.publicMetadata.role !== "admin"}
+                      value="admin"
+                    >
+                      <span className="dark:text-white">Admin</span>
+                    </SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="username" className="text-right dark:text-white">
                 Username
@@ -173,7 +201,10 @@ export default function CreateUserDialogue() {
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="phoneNumber" className="text-right dark:text-white">
+              <Label
+                htmlFor="phoneNumber"
+                className="text-right dark:text-white"
+              >
                 Phone Number
               </Label>
               <Input
@@ -182,41 +213,14 @@ export default function CreateUserDialogue() {
                 onChange={(e) => setPhoneNumber(e.target.value)}
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="employee" className="text-right dark:text-white ">
-                Roles
-              </Label>
-              <Select onValueChange={setSelectedRole}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Select a role" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem value="customer">
-                      <span className="dark:text-white">Customer</span>
-                    </SelectItem>
-
-                    <SelectItem
-                      disabled={user?.publicMetadata.role !== "admin"}
-                      value="employee"
-                    >
-                      <span className="dark:text-white">Employee</span>
-                    </SelectItem>
-                    <SelectItem
-                      disabled={user?.publicMetadata.role !== "admin"}
-                      value="admin"
-                    >
-                      <span className="dark:text-white">Admin</span>
-                    </SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
 
             {selectedRole === "customer" && (
               <div className="grid gap-4 py-4">
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="departmentName" className="text-right dark:text-white">
+                  <Label
+                    htmlFor="departmentName"
+                    className="text-right dark:text-white"
+                  >
                     Department Name
                   </Label>
                   <Input
@@ -227,7 +231,10 @@ export default function CreateUserDialogue() {
                 </div>
 
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="companyName" className="text-right dark:text-white">
+                  <Label
+                    htmlFor="companyName"
+                    className="text-right dark:text-white"
+                  >
                     Company Name
                   </Label>
                   <Input
@@ -238,7 +245,10 @@ export default function CreateUserDialogue() {
                 </div>
 
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="companyPhoneNumber" className="text-right dark:text-white">
+                  <Label
+                    htmlFor="companyPhoneNumber"
+                    className="text-right dark:text-white"
+                  >
                     Company Phone Number
                   </Label>
                   <Input
@@ -249,7 +259,6 @@ export default function CreateUserDialogue() {
                 </div>
               </div>
             )}
-
           </div>
           <DialogFooter>
             <form

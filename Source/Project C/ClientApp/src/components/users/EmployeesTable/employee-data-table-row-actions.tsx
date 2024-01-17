@@ -10,13 +10,13 @@ import {
   DropdownMenuTrigger,
 } from "../../ui/dropdown-menu";
 import useIsDarkMode from "../../IsDarkModeChecker";
+import { employeeService } from "@/services/employeeService";
 import { useClerk } from "@clerk/clerk-react";
-import { customerService } from "@/services/customerService";
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
 }
 
-export function DataTableRowActions<TData>({
+export function EmployeeDataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
   const isDarkMode = useIsDarkMode();
@@ -25,7 +25,7 @@ export function DataTableRowActions<TData>({
   const deleteUser = async (userID: number) => {
     try {
       const token = await clerk.session?.getToken({ template: tokenType });
-      const service = new customerService();
+      const service = new employeeService();
       if (token) {
         await service.delete(token, userID);
         window.location.reload();
