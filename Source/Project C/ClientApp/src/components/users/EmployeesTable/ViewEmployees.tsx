@@ -11,6 +11,7 @@ export default function ViewUsers() {
   const [data2, setData2] = useState<Employee[]>([]);
   const clerk = useClerk();
 
+
   useEffect(() => {
     async function fetchDataAsync() {
       try {

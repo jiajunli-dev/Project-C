@@ -10,14 +10,30 @@ import {
   DropdownMenuTrigger,
 } from "../../ui/dropdown-menu";
 import useIsDarkMode from "../../IsDarkModeChecker";
+import { Employee } from "@/models/Employee";
+import { employeeService } from "@/services/employeeService";
+import { useClerk } from "@clerk/clerk-react";
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
 }
 
-export function DataTableRowActions<
-  TData
->({}: DataTableRowActionsProps<TData>) {
+export function DataTableRowActions<TData>({
+  row,
+}: DataTableRowActionsProps<TData>) {
   const isDarkMode = useIsDarkMode();
+  const clerk = useClerk();
+  const tokenType = "api_token";
+
+  const deleteEmployee = async (userName: string) => {
+    try {
+      const token = await clerk.session?.getToken({ template: tokenType });
+      const service = new employeeService();
+      if (token) {
+      }
+    } catch (error) {
+      console.error("Error deleting ticket:", error);
+    }
+  };
 
   return (
     <DropdownMenu>
@@ -47,8 +63,12 @@ export function DataTableRowActions<
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
-       
-        <DropdownMenuItem className="dark:text-white">Delete</DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => deleteEmployee(row.original.username)}
+          className="dark:text-white"
+        >
+          Delete
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
