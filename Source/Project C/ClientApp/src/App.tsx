@@ -13,6 +13,7 @@ import { ArticlesContext } from "./components/Article/ArticleContext";
 import { Articles } from "./components/Article/Articles";
 import ArticlesPage from "./pages/ArticlesPage";
 import FAQPage from "./pages/FAQPage";
+import ViewEmployees from "./components/users/EmployeesTable/ViewEmployees";
 function App() {
   return (
     <>
@@ -25,7 +26,8 @@ function App() {
                 <Route path="/authentication" element={<LoginPage />} />
                 <Route path="/create-ticket" element={<CreateTicket />} />
                 <Route path="/view-tickets" element={<AdminTickets />} />
-                <Route path="/view-users" element={<ViewUsers />} />
+                <Route path="/view-customers" element={<ViewUsers />} />
+                <Route path="/view-employees" element={<ViewEmployees />} />
                 <Route path="/ApiTest" element={<ApiTest />} />
                 <Route path="/ticket/:id" element={<TicketPage />} />
                 <Route path="/faq" element={<FAQPage />} />
